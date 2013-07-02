@@ -1,0 +1,6 @@
+main: net.battlenexus.paintball.Paintball
+name: Paintball
+version: 1.0.0
+description: Paintball plugin
+author: BattleNexus
+authors: [Lavoaster, BeMacized, Wouter1997, hypereddie10]
