@@ -1,5 +1,6 @@
 package net.battlenexus.paintball;
 
+import net.battlenexus.paintball.listeners.PlayerListener;
 import net.battlenexus.paintball.scoreboard.ScoreManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,6 +10,12 @@ public class Paintball extends JavaPlugin {
     @Override
     public void onEnable() {
         scoreboard = new ScoreManager();
-        //TODO Code
+
+        //Register Listeners
+        registerListeners();
+    }
+
+    private void registerListeners() {
+        new PlayerListener(this);
     }
 }
