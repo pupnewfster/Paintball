@@ -16,7 +16,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        //Kill everyone, blame it on the new guy.
+
     }
 
     @EventHandler
@@ -24,12 +24,7 @@ public class PlayerListener implements Listener {
         if(!(event.getDamager() instanceof Player)) {
             return;
         }
-
-        Player killer = (Player) event.getDamager();
-
-        killer.damage(20D);
-
-        event.setCancelled(true);
+        //TODO
     }
 
     @EventHandler
@@ -37,9 +32,7 @@ public class PlayerListener implements Listener {
         if(!(event.getEntity().getShooter() instanceof Player)) {
             return;
         }
-
-        Player killer = (Player) event.getEntity().getShooter();
-        killer.damage(20D);
+        //TODO
     }
 
 }
