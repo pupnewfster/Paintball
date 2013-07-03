@@ -2,3 +2,6 @@
 *.iml
 testserver/
 out/
+nbproject/
+build.xml
+manifest.mf
