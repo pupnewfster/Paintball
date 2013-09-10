@@ -49,21 +49,16 @@ public class Config {
                         if (f.getName().equals(item_name)) {
                             if (isConfigItem(f)) {
                                 if (f.getDeclaringClass().isAssignableFrom(ConfigParser.class)) {
-                                    ConfigParser parser = (ConfigParser)f.get(this);
-                                    if (parser == null) {
-                                        parser = (ConfigParser) f.getDeclaringClass().getConstructor().newInstance();
-                                    }
+                                    ConfigParser parser = (ConfigParser) f.getDeclaringClass().getConstructor().newInstance();
                                     parser.parse(this, item.getChildNodes());
+                                    f.set(this, parser);
                                 } else {
                                     if (f.getDeclaringClass().isAssignableFrom(String.class)) {
-                                        String value = (String)f.get(this);
-                                        value = item.getFirstChild().getNodeValue();
+                                        f.set(this, item.getFirstChild().getNodeValue());
                                     } else if (f.getDeclaringClass().isAssignableFrom(Integer.class)) {
-                                        Integer value = (Integer)f.get(this);
-                                        value = Integer.parseInt(item.getFirstChild().getNodeName());
+                                        f.set(this, Integer.parseInt(item.getFirstChild().getNodeName()));
                                     } else if (f.getDeclaringClass().isAssignableFrom(Boolean.class)) {
-                                        Boolean value = (Boolean)f.get(this);
-                                        value = item.getFirstChild().getNodeValue().toLowerCase().contains("y");
+                                        f.set(this, item.getFirstChild().getNodeValue().toLowerCase().contains("y"));
                                     } else {
                                         Paintball.INSTANCE.error("Cannot assign value for item \"" + item_name + "\"");
                                     }
