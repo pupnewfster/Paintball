@@ -15,6 +15,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 
 public class Config {
     public static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
@@ -25,6 +27,18 @@ public class Config {
     private Team red_team;
     @ConfigItem
     private String map_name;
+
+    public Team getRedTeam() {
+        return red_team;
+    }
+
+    public Team getBlueTeam() {
+        return blue_team;
+    }
+
+    public String getMapName() {
+        return map_name;
+    }
 
 
     public void parseFile(File file) throws IOException {
@@ -84,6 +98,40 @@ public class Config {
         } catch (InvocationTargetException e) {
             throw new IOException("Error invoking method to parse item!", e);
         }
+    }
+
+    public String[] save() {
+        ArrayList<String> lines = new ArrayList<String>();
+        Field[] fields = getClass().getDeclaredFields();
+        lines.add("<config>");
+        for (Field f : fields) {
+            if (isConfigItem(f)) {
+                if (f.getDeclaringClass().isAssignableFrom(ConfigParser.class)) {
+                    lines.add("<" + f.getName() + ">");
+                    try {
+                        ConfigParser parser = (ConfigParser) f.get(this);
+                        if (parser != null) {
+                            parser.save(lines);
+                        }
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                    lines.add("</" + f.getName() + ">");
+                } else {
+                    String item_name = f.getName();
+                    if (!Modifier.isTransient(f.getModifiers())) {
+                        try {
+                            lines.add("<" + item_name + ">" + f.get(this).toString() + "</" + item_name +">");
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        lines.add("</config>");
+
+        return lines.toArray(new String[lines.size()]);
     }
 
     private boolean isConfigItem(Field field) {

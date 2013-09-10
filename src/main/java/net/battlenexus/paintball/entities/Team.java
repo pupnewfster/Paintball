@@ -6,9 +6,37 @@ import org.bukkit.Location;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
+
 public class Team implements ConfigParser {
+    private ArrayList<PBPlayer> players = new ArrayList<PBPlayer>();
     private String team_name;
     private Location spawn;
+
+    public void spawnPlayer(PBPlayer player) {
+        if (!contains(player))
+            return;
+        player.getBukkitPlayer().teleport(spawn);
+    }
+
+    public boolean contains(PBPlayer player) {
+        return players.contains(player);
+    }
+
+    public int size() {
+        return players.size();
+    }
+
+    public void joinTeam(PBPlayer player) {
+        players.add(player);
+        spawnPlayer(player);
+    }
+
+    public void leaveTeam(PBPlayer player) {
+        if (!contains(player))
+            return;
+        players.remove(player);
+    }
 
 
     @Override
@@ -19,5 +47,9 @@ public class Team implements ConfigParser {
 
             }
         }
+    }
+
+    @Override
+    public void save(ArrayList<String> lines) {
     }
 }
