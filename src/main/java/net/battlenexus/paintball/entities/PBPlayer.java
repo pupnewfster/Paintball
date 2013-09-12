@@ -85,12 +85,13 @@ public class PBPlayer {
         return current_game != null;
     }
 
-    public void kill() {
+    public void kill(final PBPlayer killer) {
+        player.damage(20D);
+        addDeath();
+        killer.addKill();
         if (!isInGame() || getCurrentTeam() == null) {
             return;
         }
-
-        //TODO Do things with stats
         getCurrentTeam().spawnPlayer(this);
     }
 
