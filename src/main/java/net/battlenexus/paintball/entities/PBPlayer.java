@@ -97,4 +97,28 @@ public class PBPlayer {
     public void joinGame(PaintballGame game) {
 
     }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public void addKill() {
+        this.kills++;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
+    public void addDeath() {
+        this.deaths++;
+    }
 }
