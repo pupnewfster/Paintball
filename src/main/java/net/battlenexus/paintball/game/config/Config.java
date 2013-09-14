@@ -27,6 +27,8 @@ public class Config {
     private Team red_team;
     @ConfigItem
     private String map_name;
+    @ConfigItem
+    private Map map_config;
 
     public Team getRedTeam() {
         return red_team;
@@ -38,6 +40,10 @@ public class Config {
 
     public String getMapName() {
         return map_name;
+    }
+
+    public Map getMapConfig() {
+        return map_config;
     }
 
 
