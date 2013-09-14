@@ -85,16 +85,41 @@ public class PBPlayer {
         return current_game != null;
     }
 
-    public void kill() {
+    public void kill(final PBPlayer killer) {
+        player.damage(20D);
+        addDeath();
+        killer.addKill();
         if (!isInGame() || getCurrentTeam() == null) {
             return;
         }
-
-        //TODO Do things with stats
         getCurrentTeam().spawnPlayer(this);
     }
 
     public void joinGame(PaintballGame game) {
 
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void setKills(int kills) {
+        this.kills = kills;
+    }
+
+    public void addKill() {
+        this.kills++;
+    }
+
+    public int getDeaths() {
+        return deaths;
+    }
+
+    public void setDeaths(int deaths) {
+        this.deaths = deaths;
+    }
+
+    public void addDeath() {
+        this.deaths++;
     }
 }
