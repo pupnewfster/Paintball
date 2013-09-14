@@ -12,6 +12,16 @@ public class Map implements ConfigParser {
     private int rot;
     private int yaw;
 
+    public Map() { }
+
+    public Map(Map toClone) {
+        this.spawnx = toClone.spawnx;
+        this.spawny = toClone.spawny;
+        this.spawnz = toClone.spawnz;
+        this.rot = toClone.rot;
+        this.yaw = toClone.yaw;
+    }
+
     public int getSpawnX() {
         return spawnx;
     }

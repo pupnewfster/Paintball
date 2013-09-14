@@ -13,6 +13,13 @@ public class Team implements ConfigParser {
     private String team_name;
     private Location spawn;
 
+    public Team(Team blue_team) {
+        this.team_name = blue_team.team_name;
+        this.spawn = new Location(blue_team.spawn.getWorld(), blue_team.spawn.getX(), blue_team.spawn.getY(), blue_team.spawn.getZ(), blue_team.spawn.getYaw(), blue_team.spawn.getPitch());
+    }
+
+    public Team() { }
+
     public void spawnPlayer(PBPlayer player) {
         if (!contains(player))
             return;
