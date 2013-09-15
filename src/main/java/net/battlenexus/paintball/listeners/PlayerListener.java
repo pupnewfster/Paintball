@@ -1,7 +1,6 @@
 package net.battlenexus.paintball.listeners;
 
 import net.battlenexus.paintball.entities.PBPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -17,7 +16,7 @@ import java.util.HashMap;
 
 public class PlayerListener implements Listener {
 
-    protected HashMap<String, String> deathMessages = new HashMap<>();
+    protected HashMap<String, String> deathMessages = new HashMap<String, String>();
 
     public PlayerListener(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -26,6 +25,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         PBPlayer.newPlayer(event.getPlayer());
+        event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }
 
     @EventHandler

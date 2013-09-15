@@ -1,7 +1,9 @@
 package net.battlenexus.paintball.entities;
 
+import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.config.ConfigParser;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -21,6 +23,26 @@ public class Team implements ConfigParser {
     }
 
     public Team() { }
+
+    public void setTeamName(String team) {
+        //This automates colors for team names.
+        //So Team Blue or Blue Team will automatically get a blue color.
+        for (ChatColor c : ChatColor.values()) {
+            if (team.toLowerCase().contains(c.name().toLowerCase())) {
+                team = c + team;
+                break;
+            }
+        }
+        this.team_name = team;
+    }
+
+    public void setSpawn(Location location) {
+        this.spawn = location;
+    }
+
+    public String getName() {
+        return team_name;
+    }
 
     public void spawnPlayer(PBPlayer player) {
         if (!contains(player))
@@ -55,14 +77,36 @@ public class Team implements ConfigParser {
     @Override
     public void parse(Config config, NodeList childNodes) {
         if (childNodes != null && childNodes.getLength() > 0) {
+            double x = 0, y = 0, z = 0, yaw = 0, pitch = 0;
             for (int i = 0; i < childNodes.getLength(); i++) {
-                Element item = (Element)childNodes.item(0);
-
+                if (!(childNodes.item(i) instanceof Element))
+                    continue;
+                Element item = (Element)childNodes.item(i);
+                if (item.getNodeName().equals("name")) {
+                    team_name = item.getFirstChild().getNodeValue().replaceAll("$", "" + ChatColor.COLOR_CHAR);
+                } else if (item.getNodeName().equals("x")) {
+                    x = Double.parseDouble(item.getFirstChild().getNodeValue());
+                } else if (item.getNodeName().equals("y")) {
+                    y = Double.parseDouble(item.getFirstChild().getNodeValue());
+                } else if (item.getNodeName().equals("z")) {
+                    z = Double.parseDouble(item.getFirstChild().getNodeValue());
+                } else if (item.getNodeName().equals("yaw")) {
+                    yaw = Double.parseDouble(item.getFirstChild().getNodeValue());
+                } else if (item.getNodeName().equals("pitch")) {
+                    pitch = Double.parseDouble(item.getFirstChild().getNodeValue());
+                }
             }
+            spawn = new Location(Paintball.INSTANCE.paintball_world, x, y, z, (float)yaw, (float)pitch);
         }
     }
 
     @Override
     public void save(ArrayList<String> lines) {
+        lines.add("<name>" + team_name.replaceAll("" + ChatColor.COLOR_CHAR, "$") + "</name>");
+        lines.add("<x>" + spawn.getX() + "</x>");
+        lines.add("<y>" + spawn.getY() + "</y>");
+        lines.add("<z>" + spawn.getZ() + "</z>");
+        lines.add("<pitch>" + spawn.getPitch() + "</pitch>");
+        lines.add("<yaw>" + spawn.getYaw() + "</yaw>");
     }
 }

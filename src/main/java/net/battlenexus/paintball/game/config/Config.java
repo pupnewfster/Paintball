@@ -2,6 +2,7 @@ package net.battlenexus.paintball.game.config;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.Team;
+import org.bukkit.Location;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -30,18 +31,39 @@ public class Config {
     private Team red_team;
     @ConfigItem
     private String map_name;
-    @ConfigItem
-    private Map map_config;
 
-    public Config() { }
+    public Config() {
+        blue_team = new Team();
+        red_team = new Team();
+    }
 
     public Config(Config toClone) {
         if (toClone == null)
             throw new InvalidParameterException("toClone cannot be null!");
         this.map_name = toClone.map_name;
-        this.map_config = new Map(toClone.map_config);
+        //this.map_config = new Map(toClone.map_config);
         this.blue_team = new Team(toClone.blue_team);
         this.red_team = new Team(toClone.red_team);
+    }
+
+    public void setMapName(String mapName) {
+        this.map_name = mapName;
+    }
+
+    public void setTeamName(int team, String name) {
+        if (team == 0) {
+            blue_team.setTeamName(name);
+        } else if (team == 1) {
+            red_team.setTeamName(name);
+        }
+    }
+
+    public void setTeamSpawn(int team, Location spawn) {
+        if (team == 0) {
+            blue_team.setSpawn(spawn);
+        } else if (team == 1) {
+            red_team.setSpawn(spawn);
+        }
     }
 
     public Team getRedTeam() {
@@ -54,10 +76,6 @@ public class Config {
 
     public String getMapName() {
         return map_name;
-    }
-
-    public Map getMapConfig() {
-        return map_config;
     }
 
 
@@ -76,22 +94,24 @@ public class Config {
             NodeList list = elm.getChildNodes();
             if (list != null && list.getLength() > 0) {
                 for (int i = 0; i < list.getLength(); i++) {
+                    if (!(list.item(i) instanceof Element))
+                        continue;
                     Element item = (Element) list.item(i);
                     String item_name = item.getNodeName();
 
                     for (Field f : fields) {
                         if (f.getName().equals(item_name)) {
                             if (isConfigItem(f)) {
-                                if (f.getDeclaringClass().isAssignableFrom(ConfigParser.class)) {
-                                    ConfigParser parser = (ConfigParser) f.getDeclaringClass().getConstructor().newInstance();
+                                if (ConfigParser.class.isAssignableFrom(f.getType())) {
+                                    ConfigParser parser = (ConfigParser) f.getType().getConstructor().newInstance();
                                     parser.parse(this, item.getChildNodes());
                                     f.set(this, parser);
                                 } else {
-                                    if (f.getDeclaringClass().isAssignableFrom(String.class)) {
+                                    if (String.class.isAssignableFrom(f.getType())) {
                                         f.set(this, item.getFirstChild().getNodeValue());
-                                    } else if (f.getDeclaringClass().isAssignableFrom(Integer.class)) {
+                                    } else if (Integer.class.isAssignableFrom(f.getType())) {
                                         f.set(this, Integer.parseInt(item.getFirstChild().getNodeName()));
-                                    } else if (f.getDeclaringClass().isAssignableFrom(Boolean.class)) {
+                                    } else if (Boolean.class.isAssignableFrom(f.getType())) {
                                         f.set(this, item.getFirstChild().getNodeValue().toLowerCase().contains("y"));
                                     } else {
                                         Paintball.INSTANCE.error("Cannot assign value for item \"" + item_name + "\"");
@@ -126,25 +146,22 @@ public class Config {
         lines.add("<config>");
         for (Field f : fields) {
             if (isConfigItem(f)) {
-                if (f.getDeclaringClass().isAssignableFrom(ConfigParser.class)) {
+                Object obj;
+                try {
+                    obj = f.get(this);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+                if (obj instanceof ConfigParser) {
                     lines.add("<" + f.getName() + ">");
-                    try {
-                        ConfigParser parser = (ConfigParser) f.get(this);
-                        if (parser != null) {
-                            parser.save(lines);
-                        }
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
+                    ConfigParser parser = (ConfigParser)obj;
+                    parser.save(lines);
                     lines.add("</" + f.getName() + ">");
                 } else {
                     String item_name = f.getName();
                     if (!Modifier.isTransient(f.getModifiers())) {
-                        try {
-                            lines.add("<" + item_name + ">" + f.get(this).toString() + "</" + item_name +">");
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
+                        lines.add("<" + item_name + ">" + obj.toString() + "</" + item_name +">");
                     }
                 }
             }

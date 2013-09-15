@@ -1,6 +1,8 @@
 package net.battlenexus.paintball;
 
+import net.battlenexus.paintball.commands.PBCommandHandler;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.listeners.PlayerListener;
 import net.battlenexus.paintball.listeners.TickBukkitTask;
 import net.battlenexus.paintball.scoreboard.ScoreManager;
@@ -16,6 +18,7 @@ public class Paintball extends JavaPlugin {
     public World paintball_world;
     public Location lobby_spawn;
     private TickBukkitTask tasks;
+    private GameService game;
     ScoreManager scoreboard;
 
     @Override
@@ -26,15 +29,24 @@ public class Paintball extends JavaPlugin {
 
         scoreboard = new ScoreManager();
 
+        PBCommandHandler handler = new PBCommandHandler();
+        getCommand("createpbmap").setExecutor(handler);
+        getCommand("cpbmap").setExecutor(handler);
+
         //Register Listeners
         registerListeners();
 
         tasks = new TickBukkitTask();
         tasks.runTaskTimerAsynchronously(this, 1, 1);
 
-        for(Player player : getServer().getOnlinePlayers()) {
-            PBPlayer.newPlayer(player);
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                game = new GameService();
+                game.loadMaps();
+                game.play();
+            }
+        }).start();
     }
 
     private void registerListeners() {
@@ -67,13 +79,17 @@ public class Paintball extends JavaPlugin {
     }
 
     public static void sendGlobalWorldMessage(String message) {
-        INSTANCE.sendWorldMessage(ChatColor.WHITE + "[" + ChatColor.RED + "Paintball" + ChatColor.WHITE + "] " + ChatColor.GRAY + message);
+        INSTANCE.sendWorldMessage(formatMessage(message));
+    }
+
+    public static String formatMessage(String message) {
+        return ChatColor.WHITE + "[" + ChatColor.RED + "Paintball" + ChatColor.WHITE + "] " + ChatColor.GRAY + message;
     }
 
     public void loadPluginConfig() {
         saveDefaultConfig();
 
-        String world_name = getConfig().getString("game.world.name", "paintball");
+        String world_name = getConfig().getString("game.world.name", "world");
         WorldCreator creator = new WorldCreator(world_name);
         paintball_world = getServer().createWorld(creator);
 

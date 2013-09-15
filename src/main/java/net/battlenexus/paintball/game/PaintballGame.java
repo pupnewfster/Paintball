@@ -5,6 +5,7 @@ import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.listeners.Tick;
+import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +14,33 @@ import java.util.Random;
 public abstract class PaintballGame implements Tick {
     protected Config config;
     protected boolean ended = false;
+    protected boolean started = true;
 
     public void beginGame() {
         Paintball.INSTANCE.getTicker().addTick(this);
+        onGameStart();
+        for (int i = 20; i > 0; i--) {
+            if (i > 15) {
+                Paintball.sendGlobalWorldMessage("Game will start in: " + ChatColor.WHITE + i);
+            } else if (i > 5) {
+                Paintball.sendGlobalWorldMessage("Game will start in: " + ChatColor.YELLOW + i);
+            } else {
+                Paintball.sendGlobalWorldMessage("Game will start in: " + ChatColor.DARK_RED + i);
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for (PBPlayer player : getAllPlayers()) {
+            player.unfreeze();
+        }
+        started = true;
+        Paintball.sendGlobalWorldMessage(ChatColor.GREEN + "GO!");
     }
+
+    protected abstract void onGameStart();
 
     void setConfig(Config map_config) {
         config = map_config;
