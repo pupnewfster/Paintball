@@ -7,6 +7,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Team implements ConfigParser {
     private ArrayList<PBPlayer> players = new ArrayList<PBPlayer>();
@@ -24,6 +26,10 @@ public class Team implements ConfigParser {
         if (!contains(player))
             return;
         player.getBukkitPlayer().teleport(spawn);
+    }
+
+    public List<PBPlayer> getAllPlayers() {
+        return Collections.unmodifiableList(players);
     }
 
     public boolean contains(PBPlayer player) {

@@ -4,6 +4,7 @@ import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.listeners.PlayerListener;
 import net.battlenexus.paintball.listeners.TickBukkitTask;
 import net.battlenexus.paintball.scoreboard.ScoreManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
@@ -48,6 +49,27 @@ public class Paintball extends JavaPlugin {
         getLogger().info("[BN Paintball] ERROR: " + message);
     }
 
+    public void sendWorldMessage(String message) {
+        Player[] players = getServer().getOnlinePlayers();
+        for (Player p : players) {
+            if (p.getLocation().getWorld().getName().equals(paintball_world.getName())) {
+                p.sendMessage(message);
+            }
+        }
+    }
+
+    public boolean isPlayingPaintball(Player player) {
+        return player.getLocation().getWorld().getName().equals(paintball_world.getName());
+    }
+
+    public boolean isPlayingPaintball(PBPlayer player) {
+        return isPlayingPaintball(player.getBukkitPlayer());
+    }
+
+    public static void sendGlobalWorldMessage(String message) {
+        INSTANCE.sendWorldMessage(ChatColor.WHITE + "[" + ChatColor.RED + "Paintball" + ChatColor.WHITE + "] " + ChatColor.GRAY + message);
+    }
+
     public void loadPluginConfig() {
         saveDefaultConfig();
 
@@ -63,7 +85,5 @@ public class Paintball extends JavaPlugin {
         float world_pitch = (float)getConfig().getDouble("game.world.lobby_pitch", paintball_world.getSpawnLocation().getPitch());
 
         lobby_spawn = new Location(paintball_world, world_x, world_y, world_z, world_yaw, world_pitch);
-
-
     }
 }

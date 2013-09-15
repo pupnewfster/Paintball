@@ -6,6 +6,8 @@ import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.listeners.Tick;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public abstract class PaintballGame implements Tick {
@@ -16,7 +18,9 @@ public abstract class PaintballGame implements Tick {
         Paintball.INSTANCE.getTicker().addTick(this);
     }
 
-    public abstract boolean isJoinable();
+    void setConfig(Config map_config) {
+        config = map_config;
+    }
 
     public void joinNextOpenTeam(PBPlayer p) {
         if (config.getBlueTeam().size() < config.getRedTeam().size()) {
@@ -46,6 +50,14 @@ public abstract class PaintballGame implements Tick {
             return config.getBlueTeam();
         else
             return null;
+    }
+
+    public PBPlayer[] getAllPlayers() {
+        List<PBPlayer> players = new ArrayList<PBPlayer>();
+        players.addAll(config.getBlueTeam().getAllPlayers());
+        players.addAll(config.getRedTeam().getAllPlayers());
+
+        return players.toArray(new PBPlayer[players.size()]);
     }
 
     protected void endGame() {

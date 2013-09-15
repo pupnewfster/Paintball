@@ -81,6 +81,14 @@ public class PBPlayer {
         return PBPlayer.players.get(player.getName());
     }
 
+    public static PBPlayer toPBPlayer(Player player) {
+        if (players.containsKey(player.getName())) {
+            return players.get(player.getName());
+        } else {
+            return newPlayer(player);
+        }
+    }
+
     public boolean isInGame() {
         return current_game != null;
     }
