@@ -6,7 +6,6 @@ public class SimpleGame extends PaintballGame {
 
     @Override
     public void tick() {
-
     }
 
     @Override

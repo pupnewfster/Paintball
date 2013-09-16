@@ -3,6 +3,7 @@ package net.battlenexus.paintball.listeners;
 import net.battlenexus.paintball.entities.PBPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -24,21 +25,26 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        PBPlayer.newPlayer(event.getPlayer());
+        //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
         event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }
 
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {
-        if(!(event.getDamager() instanceof Projectile) || !(event.getEntity() instanceof Player) || !(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
+        if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player) || !(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
             return;
         }
-
-        PBPlayer shooter = PBPlayer.getPlayer((Player) ((Projectile) event.getDamager()).getShooter());
-        PBPlayer target  = PBPlayer.getPlayer((Player) event.getEntity());
-
-        deathMessages.put(target.getBukkitPlayer().getName(), shooter.getBukkitPlayer().getDisplayName() + " has killed " + target.getBukkitPlayer().getDisplayName() + ". :(");
-        target.kill(shooter);
+        Player victim = (Player) event.getEntity();
+        PBPlayer pbvictim;
+        if ((pbvictim = PBPlayer.getPlayer(victim)) == null) {
+            return;
+        }
+        PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball)event.getDamager()).getShooter());
+        if (shooter.getCurrentTeam().contains(pbvictim)) {
+            //TODO Friendly fire
+        } else {
+            pbvictim.kill(shooter);
+        }
     }
 
     @EventHandler
@@ -65,7 +71,6 @@ public class PlayerListener implements Listener {
         if(!(event.getEntity().getShooter() instanceof Player)) {
             return;
         }
-        //TODO
     }
 
 }
