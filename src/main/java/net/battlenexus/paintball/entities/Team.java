@@ -3,8 +3,9 @@ package net.battlenexus.paintball.entities;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.config.ConfigParser;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import net.battlenexus.paintball.game.weapon.AbstractWeapon;
+import net.battlenexus.paintball.game.weapon.impl.BasicPaintball;
+import org.bukkit.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -16,6 +17,7 @@ public class Team implements ConfigParser {
     private ArrayList<PBPlayer> players = new ArrayList<PBPlayer>();
     private String team_name;
     private Location spawn;
+    private String world_name;
 
     public Team(Team blue_team) {
         this.team_name = blue_team.team_name;
@@ -47,6 +49,14 @@ public class Team implements ConfigParser {
     public void spawnPlayer(PBPlayer player) {
         if (!contains(player))
             return;
+        if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
+            World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
+            if (w == null) {
+                player.getBukkitPlayer().sendMessage(Paintball.formatMessage("Could not find world \"" + world_name + "\"!"));
+                return;
+            }
+            spawn.setWorld(w);
+        }
         player.getBukkitPlayer().teleport(spawn);
     }
 
@@ -65,6 +75,7 @@ public class Team implements ConfigParser {
     public void joinTeam(PBPlayer player) {
         players.add(player);
         spawnPlayer(player);
+        player.setWeapon(AbstractWeapon.createWeapon(BasicPaintball.class, player)); //TODO Temp code, remove
     }
 
     public void leaveTeam(PBPlayer player) {
@@ -94,9 +105,11 @@ public class Team implements ConfigParser {
                     yaw = Double.parseDouble(item.getFirstChild().getNodeValue());
                 } else if (item.getNodeName().equals("pitch")) {
                     pitch = Double.parseDouble(item.getFirstChild().getNodeValue());
+                } else if (item.getNodeName().equals("world")) {
+                    world_name = item.getFirstChild().getNodeValue();
                 }
             }
-            spawn = new Location(Paintball.INSTANCE.paintball_world, x, y, z, (float)yaw, (float)pitch);
+            spawn = new Location(Paintball.INSTANCE.paintball_world, x, y, z, (float)yaw, (float)pitch); //Use lobby as spawn world until a player needs to be spawned
         }
     }
 
@@ -108,5 +121,6 @@ public class Team implements ConfigParser {
         lines.add("<z>" + spawn.getZ() + "</z>");
         lines.add("<pitch>" + spawn.getPitch() + "</pitch>");
         lines.add("<yaw>" + spawn.getYaw() + "</yaw>");
+        lines.add("<world>" + spawn.getWorld().getName() + "</world>");
     }
 }

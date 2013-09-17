@@ -6,9 +6,10 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,6 +31,25 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player p = event.getPlayer();
+        PBPlayer who;
+        if ((who = PBPlayer.getPlayer(p)) == null) {
+            return;
+        }
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            //GUN
+            if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getMaterial())) {
+                who.getCurrentWeapon().shoot();
+            }
+            //RELOAD
+            if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem()) && who.getCurrentWeapon().clipeSize() > who.getCurrentWeapon().currentClipSize()) {
+                who.getCurrentWeapon().reload();
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player) || !(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
             return;
@@ -40,7 +60,10 @@ public class PlayerListener implements Listener {
             return;
         }
         PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball)event.getDamager()).getShooter());
-        if (shooter.getCurrentTeam().contains(pbvictim)) {
+        if (shooter.getCurrentTeam() != null) {
+            return;
+        }
+        else if (shooter.getCurrentTeam().contains(pbvictim)) {
             //TODO Friendly fire
         } else {
             pbvictim.kill(shooter);
@@ -63,13 +86,6 @@ public class PlayerListener implements Listener {
         if ((player = PBPlayer.getPlayer(event.getPlayer())) != null) {
             if (player.isFrozen())
                 player.handleFrozen();
-        }
-    }
-
-    @EventHandler
-    public void onPlayerProjectileHit(ProjectileHitEvent event) {
-        if(!(event.getEntity().getShooter() instanceof Player)) {
-            return;
         }
     }
 

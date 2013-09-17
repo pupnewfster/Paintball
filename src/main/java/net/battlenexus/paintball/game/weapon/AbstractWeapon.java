@@ -2,14 +2,12 @@ package net.battlenexus.paintball.game.weapon;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.Effect;
-import org.bukkit.Location;
+import net.battlenexus.paintball.game.PaintballGame;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -19,23 +17,21 @@ public abstract class AbstractWeapon implements Weapon {
     protected ArrayList<Clip> clips = new ArrayList<Clip>();
     protected int currentClip;
 
-    public AbstractWeapon createWeapon(Class<? extends AbstractWeapon> class_, PBPlayer owner) {
+    public static AbstractWeapon createWeapon(Class<? extends AbstractWeapon> class_, PBPlayer owner) {
         try {
-            return class_.getConstructor(PBPlayer.class).newInstance(owner);
+            AbstractWeapon w =  class_.newInstance();
+            w.owner = owner;
+            w.addBullets(w.startBullets());
+            return w;
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    protected AbstractWeapon(PBPlayer player) {
-        this.owner = player;
+    protected AbstractWeapon() {
     }
 
     public void addBullets(int bulletCount) {
@@ -54,10 +50,108 @@ public abstract class AbstractWeapon implements Weapon {
                 i++;
             }
         }
+        updateGUI();
     }
 
+    protected void updateGUI() {
+        getOwner().getBukkitPlayer().setExp(clipCount());
+        getOwner().getBukkitPlayer().setLevel(clips.get(currentClip).bullets);
+    }
+
+    @Override
+    public Material getMaterial() {
+        if (getOwner().getCurrentGame() == null || getOwner().getCurrentTeam() == null)
+            return getNormalMaterial();
+        else {
+            PaintballGame pg = getOwner().getCurrentGame();
+            if (pg.getConfig().getBlueTeam().equals(getOwner().getCurrentTeam())) {
+                return getBlueTeamMaterial();
+            } else {
+                return getRedTeamMaterial();
+            }
+        }
+    }
+
+    public abstract Material getBlueTeamMaterial();
+
+    public abstract Material getRedTeamMaterial();
+
+    public abstract Material getNormalMaterial();
+
+    private boolean reloading = false;
+    @Override
+    public void reload() {
+        if (!reloading) {
+            int bneeded = clipeSize() - currentClipSize();
+            final int clipcount = clipCount();
+            if (clipcount <= 0) {
+                //TODO No more bullets!
+                updateGUI();
+            }
+            else if (clipcount < bneeded) {
+                bneeded = clipcount;
+            }
+
+            float reloadtime = (bneeded / clipeSize()) * reloadDelay();
+            reloading = true;
+            int obtain = obtainFromOtherClips(bneeded);
+            if (clips.size() == 0) {
+                Clip c = new Clip();
+                c.bullets = obtain;
+            } else {
+                Clip c = clips.get(currentClip);
+                c.bullets += obtain;
+            }
+            if (obtain == 0) {
+                owner.getBukkitPlayer().sendMessage(ChatColor.DARK_RED + Paintball.formatMessage("Your all out!"));
+                return;
+            }
+            updateGUI();
+            owner.getBukkitPlayer().sendMessage(Paintball.formatMessage("Reloading..."));
+            displayReloadAnimation(reloadtime);
+
+            Runnable stopReload = new Runnable() {
+
+                @Override
+                public void run() {
+                    reloading = false;
+                    owner.getBukkitPlayer().sendMessage(Paintball.formatMessage(ChatColor.GREEN + "Reloaded!"));
+                    updateGUI();
+                }
+            };
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, stopReload, (long) Math.round(reloadtime * 20));
+        }
+    }
+
+    private void displayReloadAnimation(float speed) {
+        owner.getBukkitPlayer().setExp(0);
+        final Player thePlayer = owner.getBukkitPlayer();
+        final int finalspeed = Math.round((speed / 10) * 20);
+        Runnable fixTask = new Runnable() {
+
+            @Override
+            public void run() {
+                thePlayer.setExp((float) (thePlayer.getExp() + 0.1));
+            }
+        };
+        for (int i = 1; i <= 10; i++) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, fixTask, (long) finalspeed * i);
+        }
+    }
+
+    @Override
     public void shoot() {
         shoot(0);
+    }
+
+    @Override
+    public int currentClipSize() {
+        if (clips.size() == 0 || currentClip == -1) {
+            return 0;
+        }
+
+        Clip c = clips.get(currentClip);
+        return c.count();
     }
 
     public void shoot(double spreadfactor) {
@@ -71,8 +165,7 @@ public abstract class AbstractWeapon implements Weapon {
         }
 
         c.remove(getShotRate());
-        getOwner().getBukkitPlayer().setExp(clipCount());
-        getOwner().getBukkitPlayer().setLevel(c.bullets);
+        updateGUI();
 
         called = false;
         onShoot(spreadfactor);
@@ -88,6 +181,29 @@ public abstract class AbstractWeapon implements Weapon {
                 break;
             }
         }
+    }
+
+    protected int obtainFromOtherClips(int request) {
+        int temp = 0;
+        for (int i = 0; i < clips.size(); i++) {
+            if (i == currentClip)
+                continue;
+            if (temp >= request)
+                break;
+            Clip c = clips.get(i);
+            if (c.count() >= request) {
+                c.remove(request);
+                return request;
+            } else if (c.count() > 0 && c.count() < request) {
+                int gain = request - temp;
+                if (c.count() < gain) {
+                    gain = c.count();
+                }
+                temp += gain;
+                c.remove(gain);
+            }
+        }
+        return temp;
     }
 
     protected int clipCount() {

@@ -22,9 +22,7 @@ public class GameService {
     private boolean running = true;
 
     public void loadMaps() {
-        File dir = new File("maps");
-        if (!dir.exists())
-            dir.mkdir();
+        File dir = Paintball.INSTANCE.getDataFolder();
         File[] maps = dir.listFiles();
         if (maps != null) {
             for (File f : maps) {

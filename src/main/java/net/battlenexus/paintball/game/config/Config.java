@@ -173,7 +173,7 @@ public class Config {
 
     public void saveToFile(String map_name) throws IOException {
         String[] lines = save();
-        File dir = new File("maps");
+        File dir = Paintball.INSTANCE.getDataFolder();
         if (!dir.exists()) {
             boolean result = dir.mkdir();
             if (!result)

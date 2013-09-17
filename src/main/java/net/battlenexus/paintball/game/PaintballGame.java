@@ -46,6 +46,10 @@ public abstract class PaintballGame implements Tick {
         config = map_config;
     }
 
+    public final Config getConfig() {
+        return config;
+    }
+
     public void joinNextOpenTeam(PBPlayer p) {
         if (config.getBlueTeam().size() < config.getRedTeam().size()) {
             config.getBlueTeam().joinTeam(p);

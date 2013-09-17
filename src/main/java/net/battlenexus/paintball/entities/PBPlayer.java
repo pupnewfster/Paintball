@@ -1,8 +1,10 @@
 package net.battlenexus.paintball.entities;
 
 import net.battlenexus.paintball.game.PaintballGame;
+import net.battlenexus.paintball.game.weapon.Weapon;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 
@@ -13,6 +15,7 @@ public class PBPlayer {
     private Location frozen_location;
     private int kills;
     private int deaths;
+    private Weapon weapon;
     private PaintballGame current_game;
 
     private PBPlayer(Player player) {
@@ -21,6 +24,22 @@ public class PBPlayer {
 
     public Player getBukkitPlayer() {
         return player;
+    }
+
+    public Weapon getCurrentWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        if (this.weapon != null) {
+            player.getInventory().clear(); //TODO Maybe dont clear inventory
+        }
+        this.weapon = weapon;
+        ItemStack item = Weapon.WeaponUtils.toItemStack(weapon);
+        ItemStack reloadItem = Weapon.WeaponUtils.createReloadItem(weapon);
+
+        player.getInventory().addItem(item, reloadItem);
+
     }
 
     /**
