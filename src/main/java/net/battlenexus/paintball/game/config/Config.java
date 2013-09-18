@@ -31,6 +31,8 @@ public class Config {
     private Team red_team;
     @ConfigItem
     private String map_name;
+    @ConfigItem
+    private int playerMax = 16;
 
     public Config() {
         blue_team = new Team();
@@ -179,7 +181,7 @@ public class Config {
             if (!result)
                 throw new IOException("Error creating maps directory!");
         }
-        Formatter formatter = new Formatter(new FileWriter(new File(dir, map_name), true));
+        Formatter formatter = new Formatter(new FileWriter(new File(dir, map_name + ".xml"), true));
         for (String line : lines) {
             formatter.out().append(line).append("\n");
         }
@@ -188,5 +190,9 @@ public class Config {
 
     private boolean isConfigItem(Field field) {
         return field.getAnnotation(ConfigItem.class) != null;
+    }
+
+    public int getPlayerMax() {
+        return playerMax;
     }
 }

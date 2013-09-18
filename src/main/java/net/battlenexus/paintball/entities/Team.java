@@ -94,7 +94,7 @@ public class Team implements ConfigParser {
                     continue;
                 Element item = (Element)childNodes.item(i);
                 if (item.getNodeName().equals("name")) {
-                    team_name = item.getFirstChild().getNodeValue().replaceAll("$", "" + ChatColor.COLOR_CHAR);
+                    team_name = item.getFirstChild().getNodeValue().replaceAll("@", "" + ChatColor.COLOR_CHAR);
                 } else if (item.getNodeName().equals("x")) {
                     x = Double.parseDouble(item.getFirstChild().getNodeValue());
                 } else if (item.getNodeName().equals("y")) {
@@ -115,7 +115,7 @@ public class Team implements ConfigParser {
 
     @Override
     public void save(ArrayList<String> lines) {
-        lines.add("<name>" + team_name.replaceAll("" + ChatColor.COLOR_CHAR, "$") + "</name>");
+        lines.add("<name>" + team_name.replaceAll("" + ChatColor.COLOR_CHAR, "@") + "</name>");
         lines.add("<x>" + spawn.getX() + "</x>");
         lines.add("<y>" + spawn.getY() + "</y>");
         lines.add("<z>" + spawn.getZ() + "</z>");

@@ -10,3 +10,9 @@ commands:
         - cpbmap
       description: Create a new paintball map.
       usage: /<command>
+   join:
+     description: Join the paintball queue.
+     usage: /<command>
+   signstat:
+     description: Place a sign with game stats.
+     usage: /<command>

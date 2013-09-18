@@ -27,12 +27,12 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public int clipeSize() {
-        return 5;
+        return 20;
     }
 
     @Override
     public int startBullets() {
-        return 500;
+        return 100;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.battlenexus.paintball.commands;
 
+import net.battlenexus.paintball.commands.sign.PlaceSignCommand;
 import net.battlenexus.paintball.entities.PBPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -8,7 +9,9 @@ import org.bukkit.entity.Player;
 
 public class PBCommandHandler implements CommandExecutor {
     private static final PBCommand[] COMMANDS = new PBCommand[] {
-            new CreatePBMap()
+            new CreatePBMap(),
+            new JoinQueue(),
+            new PlaceSignCommand()
     };
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -20,7 +23,7 @@ public class PBCommandHandler implements CommandExecutor {
                         newargs = new String[strings.length - 1];
 
                         if (newargs.length >= 2) {
-                            System.arraycopy(strings, 1, newargs, 0, newargs.length);
+                            System.arraycopy(strings, 0, newargs, 0, newargs.length);
                         } else if (newargs.length == 1) {
                             newargs[0] = strings[0];
                         }

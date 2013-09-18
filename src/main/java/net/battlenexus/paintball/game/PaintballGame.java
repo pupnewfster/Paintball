@@ -21,11 +21,11 @@ public abstract class PaintballGame implements Tick {
         onGameStart();
         for (int i = 20; i > 0; i--) {
             if (i > 15) {
-                Paintball.sendGlobalWorldMessage("Game will start in: " + ChatColor.WHITE + i);
+                sendGameMessage("Game will start in: " + ChatColor.WHITE + i);
             } else if (i > 5) {
-                Paintball.sendGlobalWorldMessage("Game will start in: " + ChatColor.YELLOW + i);
+                sendGameMessage("Game will start in: " + ChatColor.YELLOW + i);
             } else {
-                Paintball.sendGlobalWorldMessage("Game will start in: " + ChatColor.DARK_RED + i);
+                sendGameMessage("Game will start in: " + ChatColor.DARK_RED + i);
             }
             try {
                 Thread.sleep(1000);
@@ -37,7 +37,7 @@ public abstract class PaintballGame implements Tick {
             player.unfreeze();
         }
         started = true;
-        Paintball.sendGlobalWorldMessage(ChatColor.GREEN + "GO!");
+        sendGameMessage(ChatColor.GREEN + "GO!");
     }
 
     protected abstract void onGameStart();
@@ -48,6 +48,13 @@ public abstract class PaintballGame implements Tick {
 
     public final Config getConfig() {
         return config;
+    }
+
+    public void sendGameMessage(String s) {
+        PBPlayer[] players = getAllPlayers();
+        for (PBPlayer p : players) {
+            p.sendMessage(s);
+        }
     }
 
     public void joinNextOpenTeam(PBPlayer p) {

@@ -19,6 +19,8 @@ public class GameService {
 
     private ArrayList<Config> configs = new ArrayList<Config>();
 
+    private ArrayList<PBPlayer> joinnext = new ArrayList<PBPlayer>();
+    private Config nextconfig;
     private boolean running = true;
 
     public void loadMaps() {
@@ -56,7 +58,7 @@ public class GameService {
             try {
                 int map_id = random.nextInt(configs.size());
                 Config map_config = new Config(configs.get(map_id)); //Make a clone of the config
-
+                this.nextconfig = map_config;
                 int game_id = random.nextInt(GAME_TYPES.length);
                 PaintballGame game = createGame((Class<? extends PaintballGame>) GAME_TYPES[game_id]); //Weak typing because fuck it
                 game.setConfig(map_config);
@@ -77,12 +79,11 @@ public class GameService {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Player[] bukkit_players = Paintball.INSTANCE.getServer().getOnlinePlayers();
-                for (Player p : bukkit_players) {
+                PBPlayer[] bukkit_players = joinnext.toArray(new PBPlayer[joinnext.size()]);
+                for (PBPlayer p : bukkit_players) {
                     if (Paintball.INSTANCE.isPlayingPaintball(p)) {
-                        PBPlayer pb = PBPlayer.toPBPlayer(p);
-                        game.joinNextOpenTeam(pb);
-                        pb.freeze();
+                        game.joinNextOpenTeam(p);
+                        p.freeze();
                     }
                 }
 
@@ -98,6 +99,34 @@ public class GameService {
                 e.printStackTrace();
             }
         }
+    }
+
+    public boolean canJoin() {
+        return nextconfig.getPlayerMax() < joinnext.size();
+    }
+
+    public int getMaxPlayers() {
+        return nextconfig.getPlayerMax();
+    }
+
+    public String getMapName() {
+        return nextconfig.getMapName();
+    }
+
+    public int getQueueCount() {
+        return joinnext.size();
+    }
+
+    public boolean joinNextGame(Player p) {
+        PBPlayer pb = PBPlayer.toPBPlayer(p);
+        return joinNextGame(pb);
+    }
+
+    public boolean joinNextGame(PBPlayer pb) {
+        if (joinnext.contains(pb))
+            return false;
+        joinnext.add(pb);
+        return true;
     }
 
     public PaintballGame createGame(Class<? extends PaintballGame> class_) throws IllegalAccessException, InstantiationException {

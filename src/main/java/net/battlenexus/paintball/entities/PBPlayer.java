@@ -1,5 +1,6 @@
 package net.battlenexus.paintball.entities;
 
+import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.PaintballGame;
 import net.battlenexus.paintball.game.weapon.Weapon;
 import org.bukkit.Location;
@@ -148,5 +149,9 @@ public class PBPlayer {
 
     public void addDeath() {
         this.deaths++;
+    }
+
+    public void sendMessage(String s) {
+        getBukkitPlayer().sendMessage(Paintball.formatMessage(s));
     }
 }

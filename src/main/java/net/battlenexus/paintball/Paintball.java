@@ -1,6 +1,7 @@
 package net.battlenexus.paintball;
 
 import net.battlenexus.paintball.commands.PBCommandHandler;
+import net.battlenexus.paintball.commands.sign.SignStat;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.listeners.PlayerListener;
@@ -13,6 +14,8 @@ import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.FileNotFoundException;
+
 public class Paintball extends JavaPlugin {
     public static Paintball INSTANCE;
     public World paintball_world;
@@ -20,6 +23,10 @@ public class Paintball extends JavaPlugin {
     private TickBukkitTask tasks;
     private GameService game;
     ScoreManager scoreboard;
+
+    public GameService getGameService() {
+        return game;
+    }
 
     @Override
     public void onEnable() {
@@ -32,6 +39,8 @@ public class Paintball extends JavaPlugin {
         PBCommandHandler handler = new PBCommandHandler();
         getCommand("createpbmap").setExecutor(handler);
         getCommand("cpbmap").setExecutor(handler);
+        getCommand("join").setExecutor(handler);
+        getCommand("signstat").setExecutor(handler);
 
         //Register Listeners
         registerListeners();
@@ -47,6 +56,19 @@ public class Paintball extends JavaPlugin {
                 game.play();
             }
         }).start();
+
+
+        try {
+            SignStat.loadStats();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDisable() {
+        SignStat.saveSigns();
+        SignStat.diposeSigns();
     }
 
     private void registerListeners() {
