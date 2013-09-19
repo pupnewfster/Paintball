@@ -2,6 +2,7 @@ package net.battlenexus.paintball.game;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
@@ -101,6 +102,10 @@ public class GameService {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Team blueTeam() {
+        return nextconfig.getBlueTeam();
     }
 
     public boolean canJoin() {

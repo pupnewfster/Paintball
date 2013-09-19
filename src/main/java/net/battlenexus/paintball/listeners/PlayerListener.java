@@ -18,6 +18,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.ChatColor;
 import java.util.HashMap;
 
 public class PlayerListener implements Listener {
@@ -128,6 +130,24 @@ public class PlayerListener implements Listener {
         //Stop them if they are ingame
         if(who.isInGame()) {
             return;
+        }
+    }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        Player p = event.getPlayer();
+        PBPlayer who;
+        if ((who = PBPlayer.getPlayer(p)) == null) {
+            return;
+        }
+        if(who.isInGame()) {
+            String team = "";
+            if(who.getCurrentTeam().equals(Paintball.INSTANCE.getGameService().blueTeam())) {
+                team = "(" + ChatColor.BLUE + "Blue" + ChatColor.RESET + ") ";
+            } else { //They are on red team
+                team = "(" + ChatColor.RED + "Red" + ChatColor.RESET + ") ";
+            }
+            event.setFormat(team + event.getFormat());
         }
     }
 }
