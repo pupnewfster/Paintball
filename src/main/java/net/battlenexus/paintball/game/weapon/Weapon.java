@@ -45,7 +45,7 @@ public interface Weapon {
             lore.add("Strength: " + weapon.strength());
             lore.add("Fire Rate: " + weapon.getShotRate());
             im.setLore(lore);
-            itemStack.setItemMeta(im); //TODO I dont think this is needed..
+            itemStack.setItemMeta(im);
             return itemStack;
         }
 
@@ -55,7 +55,7 @@ public interface Weapon {
             ItemMeta im = itemStack.getItemMeta();
             im.setDisplayName(ChatColor.GREEN + "Reload");
 
-            itemStack.setItemMeta(im); //TODO I dont think this is needed..
+            itemStack.setItemMeta(im);
             return itemStack;
         }
     }

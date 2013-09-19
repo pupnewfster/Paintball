@@ -6,7 +6,11 @@ import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -84,6 +88,18 @@ public class GameService {
                 for (PBPlayer p : bukkit_players) {
                     if (Paintball.INSTANCE.isPlayingPaintball(p)) {
                         game.joinNextOpenTeam(p);
+                        Player bukkitP = p.getBukkitPlayer();
+                        bukkitP.setHealth(20.0);
+                        bukkitP.setFoodLevel(20);
+                        ItemStack itemStack = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
+                        LeatherArmorMeta im = (LeatherArmorMeta) itemStack.getItemMeta();
+                        if(p.getCurrentTeam().equals(blueTeam())) {
+                            im.setColor(Color.BLUE);
+                        } else { //Current Team is red
+                            im.setColor(Color.RED);
+                        }
+                        itemStack.setItemMeta(im);
+                        bukkitP.getInventory().setChestplate(itemStack);
                         p.freeze();
                     }
                 }
