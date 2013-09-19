@@ -40,6 +40,7 @@ public class Paintball extends JavaPlugin {
         getCommand("createpbmap").setExecutor(handler);
         getCommand("cpbmap").setExecutor(handler);
         getCommand("join").setExecutor(handler);
+        getCommand("leave").setExecutor(handler);
         getCommand("signstat").setExecutor(handler);
 
         //Register Listeners

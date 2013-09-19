@@ -87,6 +87,8 @@ public class GameService {
                     }
                 }
 
+                //Empties the queue when game starts
+                joinnext.clear();
                 game.beginGame();
                 try {
                     game.waitForEnd();
@@ -126,6 +128,13 @@ public class GameService {
         if (joinnext.contains(pb))
             return false;
         joinnext.add(pb);
+        return true;
+    }
+
+    public boolean leaveQueue(PBPlayer pb) {
+        if (!joinnext.contains(pb))
+            return false;
+        joinnext.remove(pb);
         return true;
     }
 

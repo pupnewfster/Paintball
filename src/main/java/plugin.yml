@@ -13,6 +13,9 @@ commands:
    join:
      description: Join the paintball queue.
      usage: /<command>
+   leave:
+     description: Leaves the paintball queue.
+     usage: /<command>
    signstat:
      description: Place a sign with game stats.
      usage: /<command>
