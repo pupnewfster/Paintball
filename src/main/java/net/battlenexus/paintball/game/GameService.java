@@ -102,6 +102,7 @@ public class GameService {
                         }
                         itemStack.setItemMeta(im);
                         bukkitP.getInventory().setChestplate(itemStack);
+                        bukkitP.setCanPickupItems(false);
                         p.freeze();
                         p.getBukkitPlayer().setGameMode(GameMode.ADVENTURE);
                     }

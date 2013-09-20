@@ -132,6 +132,19 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onItemDrop(PlayerDropItemEvent e) {
+        Player p = event.getPlayer();
+        PBPlayer who;
+        if ((who = PBPlayer.getPlayer(p)) == null) {
+            return;
+        }
+        //Stops them from dropping items if they are inGame
+        if(who.isInGame()) {
+            return;
+        }
+    }
+
+    @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player p = event.getPlayer();
         PBPlayer who;
