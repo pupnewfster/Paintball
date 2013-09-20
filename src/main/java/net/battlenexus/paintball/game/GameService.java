@@ -106,9 +106,6 @@ public class GameService {
                         p.getBukkitPlayer().setGameMode(GameMode.ADVENTURE);
                     }
                 }
-
-                //Empties the queue when game starts
-                joinnext.clear();
                 game.beginGame();
                 try {
                     game.waitForEnd();

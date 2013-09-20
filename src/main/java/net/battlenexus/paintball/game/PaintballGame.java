@@ -106,6 +106,7 @@ public abstract class PaintballGame implements Tick {
             player.setCurrentGame(null);
             player.getBukkitPlayer().getInventory().clear();
             player.getBukkitPlayer().setHealth(20.0);
+            player.getBukkitPlayer().setFoodLevel(20);
             player.getBukkitPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         }
         ended = true;
