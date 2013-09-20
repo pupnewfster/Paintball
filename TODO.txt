@@ -1,8 +1,7 @@
 TODO list we thought of in that skype chat
 
-p.setFoodLevel(20);
 xp doesnt empty at end and neither does amo bar on left
-auto joining from sign or commandblock
+auto joining from sign? or stay with command block
 Team spectatorism
 scoreboard on right
 possibly a leave command for leaving game
