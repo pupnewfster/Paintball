@@ -11,6 +11,7 @@ public class PBCommandHandler implements CommandExecutor {
     private static final PBCommand[] COMMANDS = new PBCommand[] {
             new CreatePBMap(),
             new JoinQueue(),
+            new LeaveQueue(),
             new PlaceSignCommand()
     };
     @Override

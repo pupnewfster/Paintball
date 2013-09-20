@@ -2,11 +2,16 @@ package net.battlenexus.paintball.game;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,11 +90,25 @@ public class GameService {
                     if (Paintball.INSTANCE.isPlayingPaintball(p)) {
                         joinnext.remove(p);
                         game.joinNextOpenTeam(p);
+                        Player bukkitP = p.getBukkitPlayer();
+                        bukkitP.setHealth(20.0);
+                        bukkitP.setFoodLevel(20);
+                        ItemStack itemStack = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
+                        LeatherArmorMeta im = (LeatherArmorMeta) itemStack.getItemMeta();
+                        if(p.getCurrentTeam().equals(blueTeam())) {
+                            im.setColor(Color.BLUE);
+                        } else { //Current Team is red
+                            im.setColor(Color.RED);
+                        }
+                        itemStack.setItemMeta(im);
+                        bukkitP.getInventory().setChestplate(itemStack);
                         p.freeze();
                         p.getBukkitPlayer().setGameMode(GameMode.ADVENTURE);
                     }
                 }
 
+                //Empties the queue when game starts
+                joinnext.clear();
                 game.beginGame();
                 try {
                     game.waitForEnd();
@@ -102,6 +121,10 @@ public class GameService {
                 e.printStackTrace();
             }
         }
+    }
+
+    public Team blueTeam() {
+        return nextconfig.getBlueTeam();
     }
 
     public boolean canJoin() {
@@ -129,6 +152,13 @@ public class GameService {
         if (joinnext.contains(pb))
             return false;
         joinnext.add(pb);
+        return true;
+    }
+
+    public boolean leaveQueue(PBPlayer pb) {
+        if (!joinnext.contains(pb))
+            return false;
+        joinnext.remove(pb);
         return true;
     }
 
