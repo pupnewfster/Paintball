@@ -35,6 +35,7 @@ public abstract class PaintballGame implements Tick {
         }
         for (PBPlayer player : getAllPlayers()) {
             player.unfreeze();
+            player.setCurrentGame(this);
         }
         started = true;
         sendGameMessage(ChatColor.GREEN + "GO!");
@@ -55,6 +56,10 @@ public abstract class PaintballGame implements Tick {
         for (PBPlayer p : players) {
             p.sendMessage(s);
         }
+    }
+
+    public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
+        announceKill(killer, victim);
     }
 
     public void joinNextOpenTeam(PBPlayer p) {
@@ -96,8 +101,46 @@ public abstract class PaintballGame implements Tick {
     }
 
     protected void endGame() {
+        for (PBPlayer player : getAllPlayers()) {
+            player.getCurrentTeam().leaveTeam(null);
+            player.setCurrentGame(null);
+            player.getBukkitPlayer().getInventory().clear();
+            player.getBukkitPlayer().setHealth(20.0);
+            player.getBukkitPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
+        }
         ended = true;
         _wakeup();
+    }
+
+    protected void announceKill(PBPlayer killer, PBPlayer victim) {
+        String message = "shot";
+        if (!killer.kill_cache.containsKey(victim)) {
+            killer.kill_cache.put(victim, 1);
+        } else if (victim.kill_cache.containsKey(killer)) {
+            int kills = victim.kill_cache.get(killer);
+            if (kills > 3) {
+                message = "took revenge on";
+            }
+            victim.kill_cache.remove(killer);
+        } else {
+            Integer kills = killer.kill_cache.get(victim);
+            kills++;
+            killer.kill_cache.put(victim, kills);
+
+            if (kills > 25) {
+                message = ChatColor.DARK_RED + "WONT STOP KILLING" + ChatColor.GRAY;
+            } else if (kills > 20) {
+                message = ChatColor.RED + "IS OWNING" + ChatColor.GRAY;
+            } else if (kills > 15) {
+                message = ChatColor.RED + "IS DOMINATING" + ChatColor.GRAY;
+            } else if (kills > 10) {
+                message = "is hunting down";
+            } else if (kills > 3) {
+                message = "is killing";
+            }
+        }
+
+        sendGameMessage(killer.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " " + message + " " + victim.getBukkitPlayer().getDisplayName());
     }
 
     private synchronized void _wakeup() {

@@ -1,6 +1,8 @@
 package net.battlenexus.paintball.listeners;
 
+import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -26,8 +28,10 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
+        event.getPlayer().setFoodLevel(20);
         //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
-        event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
+        //event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }
 
     @EventHandler
@@ -52,6 +56,7 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player) || !(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
+            event.setCancelled(true);
             return;
         }
         Player victim = (Player) event.getEntity();
@@ -61,12 +66,11 @@ public class PlayerListener implements Listener {
         }
         PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball)event.getDamager()).getShooter());
         if (shooter.getCurrentTeam() != null) {
-            return;
-        }
-        else if (shooter.getCurrentTeam().contains(pbvictim)) {
-            //TODO Friendly fire
-        } else {
-            pbvictim.kill(shooter);
+            if (shooter.getCurrentTeam().contains(pbvictim)) {
+                shooter.sendMessage("Watch out! " + pbvictim.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
+            } else {
+                pbvictim.kill(shooter);
+            }
         }
     }
 
@@ -88,5 +92,4 @@ public class PlayerListener implements Listener {
                 player.handleFrozen();
         }
     }
-
 }

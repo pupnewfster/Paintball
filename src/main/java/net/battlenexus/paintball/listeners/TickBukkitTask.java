@@ -18,6 +18,8 @@ public class TickBukkitTask extends BukkitRunnable {
                     tickDataIterator.remove();
                     continue;
                 }
+                if (t.tick.getTimeout() == 0)
+                    continue;
                 t.time++;
                 if (t.time >= t.tick.getTimeout()) {
                     t.time = 0;

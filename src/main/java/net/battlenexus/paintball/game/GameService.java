@@ -5,6 +5,7 @@ import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -65,9 +66,9 @@ public class GameService {
 
                 Paintball.sendGlobalWorldMessage("The next map will be " + map_config.getMapName() + "!");
 
-                Paintball.sendGlobalWorldMessage("The game will start in 60 seconds.");
+                Paintball.sendGlobalWorldMessage("The game will start in 120 seconds.");
                 try {
-                    Thread.sleep(40000);
+                    Thread.sleep(100000);
                     Paintball.sendGlobalWorldMessage(ChatColor.RED + "Game will start in 20 seconds!");
                     Thread.sleep(10000);
                     Paintball.sendGlobalWorldMessage(ChatColor.DARK_RED + "10 seconds!");
@@ -82,8 +83,10 @@ public class GameService {
                 PBPlayer[] bukkit_players = joinnext.toArray(new PBPlayer[joinnext.size()]);
                 for (PBPlayer p : bukkit_players) {
                     if (Paintball.INSTANCE.isPlayingPaintball(p)) {
+                        joinnext.remove(p);
                         game.joinNextOpenTeam(p);
                         p.freeze();
+                        p.getBukkitPlayer().setGameMode(GameMode.ADVENTURE);
                     }
                 }
 

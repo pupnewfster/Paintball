@@ -19,6 +19,8 @@ public class PBPlayer {
     private Weapon weapon;
     private PaintballGame current_game;
 
+    public HashMap<PBPlayer, Integer> kill_cache = new HashMap<PBPlayer, Integer>();
+
     private PBPlayer(Player player) {
         this.player = player;
     }
@@ -114,13 +116,13 @@ public class PBPlayer {
     }
 
     public void kill(final PBPlayer killer) {
-        player.damage(20D);
         addDeath();
         killer.addKill();
         if (!isInGame() || getCurrentTeam() == null) {
             return;
         }
         getCurrentTeam().spawnPlayer(this);
+        getCurrentGame().onPlayerKill(killer, this);
     }
 
     public void joinGame(PaintballGame game) {

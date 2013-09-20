@@ -32,7 +32,7 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public int startBullets() {
-        return 100;
+        return 500;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public int reloadDelay() {
-        return 10;
+        return 3;
     }
 
     @Override
