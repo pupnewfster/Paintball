@@ -30,6 +30,8 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         event.getPlayer().setFoodLevel(20);
+        event.getPlayer().getInventory().clear();
+        event.getPlayer().getInventory().setMaxStackSize(1);
         //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
         //event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }

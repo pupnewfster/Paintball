@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public interface Weapon {
     public String name();
@@ -49,15 +50,19 @@ public interface Weapon {
             return itemStack;
         }
 
+        private static final Random random = new Random();
         public static ItemStack createReloadItem(Material material, int amount) {
             ItemStack itemStack = new ItemStack(material);
 
             ItemMeta im = itemStack.getItemMeta();
-            im.setDisplayName(ChatColor.GREEN + "Ammo Clip");
+            im.setDisplayName(ChatColor.GREEN + "Ammo Clip (" + amount + ")");
             List<String> lore = new ArrayList<String>();
             lore.add("Bullet Count: " + amount);
+            long id = random.nextLong();
+            lore.add("ID: " + id); //TODO Find a better way to make these not stack
             im.setLore(lore);
             itemStack.setItemMeta(im);
+
             return itemStack;
         }
 
@@ -67,7 +72,7 @@ public interface Weapon {
             ItemMeta m = item.getItemMeta();
             if (m == null)
                 return 0;
-            if (!m.getDisplayName().equals(ChatColor.GREEN + "Ammo Clip"))
+            if (m.getDisplayName() == null || !m.getDisplayName().contains(ChatColor.GREEN + "Ammo Clip"))
                 return 0;
             List<String> lore_list = m.getLore();
             if (lore_list == null || lore_list.size() < 1)
@@ -78,6 +83,24 @@ public interface Weapon {
             } catch (Throwable t) {
                 return 0;
             }
+        }
+
+        public static void setBulletCount(ItemStack item, int amount) {
+            if (item == null)
+                return;
+            ItemMeta m = item.getItemMeta();
+            m.setDisplayName(ChatColor.GREEN + "Ammo Clip (" + amount + ")");
+            List<String> lore;
+            if (!m.hasLore()) {
+                lore = new ArrayList<String>();
+                lore.add("Bullet Count: " + amount);
+                lore.add("ID: " + random.nextLong()); //TODO Find a better way to make these not stack
+            } else {
+                lore = m.getLore();
+                lore.set(0, "Bullet Count: " + amount);
+            }
+            m.setLore(lore);
+            item.setItemMeta(m);
         }
     }
 }

@@ -6,6 +6,7 @@ import net.battlenexus.paintball.game.PaintballGame;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -20,7 +21,7 @@ public abstract class AbstractWeapon implements Weapon {
         try {
             AbstractWeapon w =  class_.newInstance();
             w.owner = owner;
-            w.bullets += w.startBullets();
+            w.addBullets(w.startBullets());
             return w;
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -34,7 +35,9 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     protected void updateGUI() {
-        getOwner().getBukkitPlayer().setExp((getMaxBullets() == 0 ? 0 : bullets / getMaxBullets()));
+        float max = (float)getMaxBullets();
+        float percent = (max == 0.0f ? 0.0f : (float)bullets / max);
+        getOwner().getBukkitPlayer().setExp(percent); //TODO Display EXP properly
         getOwner().getBukkitPlayer().setLevel(bullets);
     }
 
@@ -61,6 +64,26 @@ public abstract class AbstractWeapon implements Weapon {
         }
     }
 
+    public void addBullets(int amount) {
+        if (amount <= clipeSize()) {
+            ItemStack item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), amount);
+            owner.getBukkitPlayer().getInventory().addItem(item);
+        } else {
+            while (amount > 0) {
+                int t;
+                if (amount - clipeSize() >= 0) {
+                    t = clipeSize();
+                } else {
+                    t = amount;
+                }
+
+                ItemStack item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), t);
+                owner.getBukkitPlayer().getInventory().addItem(item);
+                amount -= t;
+            }
+        }
+    }
+
     public abstract Material getBlueTeamMaterial();
 
     public abstract Material getRedTeamMaterial();
@@ -75,9 +98,45 @@ public abstract class AbstractWeapon implements Weapon {
             if (c == 0)
                 return;
 
-            int bneeded = bullets - clipeSize();
-            float reloadtime = (bneeded / clipeSize()) * reloadDelay();
-            bullets += c;
+            int bneeded = clipeSize() - bullets;
+            if (bneeded == 0) {
+                owner.sendMessage(ChatColor.DARK_RED + "Reload failed! Your gun is full!");
+                return;
+            }
+            int take = 0;
+            float reloadtime = (bneeded / clipeSize()) * (reloadDelay() * 2);
+            if (bneeded == c) {
+                take = c;
+            } else if (bneeded < c) {
+                take = bneeded;
+            } else if (bneeded > c) {
+                take = c;
+            }
+            bullets += take;
+            reloading = true;
+            if (c - take > 0) {
+                Weapon.WeaponUtils.setBulletCount(item, c - take);
+            } else {
+                if (item.getAmount() > 1) {
+                    item.setAmount(item.getAmount() - 1);
+                } else {
+                    owner.getBukkitPlayer().getInventory().clear(owner.getBukkitPlayer().getInventory().getHeldItemSlot());
+                    final Inventory i = owner.getBukkitPlayer().getInventory();
+                    while (true) {
+                        int first_index = i.first(getReloadItem());
+                        ItemStack item_to_move = i.getItem(first_index);
+                        if (!item_to_move.hasItemMeta() || !item_to_move.getItemMeta().hasDisplayName() || !item_to_move.getItemMeta().hasLore()) {
+                            i.remove(first_index);
+                            continue;
+                        }
+                        i.clear(first_index);
+                        int clear = i.firstEmpty();
+                        i.setItem(clear, item_to_move);
+                        break;
+                    }
+                    owner.getBukkitPlayer().updateInventory();
+                }
+            }
             updateGUI();
             owner.getBukkitPlayer().sendMessage(Paintball.formatMessage("Reloading..."));
             displayReloadAnimation(reloadtime);
@@ -124,6 +183,7 @@ public abstract class AbstractWeapon implements Weapon {
     public void shoot(double spreadfactor) {
         if (reloading) {
             owner.sendMessage(ChatColor.DARK_RED + "You cant shoot while reloading!");
+            return;
         }
         if (bullets < getShotRate()) {
             return;
