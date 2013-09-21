@@ -136,7 +136,7 @@ public class PBPlayer {
 
     public void damagePlayer(int damage) {
         getBukkitPlayer().setMaxHealth(getBukkitPlayer().getMaxHealth() - damage);
-        getBukkitPlayer().setHealth(getBukkitPlayer().getMaxHealth() - damage);
+        getBukkitPlayer().setHealth(getBukkitPlayer().getMaxHealth());
     }
 
     public void refillHealth() {
