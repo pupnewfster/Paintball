@@ -89,6 +89,7 @@ public class GameService {
                 for (PBPlayer p : bukkit_players) {
                     if (Paintball.INSTANCE.isPlayingPaintball(p)) {
                         joinnext.remove(p);
+                        p.setCurrentGame(game);
                         game.joinNextOpenTeam(p);
                         Player bukkitP = p.getBukkitPlayer();
                         bukkitP.setHealth(20.0);

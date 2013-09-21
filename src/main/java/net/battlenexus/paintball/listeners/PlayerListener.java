@@ -58,8 +58,8 @@ public class PlayerListener implements Listener {
                 who.getCurrentWeapon().shoot();
             }
             //RELOAD
-            if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem()) && who.getCurrentWeapon().clipeSize() > who.getCurrentWeapon().currentClipSize()) {
-                who.getCurrentWeapon().reload();
+            if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
+                who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
             }
         }
     }
@@ -132,7 +132,7 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onItemDrop(PlayerDropItemEvent e) {
+    public void onItemDrop(PlayerDropItemEvent event) {
         Player p = event.getPlayer();
         PBPlayer who;
         if ((who = PBPlayer.getPlayer(p)) == null) {
@@ -140,7 +140,7 @@ public class PlayerListener implements Listener {
         }
         //Stops them from dropping items if they are inGame
         if(who.isInGame()) {
-            return;
+            event.setCancelled(true);
         }
     }
 

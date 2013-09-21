@@ -39,9 +39,9 @@ public class PBPlayer {
         }
         this.weapon = weapon;
         ItemStack item = Weapon.WeaponUtils.toItemStack(weapon);
-        ItemStack reloadItem = Weapon.WeaponUtils.createReloadItem(weapon);
+        ItemStack reloadItem = Weapon.WeaponUtils.createReloadItem(weapon.getReloadItem(), weapon.clipeSize());
 
-        player.getInventory().addItem(item, reloadItem);
+        player.getInventory().addItem(item, reloadItem, reloadItem);
 
     }
 

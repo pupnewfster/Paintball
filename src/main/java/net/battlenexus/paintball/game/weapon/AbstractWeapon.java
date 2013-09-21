@@ -6,22 +6,21 @@ import net.battlenexus.paintball.game.PaintballGame;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.Random;
 
 public abstract class AbstractWeapon implements Weapon {
     private PBPlayer owner;
-    protected ArrayList<Clip> clips = new ArrayList<Clip>();
+    private int bullets;
     protected int currentClip;
 
     public static AbstractWeapon createWeapon(Class<? extends AbstractWeapon> class_, PBPlayer owner) {
         try {
             AbstractWeapon w =  class_.newInstance();
             w.owner = owner;
-            w.addBullets(w.startBullets());
+            w.bullets += w.startBullets();
             return w;
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -34,28 +33,18 @@ public abstract class AbstractWeapon implements Weapon {
     protected AbstractWeapon() {
     }
 
-    public void addBullets(int bulletCount) {
-        final int max = clipeSize() == 0 ? 1 : clipeSize();
-        int i = 0;
-        while (bulletCount > 0) {
-            if (i >= clips.size()) {
-                clips.add(new Clip());
-            }
-
-            final Clip c = clips.get(i);
-            if (c.count() < max) {
-                c.bullets++;
-                bulletCount--;
-            } else {
-                i++;
-            }
-        }
-        updateGUI();
+    protected void updateGUI() {
+        getOwner().getBukkitPlayer().setExp((getMaxBullets() == 0 ? 0 : bullets / getMaxBullets()));
+        getOwner().getBukkitPlayer().setLevel(bullets);
     }
 
-    protected void updateGUI() {
-        getOwner().getBukkitPlayer().setExp(clipCount());
-        getOwner().getBukkitPlayer().setLevel(clips.get(currentClip).bullets);
+    public int getMaxBullets() {
+        ItemStack[] items = owner.getBukkitPlayer().getInventory().getContents();
+        int i = 0;
+        for (ItemStack item : items) {
+            i += Weapon.WeaponUtils.getBulletCount(item);
+        }
+        return i;
     }
 
     @Override
@@ -80,32 +69,15 @@ public abstract class AbstractWeapon implements Weapon {
 
     private boolean reloading = false;
     @Override
-    public void reload() {
+    public void reload(ItemStack item) {
         if (!reloading) {
-            int bneeded = clipeSize() - currentClipSize();
-            final int clipcount = clipCount();
-            if (clipcount <= 0) {
-                //TODO No more bullets!
-                updateGUI();
-            }
-            else if (clipcount < bneeded) {
-                bneeded = clipcount;
-            }
-
-            float reloadtime = (bneeded / clipeSize()) * reloadDelay();
-            reloading = true;
-            int obtain = obtainFromOtherClips(bneeded);
-            if (clips.size() == 0) {
-                Clip c = new Clip();
-                c.bullets = obtain;
-            } else {
-                Clip c = clips.get(currentClip);
-                c.bullets += obtain;
-            }
-            if (obtain == 0) {
-                owner.getBukkitPlayer().sendMessage(ChatColor.DARK_RED + Paintball.formatMessage("Your all out!"));
+            int c = Weapon.WeaponUtils.getBulletCount(item);
+            if (c == 0)
                 return;
-            }
+
+            int bneeded = bullets - clipeSize();
+            float reloadtime = (bneeded / clipeSize()) * reloadDelay();
+            bullets += c;
             updateGUI();
             owner.getBukkitPlayer().sendMessage(Paintball.formatMessage("Reloading..."));
             displayReloadAnimation(reloadtime);
@@ -145,75 +117,26 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     @Override
-    public int currentClipSize() {
-        if (clips.size() == 0 || currentClip == -1) {
-            return 0;
-        }
-
-        Clip c = clips.get(currentClip);
-        return c.count();
+    public int currentBullets() {
+        return bullets;
     }
 
     public void shoot(double spreadfactor) {
-        if (clips.size() == 0 || currentClip == -1) {
+        if (reloading) {
+            owner.sendMessage(ChatColor.DARK_RED + "You cant shoot while reloading!");
+        }
+        if (bullets < getShotRate()) {
             return;
         }
 
-        Clip c = clips.get(currentClip);
-        if (c.count() < getShotRate()) {
-            return;
-        }
+        bullets -= getShotRate();
 
-        c.remove(getShotRate());
         updateGUI();
 
         called = false;
         onShoot(spreadfactor);
         if (!called)
             throw new RuntimeException("super.onShoot was not called! Try putting super.onShoot at the top of your method!");
-    }
-
-    protected void findNextClip() {
-        currentClip = -1;
-        for (int i = 0; i < clips.size(); i++) {
-            if (clips.get(i).count() > 0) {
-                currentClip = i;
-                break;
-            }
-        }
-    }
-
-    protected int obtainFromOtherClips(int request) {
-        int temp = 0;
-        for (int i = 0; i < clips.size(); i++) {
-            if (i == currentClip)
-                continue;
-            if (temp >= request)
-                break;
-            Clip c = clips.get(i);
-            if (c.count() >= request) {
-                c.remove(request);
-                return request;
-            } else if (c.count() > 0 && c.count() < request) {
-                int gain = request - temp;
-                if (c.count() < gain) {
-                    gain = c.count();
-                }
-                temp += gain;
-                c.remove(gain);
-            }
-        }
-        return temp;
-    }
-
-    protected int clipCount() {
-        int temp = 0;
-        for (Clip clip : clips) {
-            if (clip.count() > 0) {
-                temp++;
-            }
-        }
-        return temp;
     }
 
     @Override
@@ -260,20 +183,6 @@ public abstract class AbstractWeapon implements Weapon {
         };
         for (int i = 1; i <= 10; i++) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, task, 2L * i);
-        }
-    }
-
-    protected class Clip {
-        public int bullets;
-
-        public void remove(int count) {
-            if (bullets - count < 0)
-                throw new InvalidParameterException("Requesting more bullets than there is!");
-            bullets -= count;
-        }
-
-        public int count() {
-            return bullets;
         }
     }
 }
