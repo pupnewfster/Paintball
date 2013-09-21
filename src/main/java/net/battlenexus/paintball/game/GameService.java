@@ -102,17 +102,16 @@ public class GameService {
                         LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
                         LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
                         if(p.getCurrentTeam().equals(blueTeam())) {
-                            bukkitP.setCustomName(ChatColor.BLUE + bukkitP.getName() + ChatColor.RESET);
+                            bukkitP.setPlayerListName(ChatColor.BLUE+ bukkitP.getName() + ChatColor.RESET);
                             chestIm.setColor(Color.BLUE);
                             legsIm.setColor(Color.BLUE);
                             bootsIm.setColor(Color.BLUE);
                         } else { //Current Team is red
-                            bukkitP.setCustomName(ChatColor.RED + bukkitP.getName() + ChatColor.RESET);
+                            bukkitP.setPlayerListName(ChatColor.RED + bukkitP.getName() + ChatColor.RESET);
                             chestIm.setColor(Color.RED);
                             legsIm.setColor(Color.RED);
                             bootsIm.setColor(Color.RED);
                         }
-                        bukkitP.setCustomNameVisible(true);
                         chest.setItemMeta(chestIm);
                         legs.setItemMeta(legsIm);
                         boots.setItemMeta(bootsIm);
