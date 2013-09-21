@@ -107,9 +107,13 @@ public abstract class PaintballGame implements Tick {
             player.setCurrentGame(null);
             player.getBukkitPlayer().getInventory().clear();
             player.getBukkitPlayer().getInventory().setChestplate(new ItemStack(Material.AIR));
+            player.getBukkitPlayer().getInventory().setLeggings(new ItemStack(Material.AIR));
+            player.getBukkitPlayer().getInventory().setBoots(new ItemStack(Material.AIR));
+            player.getBukkitPlayer().setMaxHealth(20.0);
             player.getBukkitPlayer().setHealth(20.0);
             player.getBukkitPlayer().setFoodLevel(20);
             player.getBukkitPlayer().setCanPickupItems(true);
+            player.getBukkitPlayer().setCustomName(player.getBukkitPlayer().getName());
             player.getBukkitPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         }
         ended = true;

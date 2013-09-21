@@ -32,6 +32,8 @@ public class PlayerListener implements Listener {
         event.getPlayer().setFoodLevel(20);
         event.getPlayer().getInventory().clear();
         event.getPlayer().getInventory().setMaxStackSize(1);
+        event.getPlayer().setMaxHealth(20.0);
+        event.getPlayer().setHealth(20.0);
         //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
         //event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }
@@ -82,7 +84,12 @@ public class PlayerListener implements Listener {
             if (shooter.getCurrentTeam().contains(pbvictim)) {
                 shooter.sendMessage("Watch out! " + pbvictim.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
             } else {
-                pbvictim.kill(shooter);
+                if(pbvictim.wouldDie(shooter.getCurrentWeapon().strength())) {
+                    pbvictim.refillHealth();
+                    pbvictim.kill(shooter);
+                } else {
+                    pbvictim.damagePlayer(shooter.getCurrentWeapon().strength());
+                }
             }
         }
     }
