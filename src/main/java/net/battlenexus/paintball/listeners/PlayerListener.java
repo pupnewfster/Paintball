@@ -30,6 +30,8 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         event.getPlayer().setFoodLevel(20);
+        event.getPlayer().setMaxHealth(20.0);
+        event.getPlayer().setHealth(20.0);
         //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
         //event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }
@@ -80,7 +82,12 @@ public class PlayerListener implements Listener {
             if (shooter.getCurrentTeam().contains(pbvictim)) {
                 shooter.sendMessage("Watch out! " + pbvictim.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
             } else {
-                pbvictim.kill(shooter);
+                if(pbvictim.wouldDie(shooter.getCurrentWeapon().strength())) {
+                    pbvictim.refillHealth();
+                    pbvictim.kill(shooter);
+                } else {
+                    pbvictim.damagePlayer(shooter.getCurrentWeapon().strength());
+                }
             }
         }
     }
@@ -132,7 +139,7 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
-    public void onItemDrop(PlayerDropItemEvent e) {
+    public void onItemDrop(PlayerDropItemEvent event) {
         Player p = event.getPlayer();
         PBPlayer who;
         if ((who = PBPlayer.getPlayer(p)) == null) {
@@ -140,7 +147,7 @@ public class PlayerListener implements Listener {
         }
         //Stops them from dropping items if they are inGame
         if(who.isInGame()) {
-            return;
+            event.setCancelled(true);
         }
     }
 

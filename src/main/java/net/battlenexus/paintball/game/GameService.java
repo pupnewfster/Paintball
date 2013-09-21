@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -91,17 +92,32 @@ public class GameService {
                         joinnext.remove(p);
                         game.joinNextOpenTeam(p);
                         Player bukkitP = p.getBukkitPlayer();
-                        bukkitP.setHealth(20.0);
+                        p.refillHealth();
                         bukkitP.setFoodLevel(20);
-                        ItemStack itemStack = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
-                        LeatherArmorMeta im = (LeatherArmorMeta) itemStack.getItemMeta();
+                        ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
+                        ItemStack legs = new ItemStack(Material.LEATHER_LEGGINGS, 1);
+                        ItemStack boots = new ItemStack(Material.LEATHER_BOOTS, 1);
+                        LeatherArmorMeta chestIm = (LeatherArmorMeta) chest.getItemMeta();
+                        LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
+                        LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
                         if(p.getCurrentTeam().equals(blueTeam())) {
-                            im.setColor(Color.BLUE);
+                            bukkitP.setCustomName(ChatColor.BLUE + bukkitP.getName() + ChatColor.RESET);
+                            chestIm.setColor(Color.BLUE);
+                            legsIm.setColor(Color.BLUE);
+                            bootsIm.setColor(Color.BLUE);
                         } else { //Current Team is red
-                            im.setColor(Color.RED);
+                            bukkitP.setCustomName(ChatColor.RED + bukkitP.getName() + ChatColor.RESET);
+                            chestIm.setColor(Color.RED);
+                            legsIm.setColor(Color.RED);
+                            bootsIm.setColor(Color.RED);
                         }
-                        itemStack.setItemMeta(im);
-                        bukkitP.getInventory().setChestplate(itemStack);
+                        bukkitP.setCustomNameVisible(true);
+                        chest.setItemMeta(chestIm);
+                        legs.setItemMeta(legsIm);
+                        boots.setItemMeta(bootsIm);
+                        bukkitP.getInventory().setChestplate(chest);
+                        bukkitP.getInventory().setLeggings(legs);
+                        bukkitP.getInventory().setBoots(boots);
                         bukkitP.setCanPickupItems(false);
                         p.freeze();
                         p.getBukkitPlayer().setGameMode(GameMode.ADVENTURE);

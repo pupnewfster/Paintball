@@ -6,6 +6,8 @@ import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.listeners.Tick;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,9 +107,14 @@ public abstract class PaintballGame implements Tick {
             player.getCurrentTeam().leaveTeam(null);
             player.setCurrentGame(null);
             player.getBukkitPlayer().getInventory().clear();
+            player.getBukkitPlayer().getInventory().setChestplate(new ItemStack(Material.AIR));
+            player.getBukkitPlayer().getInventory().setLeggings(new ItemStack(Material.AIR));
+            player.getBukkitPlayer().getInventory().setBoots(new ItemStack(Material.AIR));
+            player.getBukkitPlayer().setMaxHealth(20.0);
             player.getBukkitPlayer().setHealth(20.0);
             player.getBukkitPlayer().setFoodLevel(20);
             player.getBukkitPlayer().setCanPickupItems(true);
+            player.getBukkitPlayer().setCustomName(player.getBukkitPlayer().getName());
             player.getBukkitPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         }
         ended = true;

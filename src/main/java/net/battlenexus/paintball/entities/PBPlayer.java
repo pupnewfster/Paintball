@@ -18,6 +18,7 @@ public class PBPlayer {
     private int deaths;
     private Weapon weapon;
     private PaintballGame current_game;
+    private double maxHealth = 18; //Can change to have more items and things but this is default max health
 
     public HashMap<PBPlayer, Integer> kill_cache = new HashMap<PBPlayer, Integer>();
 
@@ -127,6 +128,20 @@ public class PBPlayer {
 
     public void joinGame(PaintballGame game) {
 
+    }
+
+    public boolean wouldDie(int damage) {
+        return getBukkitPlayer().getMaxHealth() - damage <= 0;
+    }
+
+    public void damagePlayer(int damage) {
+        getBukkitPlayer().setMaxHealth(getBukkitPlayer().getMaxHealth() - damage);
+        getBukkitPlayer().setHealth(getBukkitPlayer().getMaxHealth() - damage);
+    }
+
+    public void refillHealth() {
+        getBukkitPlayer().setMaxHealth(maxHealth);
+        getBukkitPlayer().setHealth(maxHealth);
     }
 
     public int getKills() {
