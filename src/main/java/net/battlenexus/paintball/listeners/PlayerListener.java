@@ -12,6 +12,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -69,6 +70,22 @@ public class PlayerListener implements Listener {
     }
 
     @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player victim = (Player) event.getEntity();
+            PBPlayer pbvictim;
+            if(!(event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) && !(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
+                if ((pbvictim = PBPlayer.getPlayer(victim)) == null) {
+                    return;
+                }
+                if (pbvictim.isInGame()) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {
         if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player) || !(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
             event.setCancelled(true);
@@ -100,6 +117,7 @@ public class PlayerListener implements Listener {
         if (deathMessages.containsKey(playerName)) {
             event.setDeathMessage(deathMessages.get(playerName));
             deathMessages.remove(playerName);
+
         }
     }
 

@@ -27,7 +27,7 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public int clipeSize() {
-        return 20;
+        return 40;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public int strength() {
-        return 1;
+        return 4;
     }
 
     @Override

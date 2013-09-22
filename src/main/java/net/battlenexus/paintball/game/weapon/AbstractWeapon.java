@@ -124,6 +124,11 @@ public abstract class AbstractWeapon implements Weapon {
                     final Inventory i = owner.getBukkitPlayer().getInventory();
                     while (true) {
                         int first_index = i.first(getReloadItem());
+                        if (first_index == -1) {
+                            reloading = false;
+                            owner.sendMessage(ChatColor.DARK_RED + "You're all out!");
+                            return;
+                        }
                         ItemStack item_to_move = i.getItem(first_index);
                         if (!item_to_move.hasItemMeta() || !item_to_move.getItemMeta().hasDisplayName() || !item_to_move.getItemMeta().hasLore()) {
                             i.remove(first_index);

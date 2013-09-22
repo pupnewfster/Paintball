@@ -3,8 +3,10 @@ package net.battlenexus.paintball.entities;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.PaintballGame;
 import net.battlenexus.paintball.game.weapon.Weapon;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -35,14 +37,22 @@ public class PBPlayer {
     }
 
     public void setWeapon(Weapon weapon) {
-        if (this.weapon != null) {
-            player.getInventory().clear(); //TODO Maybe dont clear inventory
-        }
         this.weapon = weapon;
         ItemStack item = Weapon.WeaponUtils.toItemStack(weapon);
-        ItemStack reloadItem = Weapon.WeaponUtils.createReloadItem(weapon.getReloadItem(), weapon.clipeSize());
 
-        player.getInventory().addItem(item, reloadItem, reloadItem);
+        player.getInventory().addItem(item);
+
+        if (player.getInventory().getItem(0) != item) {
+            Inventory i = player.getInventory();
+            int item_index = i.first(item);
+            ItemStack tomove = i.getItem(0);
+            i.clear(0);
+            i.clear(item_index);
+            i.setItem(0, item);
+            i.setItem(item_index, tomove);
+
+            player.updateInventory();
+        }
 
     }
 
@@ -112,13 +122,29 @@ public class PBPlayer {
         }
     }
 
+    public void hit(PBPlayer shooter) {
+        if (shooter.getCurrentTeam() != null) {
+            if (shooter.getCurrentTeam().contains(this)) {
+                shooter.sendMessage("Watch out! " + getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
+            } else {
+                if(wouldDie(shooter.getCurrentWeapon().strength())) {
+                    refillHealth();
+                    kill(shooter);
+                } else {
+                    damagePlayer(shooter.getCurrentWeapon().strength());
+                }
+            }
+        }
+    }
+
     public boolean isInGame() {
         return current_game != null;
     }
 
     public void kill(final PBPlayer killer) {
         addDeath();
-        killer.addKill();
+        if (killer != null)
+            killer.addKill();
         if (!isInGame() || getCurrentTeam() == null) {
             return;
         }
@@ -135,8 +161,8 @@ public class PBPlayer {
     }
 
     public void damagePlayer(int damage) {
-        getBukkitPlayer().setMaxHealth(getBukkitPlayer().getMaxHealth() - damage);
-        getBukkitPlayer().setHealth(getBukkitPlayer().getMaxHealth());
+        getBukkitPlayer().setMaxHealth((double)getBukkitPlayer().getMaxHealth() - damage);
+        getBukkitPlayer().setHealth((double)getBukkitPlayer().getMaxHealth());
     }
 
     public void refillHealth() {

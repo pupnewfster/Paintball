@@ -23,7 +23,8 @@ public class LeaveQueue implements PBCommand {
     @Override
     public String[] getNames() {
         return new String[] {
-                "leave"
+                "leave",
+                "l"
         };
     }
 }

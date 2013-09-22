@@ -6,10 +6,9 @@ import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -72,9 +71,9 @@ public class GameService {
 
                 Paintball.sendGlobalWorldMessage("The next map will be " + map_config.getMapName() + "!");
 
-                Paintball.sendGlobalWorldMessage("The game will start in 60 seconds.");
+                Paintball.sendGlobalWorldMessage("The game will start in 120 seconds.");
                 try {
-                    Thread.sleep(40000);
+                    Thread.sleep(100000);
                     Paintball.sendGlobalWorldMessage(ChatColor.RED + "Game will start in 20 seconds!");
                     Thread.sleep(10000);
                     Paintball.sendGlobalWorldMessage(ChatColor.DARK_RED + "10 seconds!");
@@ -102,12 +101,14 @@ public class GameService {
                         LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
                         LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
                         if(p.getCurrentTeam().equals(blueTeam())) {
-                            bukkitP.setPlayerListName(ChatColor.BLUE+ bukkitP.getName() + ChatColor.RESET);
+                            if (bukkitP.getName().length() + 2 <= 16)
+                                bukkitP.setPlayerListName(ChatColor.BLUE + bukkitP.getName());
                             chestIm.setColor(Color.BLUE);
                             legsIm.setColor(Color.BLUE);
                             bootsIm.setColor(Color.BLUE);
                         } else { //Current Team is red
-                            bukkitP.setPlayerListName(ChatColor.RED + bukkitP.getName() + ChatColor.RESET);
+                            if (bukkitP.getName().length() + 2 <= 16)
+                                bukkitP.setPlayerListName(ChatColor.RED + bukkitP.getName());
                             chestIm.setColor(Color.RED);
                             legsIm.setColor(Color.RED);
                             bootsIm.setColor(Color.RED);

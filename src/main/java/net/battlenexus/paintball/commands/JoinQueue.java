@@ -2,9 +2,7 @@ package net.battlenexus.paintball.commands;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class JoinQueue implements PBCommand {
     @Override
@@ -25,7 +23,8 @@ public class JoinQueue implements PBCommand {
     @Override
     public String[] getNames() {
         return new String[] {
-                "join"
+                "join",
+                "j"
         };
     }
 }

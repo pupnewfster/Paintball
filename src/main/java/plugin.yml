@@ -11,9 +11,13 @@ commands:
       description: Create a new paintball map.
       usage: /<command>
    join:
+     aliases:
+       - j
      description: Join the paintball queue.
      usage: /<command>
    leave:
+     aliases:
+       - l
      description: Leaves the paintball queue.
      usage: /<command>
    signstat:

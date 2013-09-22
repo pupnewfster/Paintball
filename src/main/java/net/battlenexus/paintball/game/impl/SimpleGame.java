@@ -26,21 +26,31 @@ public class SimpleGame extends PaintballGame implements Listener {
     @Override
     public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
         super.onPlayerKill(killer, victim);
-        if (killer.getCurrentTeam() != null) {
+        if (killer != null && killer.getCurrentTeam() != null) {
             Team t = killer.getCurrentTeam();
             if (t == super.getConfig().getBlueTeam()) {
                 bscore++;
             } else {
                 rscore++;
             }
-
-            if (bscore >= 20) {
-                sendGameMessage("The " + getConfig().getBlueTeam().getName() + ChatColor.GRAY + " team wins!");
-                super.endGame();
-            } else if (rscore >= 20) {
-                sendGameMessage("The " + getConfig().getRedTeam().getName() + ChatColor.GRAY + " team wins!");
-                super.endGame();
+        } else if (killer == null) {
+            if (victim.getCurrentTeam() != null) {
+                Team t = victim.getCurrentTeam();
+                if (t == super.getConfig().getBlueTeam()) {
+                    rscore++;
+                } else {
+                    bscore++;
+                }
             }
+        }
+
+
+        if (bscore >= 20) {
+            sendGameMessage("The " + getConfig().getBlueTeam().getName() + ChatColor.GRAY + " team wins!");
+            super.endGame();
+        } else if (rscore >= 20) {
+            sendGameMessage("The " + getConfig().getRedTeam().getName() + ChatColor.GRAY + " team wins!");
+            super.endGame();
         }
     }
 }
