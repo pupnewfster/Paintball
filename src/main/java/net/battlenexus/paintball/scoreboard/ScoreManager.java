@@ -1,6 +1,7 @@
 package net.battlenexus.paintball.scoreboard;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
@@ -36,6 +37,9 @@ public class ScoreManager {
     public void addTeam(String teamName, OfflinePlayer[] players) {
         //Create the new team
         Team team = scoreboard.registerNewTeam(teamName);
+        char[] teamChars = teamName.toCharArray();
+        boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
+        team.setPrefix(ChatColor.translateAlternateColorCodes(ChatColor.COLOR_CHAR, (String) (hasColor ? ChatColor.COLOR_CHAR + teamChars[1] : ChatColor.GRAY)));
 
         //Add players to that team
         for (OfflinePlayer player : players) {
