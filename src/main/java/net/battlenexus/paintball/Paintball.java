@@ -70,6 +70,9 @@ public class Paintball extends JavaPlugin {
     public void onDisable() {
         SignStat.saveSigns();
         SignStat.diposeSigns();
+        if (game != null) {
+            game.stop();
+        }
     }
 
     private void registerListeners() {

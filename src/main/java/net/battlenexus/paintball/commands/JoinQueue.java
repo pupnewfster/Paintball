@@ -2,16 +2,22 @@ package net.battlenexus.paintball.commands;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.game.GameService;
 import org.bukkit.command.CommandSender;
 
 public class JoinQueue implements PBCommand {
     @Override
     public void executePlayer(PBPlayer player, String[] args) {
-        boolean result = Paintball.INSTANCE.getGameService().joinNextGame(player);
-        if (!result) {
-            player.sendMessage("You are already in the queue!");
+        GameService service = Paintball.INSTANCE.getGameService();
+        if (!service.isGameInProgress() || !service.canJoin()) {
+            boolean result = service.joinNextGame(player);
+            if (!result) {
+                player.sendMessage("You are already in the queue!");
+            } else {
+                player.sendMessage("You have been added to the queue for the next game!");
+            }
         } else {
-            player.sendMessage("You have been added to the queue!");
+            player.joinGame(service.getCurrentGame());
         }
     }
 

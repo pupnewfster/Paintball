@@ -3,11 +3,11 @@ package net.battlenexus.paintball.entities;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.PaintballGame;
 import net.battlenexus.paintball.game.weapon.Weapon;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.HashMap;
 
@@ -138,22 +138,77 @@ public class PBPlayer {
     }
 
     public boolean isInGame() {
-        return current_game != null;
+        return current_game != null && getCurrentTeam() != null;
     }
 
     public void kill(final PBPlayer killer) {
+        if (!isInGame())
+            return;
         addDeath();
         if (killer != null)
             killer.addKill();
-        if (!isInGame() || getCurrentTeam() == null) {
-            return;
-        }
         getCurrentTeam().spawnPlayer(this);
         getCurrentGame().onPlayerKill(killer, this);
     }
 
     public void joinGame(PaintballGame game) {
+        if (isInGame()) {
+            leaveGame(getCurrentGame());
+        }
+        setCurrentGame(game);
+        game.joinNextOpenTeam(this);
+        game.onPlayerJoin(this);
+        Player bukkitP = getBukkitPlayer();
+        refillHealth();
+        bukkitP.setFoodLevel(20);
+        ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
+        ItemStack legs = new ItemStack(Material.LEATHER_LEGGINGS, 1);
+        ItemStack boots = new ItemStack(Material.LEATHER_BOOTS, 1);
+        LeatherArmorMeta chestIm = (LeatherArmorMeta) chest.getItemMeta();
+        LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
+        LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
+        if(getCurrentTeam().equals(game.getConfig().getBlueTeam())) {
+            if (bukkitP.getName().length() + 2 <= 16)
+                bukkitP.setPlayerListName(ChatColor.BLUE + bukkitP.getName());
+            chestIm.setColor(Color.BLUE);
+            legsIm.setColor(Color.BLUE);
+            bootsIm.setColor(Color.BLUE);
+        } else { //Current Team is red
+            if (bukkitP.getName().length() + 2 <= 16)
+                bukkitP.setPlayerListName(ChatColor.RED + bukkitP.getName());
+            chestIm.setColor(Color.RED);
+            legsIm.setColor(Color.RED);
+            bootsIm.setColor(Color.RED);
+        }
+        chest.setItemMeta(chestIm);
+        legs.setItemMeta(legsIm);
+        boots.setItemMeta(bootsIm);
+        bukkitP.getInventory().setChestplate(chest);
+        bukkitP.getInventory().setLeggings(legs);
+        bukkitP.getInventory().setBoots(boots);
+        bukkitP.setCanPickupItems(false);
+        freeze();
+        getBukkitPlayer().setGameMode(GameMode.ADVENTURE);
+    }
 
+    public void leaveGame(PaintballGame game) {
+        if (!isInGame())
+            return;
+        if (!game.hasEnded())
+            game.onPlayerLeave(this);
+        getCurrentTeam().leaveTeam(null);
+        setCurrentGame(null);
+        player.getInventory().clear();
+        player.getInventory().setChestplate(new ItemStack(Material.AIR));
+        player.getInventory().setLeggings(new ItemStack(Material.AIR));
+        player.getInventory().setBoots(new ItemStack(Material.AIR));
+        player.setMaxHealth(20.0);
+        player.setHealth(20.0);
+        player.setFoodLevel(20);
+        player.setCanPickupItems(true);
+        if (player.getPlayerListName().contains("" + ChatColor.COLOR_CHAR))
+            player.setPlayerListName(player.getName());
+        player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
     }
 
     public boolean wouldDie(int damage) {

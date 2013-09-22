@@ -2,16 +2,10 @@ package net.battlenexus.paintball.game;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
-import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +18,12 @@ public class GameService {
     };
 
     private ArrayList<Config> configs = new ArrayList<Config>();
-
+    private PaintballGame game;
     private ArrayList<PBPlayer> joinnext = new ArrayList<PBPlayer>();
     private Config nextconfig;
     private boolean running = true;
+    private boolean waiting = false;
+    private Thread current_thread;
 
     public void loadMaps() {
         File dir = Paintball.INSTANCE.getDataFolder();
@@ -58,7 +54,7 @@ public class GameService {
             return;
         }
 
-
+        current_thread = Thread.currentThread();
         final Random random = new Random();
         while (running) {
             try {
@@ -66,7 +62,7 @@ public class GameService {
                 Config map_config = new Config(configs.get(map_id)); //Make a clone of the config
                 this.nextconfig = map_config;
                 int game_id = random.nextInt(GAME_TYPES.length);
-                PaintballGame game = createGame((Class<? extends PaintballGame>) GAME_TYPES[game_id]); //Weak typing because fuck it
+                game = createGame((Class<? extends PaintballGame>) GAME_TYPES[game_id]); //Weak typing because fuck it
                 game.setConfig(map_config);
 
                 Paintball.sendGlobalWorldMessage("The next map will be " + map_config.getMapName() + "!");
@@ -89,47 +85,20 @@ public class GameService {
                 for (PBPlayer p : bukkit_players) {
                     if (Paintball.INSTANCE.isPlayingPaintball(p)) {
                         joinnext.remove(p);
-                        p.setCurrentGame(game);
-                        game.joinNextOpenTeam(p);
-                        Player bukkitP = p.getBukkitPlayer();
-                        p.refillHealth();
-                        bukkitP.setFoodLevel(20);
-                        ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
-                        ItemStack legs = new ItemStack(Material.LEATHER_LEGGINGS, 1);
-                        ItemStack boots = new ItemStack(Material.LEATHER_BOOTS, 1);
-                        LeatherArmorMeta chestIm = (LeatherArmorMeta) chest.getItemMeta();
-                        LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
-                        LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
-                        if(p.getCurrentTeam().equals(blueTeam())) {
-                            if (bukkitP.getName().length() + 2 <= 16)
-                                bukkitP.setPlayerListName(ChatColor.BLUE + bukkitP.getName());
-                            chestIm.setColor(Color.BLUE);
-                            legsIm.setColor(Color.BLUE);
-                            bootsIm.setColor(Color.BLUE);
-                        } else { //Current Team is red
-                            if (bukkitP.getName().length() + 2 <= 16)
-                                bukkitP.setPlayerListName(ChatColor.RED + bukkitP.getName());
-                            chestIm.setColor(Color.RED);
-                            legsIm.setColor(Color.RED);
-                            bootsIm.setColor(Color.RED);
-                        }
-                        chest.setItemMeta(chestIm);
-                        legs.setItemMeta(legsIm);
-                        boots.setItemMeta(bootsIm);
-                        bukkitP.getInventory().setChestplate(chest);
-                        bukkitP.getInventory().setLeggings(legs);
-                        bukkitP.getInventory().setBoots(boots);
-                        bukkitP.setCanPickupItems(false);
-                        p.freeze();
-                        p.getBukkitPlayer().setGameMode(GameMode.ADVENTURE);
+                        p.joinGame(game);
                     }
                 }
                 game.beginGame();
                 try {
+                    waiting = true;
                     game.waitForEnd();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    if (!game.ended) {
+                        game.endGame();
+                    }
                 }
+                waiting = false;
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
@@ -138,8 +107,26 @@ public class GameService {
         }
     }
 
-    public Team blueTeam() {
-        return nextconfig.getBlueTeam();
+    public void stop() {
+        if (!running)
+            return;
+        running = false;
+        current_thread.interrupt();
+        try {
+            current_thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        current_thread = null;
+        joinnext.clear();
+    }
+
+    public PaintballGame getCurrentGame() {
+        return game;
+    }
+
+    public boolean isGameInProgress() {
+        return waiting;
     }
 
     public boolean canJoin() {

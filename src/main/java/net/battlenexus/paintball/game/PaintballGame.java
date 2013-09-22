@@ -6,8 +6,6 @@ import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.listeners.Tick;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,22 +99,30 @@ public abstract class PaintballGame implements Tick {
         return players.toArray(new PBPlayer[players.size()]);
     }
 
+    public boolean hasEnded() {
+        return ended;
+    }
+
+    public void onPlayerJoin(PBPlayer player) {
+        sendGameMessage(ChatColor.DARK_RED + "+ " + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has joined the game.");
+
+    }
+
+    public void onPlayerLeave(PBPlayer player) {
+        sendGameMessage(ChatColor.DARK_RED + "- " + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has left the game.");
+    }
+
     protected void endGame() {
-        for (PBPlayer player : getAllPlayers()) {
-            player.getCurrentTeam().leaveTeam(null);
-            player.setCurrentGame(null);
-            player.getBukkitPlayer().getInventory().clear();
-            player.getBukkitPlayer().getInventory().setChestplate(new ItemStack(Material.AIR));
-            player.getBukkitPlayer().getInventory().setLeggings(new ItemStack(Material.AIR));
-            player.getBukkitPlayer().getInventory().setBoots(new ItemStack(Material.AIR));
-            player.getBukkitPlayer().setMaxHealth(20.0);
-            player.getBukkitPlayer().setHealth(20.0);
-            player.getBukkitPlayer().setFoodLevel(20);
-            player.getBukkitPlayer().setCanPickupItems(true);
-            player.getBukkitPlayer().setPlayerListName(player.getBukkitPlayer().getName());
-            player.getBukkitPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
-        }
         ended = true;
+        PBPlayer[] players = getAllPlayers();
+        for (PBPlayer player : players) {
+            try {
+                player.leaveGame(this);
+            } catch (Throwable t) {
+                t.printStackTrace();
+                Paintball.INSTANCE.error("Error removing player \"" + player.getBukkitPlayer().getName() + "\" from paintball game!");
+            }
+        }
         _wakeup();
     }
 

@@ -7,11 +7,15 @@ import org.bukkit.command.CommandSender;
 public class LeaveQueue implements PBCommand {
     @Override
     public void executePlayer(PBPlayer player, String[] args) {
-        boolean result = Paintball.INSTANCE.getGameService().leaveQueue(player);
-        if (!result) {
-            player.sendMessage("You are not in the queue!");
+        if (!player.isInGame()) {
+            boolean result = Paintball.INSTANCE.getGameService().leaveQueue(player);
+            if (!result) {
+                player.sendMessage("You are not in the queue!");
+            } else {
+                player.sendMessage("You have been removed from the queue!");
+            }
         } else {
-            player.sendMessage("You have been removed from the queue!");
+            player.leaveGame(player.getCurrentGame());
         }
     }
 
