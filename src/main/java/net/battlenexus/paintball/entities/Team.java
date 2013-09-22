@@ -42,6 +42,11 @@ public class Team implements ConfigParser {
         this.spawn = location;
     }
 
+
+    public Location getSpawn() {
+        return spawn;
+    }
+
     public String getName() {
         return team_name;
     }

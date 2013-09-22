@@ -18,6 +18,7 @@ public class PBPlayer {
     private Location frozen_location;
     private int kills;
     private int deaths;
+    private boolean isSpectating;
     private Weapon weapon;
     private PaintballGame current_game;
     private double maxHealth = 18; //Can change to have more items and things but this is default max health
@@ -150,6 +151,33 @@ public class PBPlayer {
         getCurrentTeam().spawnPlayer(this);
         getCurrentGame().onPlayerKill(killer, this);
     }
+
+    public void spectateGame(PaintballGame game) {
+        Paintball.makePlayerGhost(player);
+        player.setFlying(true);
+        player.setAllowFlight(true);
+
+        Team firstTeam = game.getConfig().getBlueTeam();
+        player.teleport(firstTeam.getSpawn());
+        isSpectating = true;
+
+    }
+
+    public void stopSpectating() {
+        if (!isSpectating)
+            return;
+        isSpectating = false;
+        player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
+        player.setFlying(false);
+        player.setAllowFlight(false);
+        Paintball.makePlayerVisible(player);
+    }
+
+
+    public boolean isSpectating() {
+        return isSpectating;
+    }
+
 
     public void joinGame(PaintballGame game) {
         if (isInGame()) {

@@ -35,6 +35,8 @@ public class PlayerListener implements Listener {
         event.getPlayer().getInventory().setMaxStackSize(1);
         event.getPlayer().setMaxHealth(20.0);
         event.getPlayer().setHealth(20.0);
+
+        Paintball.getGhostManager().addPlayer(event.getPlayer());
         //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
         //event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }
@@ -48,6 +50,8 @@ public class PlayerListener implements Listener {
         }
         //Removes from queue if in queue when leaving
         Paintball.INSTANCE.getGameService().leaveQueue(who);
+
+        Paintball.getGhostManager().removePlayer(event.getPlayer());
     }
 
     @EventHandler
@@ -78,7 +82,7 @@ public class PlayerListener implements Listener {
                 if ((pbvictim = PBPlayer.getPlayer(victim)) == null) {
                     return;
                 }
-                if (pbvictim.isInGame()) {
+                if (pbvictim.isInGame() || pbvictim.isSpectating()) {
                     event.setCancelled(true);
                 }
             }
@@ -129,7 +133,7 @@ public class PlayerListener implements Listener {
             return;
         }
         //Stop them if they are ingame
-        if(who.isInGame()) {
+        if(who.isInGame() || who.isSpectating()) {
             event.setCancelled(true);
         }
     }
@@ -143,7 +147,7 @@ public class PlayerListener implements Listener {
             return;
         }
         //Stop them if they are ingame
-        if(who.isInGame()) {
+        if(who.isInGame() || who.isSpectating()) {
             event.setCancelled(true);
         }
     }
@@ -156,7 +160,7 @@ public class PlayerListener implements Listener {
             return;
         }
         //Stops them from dropping items if they are inGame
-        if(who.isInGame()) {
+        if(who.isInGame() || who.isSpectating()) {
             event.setCancelled(true);
         }
     }
@@ -170,12 +174,15 @@ public class PlayerListener implements Listener {
         }
         if(who.isInGame()) {
             String team = "";
-            if(who.getCurrentTeam().equals(Paintball.INSTANCE.getGameService().blueTeam())) {
+            if(who.getCurrentTeam().equals(who.getCurrentGame().getConfig().getBlueTeam())) {
                 team = "(" + ChatColor.BLUE + "Blue" + ChatColor.RESET + ") ";
             } else { //They are on red team
                 team = "(" + ChatColor.RED + "Red" + ChatColor.RESET + ") ";
             }
             event.setFormat(team + event.getFormat());
+        } else if (who.isSpectating()) {
+            who.sendMessage("You are spectating, you cannot talk!"); //TODO Maybe only send messages to other spectators
+            event.setCancelled(true);
         }
     }
 }

@@ -7,6 +7,7 @@ import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.listeners.PlayerListener;
 import net.battlenexus.paintball.listeners.TickBukkitTask;
 import net.battlenexus.paintball.scoreboard.ScoreManager;
+import net.battlenexus.paintball.utils.GhostManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,6 +23,7 @@ public class Paintball extends JavaPlugin {
     public Location lobby_spawn;
     private TickBukkitTask tasks;
     private GameService game;
+    private GhostManager ghostManager;
     ScoreManager scoreboard;
 
     public GameService getGameService() {
@@ -64,6 +66,9 @@ public class Paintball extends JavaPlugin {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+        ghostManager = new GhostManager(this);
+
     }
 
     @Override
@@ -73,6 +78,28 @@ public class Paintball extends JavaPlugin {
         if (game != null) {
             game.stop();
         }
+
+        ghostManager.close();
+    }
+
+    public static GhostManager getGhostManager() {
+        return INSTANCE.ghostManager;
+    }
+
+    public static void makePlayerGhost(PBPlayer player) {
+        makePlayerGhost(player.getBukkitPlayer());
+    }
+
+    public static void makePlayerGhost(Player player) {
+        INSTANCE.ghostManager.setGhost(player, true);
+    }
+
+    public static void makePlayerVisible(PBPlayer player) {
+        makePlayerVisible(player.getBukkitPlayer());
+    }
+
+    public static void makePlayerVisible(Player player) {
+        INSTANCE.ghostManager.setGhost(player, false);
     }
 
     private void registerListeners() {
