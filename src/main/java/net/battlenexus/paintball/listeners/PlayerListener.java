@@ -91,24 +91,14 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        Player victim = (Player) event.getEntity();
-        PBPlayer pbvictim;
-        if ((pbvictim = PBPlayer.getPlayer(victim)) == null) {
+        PBPlayer victim;
+        PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball)event.getDamager()).getShooter());
+
+        if ((victim = PBPlayer.getPlayer((Player) event.getEntity())) == null) {
             return;
         }
-        PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball)event.getDamager()).getShooter());
-        if (shooter.getCurrentTeam() != null) {
-            if (shooter.getCurrentTeam().contains(pbvictim)) {
-                shooter.sendMessage("Watch out! " + pbvictim.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
-            } else {
-                if(pbvictim.wouldDie(shooter.getCurrentWeapon().strength())) {
-                    pbvictim.refillHealth();
-                    pbvictim.kill(shooter);
-                } else {
-                    pbvictim.damagePlayer(shooter.getCurrentWeapon().strength());
-                }
-            }
-        }
+
+        victim.hit(shooter);
     }
 
     @EventHandler
