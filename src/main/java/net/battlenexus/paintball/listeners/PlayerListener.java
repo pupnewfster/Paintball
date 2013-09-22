@@ -115,7 +115,7 @@ public class PlayerListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         PBPlayer player;
         if ((player = PBPlayer.getPlayer(event.getPlayer())) != null) {
-            if (player.isFrozen())
+            if (player.isFrozen() && (event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ()))
                 player.handleFrozen();
         }
     }
