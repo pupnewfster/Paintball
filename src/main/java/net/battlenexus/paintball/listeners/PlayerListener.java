@@ -50,7 +50,7 @@ public class PlayerListener implements Listener {
         }
         //Removes from queue if in queue when leaving
         Paintball.INSTANCE.getGameService().leaveQueue(who);
-
+        //TODO leave game if in a game
         Paintball.getGhostManager().removePlayer(event.getPlayer());
     }
 
@@ -173,12 +173,7 @@ public class PlayerListener implements Listener {
             return;
         }
         if(who.isInGame()) {
-            String team = "";
-            if(who.getCurrentTeam().equals(who.getCurrentGame().getConfig().getBlueTeam())) {
-                team = "(" + ChatColor.BLUE + "Blue" + ChatColor.RESET + ") ";
-            } else { //They are on red team
-                team = "(" + ChatColor.RED + "Red" + ChatColor.RESET + ") ";
-            }
+            String team = "(" + ChatColor.translateAlternateColorCodes(ChatColor.COLOR_CHAR, who.getCurrentTeam().getName()) + ChatColor.RESET + ") ";
             event.setFormat(team + event.getFormat());
         } else if (who.isSpectating()) {
             who.sendMessage("You are spectating, you cannot talk!"); //TODO Maybe only send messages to other spectators
