@@ -14,7 +14,7 @@ public class QueueSign extends SignStat {
     public void tick() {
         if (Paintball.INSTANCE.getGameService().getQueueCount() != oldvalue) {
             int temp = Paintball.INSTANCE.getGameService().getQueueCount();
-            updateSign("Next Game:", getText(temp), "Map: " + Paintball.INSTANCE.getGameService().getMapName());
+            updateSign("Next Game:", getText(temp), Paintball.INSTANCE.getGameService().getMapName());
             oldvalue = temp;
         }
     }

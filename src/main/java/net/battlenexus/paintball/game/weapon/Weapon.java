@@ -17,11 +17,15 @@ public interface Weapon {
 
     public int startBullets();
 
-    public int strength();
+    public int damage();
+
+    public float strength();
 
     public int reloadDelay();
 
     public int getShotRate();
+
+    public int getFireDelay();
 
     public Material getMaterial();
 
@@ -31,7 +35,9 @@ public interface Weapon {
 
     public void shoot();
 
-    public int currentBullets();
+    public int currentClipSize();
+
+    public int totalBullets();
 
     public void reload(ItemStack item);
 
@@ -43,7 +49,7 @@ public interface Weapon {
             im.setDisplayName(weapon.name());
             List<String> lore = new ArrayList<String>();
             lore.add("Clip Size: " + weapon.clipeSize());
-            lore.add("Strength: " + weapon.strength());
+            lore.add("Strength: " + weapon.damage());
             lore.add("Fire Rate: " + weapon.getShotRate());
             im.setLore(lore);
             itemStack.setItemMeta(im);

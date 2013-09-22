@@ -128,11 +128,11 @@ public class PBPlayer {
             if (shooter.getCurrentTeam().contains(this)) {
                 shooter.sendMessage("Watch out! " + getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
             } else {
-                if(wouldDie(shooter.getCurrentWeapon().strength())) {
+                if(wouldDie(shooter.getCurrentWeapon().damage())) {
                     refillHealth();
                     kill(shooter);
                 } else {
-                    damagePlayer(shooter.getCurrentWeapon().strength());
+                    damagePlayer(shooter.getCurrentWeapon().damage());
                 }
             }
         }

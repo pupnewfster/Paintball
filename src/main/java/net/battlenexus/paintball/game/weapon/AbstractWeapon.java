@@ -181,10 +181,16 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     @Override
-    public int currentBullets() {
+    public int currentClipSize() {
         return bullets;
     }
 
+    @Override
+    public int totalBullets() {
+        return getMaxBullets();
+    }
+
+    long lastFire = -1;
     public void shoot(double spreadfactor) {
         if (reloading) {
             owner.sendMessage(ChatColor.DARK_RED + "You cant shoot while reloading!");
@@ -194,14 +200,18 @@ public abstract class AbstractWeapon implements Weapon {
             return;
         }
 
-        bullets -= getShotRate();
+        if (lastFire == -1 || (System.currentTimeMillis() - lastFire) >= getFireDelay()) {
 
-        updateGUI();
+            bullets -= getShotRate();
 
-        called = false;
-        onShoot(spreadfactor);
-        if (!called)
-            throw new RuntimeException("super.onShoot was not called! Try putting super.onShoot at the top of your method!");
+            updateGUI();
+
+            called = false;
+            onShoot(spreadfactor);
+            if (!called)
+                throw new RuntimeException("super.onShoot was not called! Try putting super.onShoot at the top of your method!");
+            lastFire = System.currentTimeMillis();
+        }
     }
 
     @Override
@@ -210,12 +220,7 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     private boolean called;
-    protected void onShoot(double spread) {
-        called = true;
-        Player bukkitPlayer = owner.getBukkitPlayer();
-        bukkitPlayer.playEffect(bukkitPlayer.getLocation(), Effect.CLICK1, 10);
-
-        final Snowball snowball = bukkitPlayer.getWorld().spawn(bukkitPlayer.getEyeLocation(), Snowball.class);
+    protected void onFire(final Snowball snowball, Player bukkitPlayer, double spread) {
         snowball.setShooter(bukkitPlayer);
         snowball.setTicksLived(2400);
         Vector vector;
@@ -249,5 +254,13 @@ public abstract class AbstractWeapon implements Weapon {
         for (int i = 1; i <= 10; i++) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, task, 2L * i);
         }
+    }
+    protected void onShoot(double spread) {
+        called = true;
+        Player bukkitPlayer = owner.getBukkitPlayer();
+        bukkitPlayer.playEffect(bukkitPlayer.getLocation(), Effect.CLICK1, 10);
+
+        final Snowball snowball = bukkitPlayer.getWorld().spawn(bukkitPlayer.getEyeLocation(), Snowball.class);
+        onFire(snowball, bukkitPlayer, spread);
     }
 }

@@ -18,6 +18,7 @@ public class JoinQueue implements PBCommand {
             }
         } else {
             player.joinGame(service.getCurrentGame());
+            player.unfreeze();
         }
     }
 

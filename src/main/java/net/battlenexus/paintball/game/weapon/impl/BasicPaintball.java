@@ -36,8 +36,13 @@ public class BasicPaintball extends AbstractWeapon {
     }
 
     @Override
-    public int strength() {
+    public int damage() {
         return 4;
+    }
+
+    @Override
+    public float strength() {
+        return 1;
     }
 
     @Override
@@ -48,6 +53,11 @@ public class BasicPaintball extends AbstractWeapon {
     @Override
     public int getShotRate() {
         return 1;
+    }
+
+    @Override
+    public int getFireDelay() {
+        return 2000;
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -54,8 +55,10 @@ public class PlayerListener implements Listener {
         Paintball.getGhostManager().removePlayer(event.getPlayer());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.isCancelled())
+            return;
         Player p = event.getPlayer();
         PBPlayer who;
         if ((who = PBPlayer.getPlayer(p)) == null) {
@@ -65,10 +68,12 @@ public class PlayerListener implements Listener {
             //GUN
             if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getMaterial())) {
                 who.getCurrentWeapon().shoot();
+                event.setCancelled(true);
             }
             //RELOAD
             if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
                 who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
+                event.setCancelled(true);
             }
         }
     }

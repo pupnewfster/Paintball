@@ -79,7 +79,9 @@ public class GameService {
                         Thread.sleep(1000);
                     }
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Paintball.INSTANCE.error("Countdown interrupted!");
+                    if (!running)
+                        break;
                 }
                 PBPlayer[] bukkit_players = joinnext.toArray(new PBPlayer[joinnext.size()]);
                 for (PBPlayer p : bukkit_players) {
@@ -93,7 +95,7 @@ public class GameService {
                     waiting = true;
                     game.waitForEnd();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Paintball.INSTANCE.error("Game interrupted!");
                     if (!game.ended) {
                         game.endGame();
                     }
@@ -112,11 +114,6 @@ public class GameService {
             return;
         running = false;
         current_thread.interrupt();
-        try {
-            current_thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         current_thread = null;
         joinnext.clear();
     }
@@ -130,7 +127,7 @@ public class GameService {
     }
 
     public boolean canJoin() {
-        return nextconfig.getPlayerMax() < joinnext.size();
+        return joinnext.size() < nextconfig.getPlayerMax();
     }
 
     public int getMaxPlayers() {
