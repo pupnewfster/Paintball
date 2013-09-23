@@ -38,6 +38,17 @@ public class SimpleGame extends PaintballGame implements Listener {
         score.addPlayersToTeam(player.getCurrentTeam().getName(), thisPlayer);
     }
 
+    public void onPlayerLeave(PBPlayer player) {
+        super.onPlayerLeave(player);
+        if (!didsetup) {
+            super.setupScoreboard();
+            didsetup = true;
+        }
+        OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
+        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getName());
+        score.removePlayersFromTeam(player.getCurrentTeam().getName(), thisPlayer);
+    }
+
     @Override
     public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
         super.onPlayerKill(killer, victim);
