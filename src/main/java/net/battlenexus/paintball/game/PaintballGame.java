@@ -5,6 +5,7 @@ import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.listeners.Tick;
+import net.battlenexus.paintball.scoreboard.ScoreManager;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Random;
 
 public abstract class PaintballGame implements Tick {
     protected Config config;
+    protected ScoreManager score;
     protected boolean ended = false;
     protected boolean started = true;
 
@@ -38,6 +40,12 @@ public abstract class PaintballGame implements Tick {
         }
         started = true;
         sendGameMessage(ChatColor.GREEN + "GO!");
+    }
+
+    public void showScore() {
+        if(score != null) {
+            score.showScoreboard();
+        }
     }
 
     protected abstract void onGameStart();
@@ -115,6 +123,9 @@ public abstract class PaintballGame implements Tick {
     protected void endGame() {
         ended = true;
         PBPlayer[] players = getAllPlayers();
+        if(score != null) {
+            score.hideScoreboard();
+        }
         for (PBPlayer player : players) {
             try {
                 player.leaveGame(this);
@@ -159,6 +170,8 @@ public abstract class PaintballGame implements Tick {
         }
 
         sendGameMessage(killer.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " " + message + " " + victim.getBukkitPlayer().getDisplayName());
+
+
     }
 
     private synchronized void _wakeup() {
