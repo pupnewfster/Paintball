@@ -3,7 +3,10 @@ package net.battlenexus.paintball.game.impl;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.PaintballGame;
+import net.battlenexus.paintball.scoreboard.ScoreManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
 
 public class SimpleGame extends PaintballGame implements Listener {
@@ -21,6 +24,21 @@ public class SimpleGame extends PaintballGame implements Listener {
     @Override
     protected void onGameStart() {
         sendGameMessage("First team to 20 kills win!");
+        score = new ScoreManager();
+        score.setupScoreboard("Kills", "kills");
+        OfflinePlayer[] blue = new OfflinePlayer[1];
+        OfflinePlayer[] red = new OfflinePlayer[1];
+        blue[0] = Bukkit.getOfflinePlayer(super.getConfig().getBlueTeam().getName());
+        red[0] = Bukkit.getOfflinePlayer(super.getConfig().getRedTeam().getName());
+        score.addTeam(super.getConfig().getBlueTeam().getName(), blue);
+        score.addTeam(super.getConfig().getRedTeam().getName(), red);
+    }
+
+    public void onPlayerJoin(PBPlayer player) {
+        super.onPlayerJoin(player);
+        OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
+        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getName());
+        score.addPlayersToTeam(player.getCurrentTeam().getName(), thisPlayer);
     }
 
     @Override
@@ -30,8 +48,10 @@ public class SimpleGame extends PaintballGame implements Listener {
             Team t = killer.getCurrentTeam();
             if (t == super.getConfig().getBlueTeam()) {
                 bscore++;
+                score.addPoints(Bukkit.getOfflinePlayer(super.getConfig().getBlueTeam().getName()), 1);
             } else {
                 rscore++;
+                score.addPoints(Bukkit.getOfflinePlayer(super.getConfig().getRedTeam().getName()), 1);
             }
         } else if (killer == null) {
             if (victim.getCurrentTeam() != null) {

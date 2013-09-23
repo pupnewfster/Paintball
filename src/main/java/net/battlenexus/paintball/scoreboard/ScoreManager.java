@@ -57,6 +57,15 @@ public class ScoreManager {
     }
 
     /**
+     * Removes this scoreboard to everyone on the server
+     */
+    public void hideScoreboard() {
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            player.setScoreboard(scoreboardManager.getNewScoreboard());
+        }
+    }
+
+    /**
      * Adds players to a team
      *
      * @param teamName String The name of the team

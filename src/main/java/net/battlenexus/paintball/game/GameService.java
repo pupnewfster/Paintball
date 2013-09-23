@@ -142,6 +142,10 @@ public class GameService {
         return joinnext.size();
     }
 
+    public void showScore() {
+        game.showScore();
+    }
+
     public boolean joinNextGame(Player p) {
         PBPlayer pb = PBPlayer.toPBPlayer(p);
         return joinNextGame(pb);

@@ -36,7 +36,7 @@ public class PlayerListener implements Listener {
         event.getPlayer().getInventory().setMaxStackSize(1);
         event.getPlayer().setMaxHealth(20.0);
         event.getPlayer().setHealth(20.0);
-
+        Paintball.INSTANCE.getGameService().showScore();
         Paintball.getGhostManager().addPlayer(event.getPlayer());
 
         PBPlayer pbPlayer;
