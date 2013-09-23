@@ -67,9 +67,9 @@ public class GameService {
 
                 Paintball.sendGlobalWorldMessage("The next map will be " + map_config.getMapName() + "!");
 
-                Paintball.sendGlobalWorldMessage("The game will start in 120 seconds.");
+                Paintball.sendGlobalWorldMessage("The game will start in 60 seconds.");
                 try {
-                    Thread.sleep(100000);
+                    Thread.sleep(40000);
                     Paintball.sendGlobalWorldMessage(ChatColor.RED + "Game will start in 20 seconds!");
                     Thread.sleep(10000);
                     Paintball.sendGlobalWorldMessage(ChatColor.DARK_RED + "10 seconds!");

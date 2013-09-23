@@ -4,7 +4,7 @@ import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.config.ConfigParser;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
-import net.battlenexus.paintball.game.weapon.impl.Shotgun;
+import net.battlenexus.paintball.game.weapon.impl.Sniper;
 import org.bukkit.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -80,7 +80,7 @@ public class Team implements ConfigParser {
     public void joinTeam(PBPlayer player) {
         players.add(player);
         spawnPlayer(player);
-        player.setWeapon(AbstractWeapon.createWeapon(Shotgun.class, player)); //TODO Temp code, remove
+        player.setWeapon(AbstractWeapon.createWeapon(Sniper.class, player)); //TODO Temp code, remove
     }
 
     public void leaveTeam(PBPlayer player) {

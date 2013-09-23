@@ -57,7 +57,7 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public int getFireDelay() {
-        return 2000;
+        return 0;
     }
 
     @Override

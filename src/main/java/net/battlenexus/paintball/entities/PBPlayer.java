@@ -46,6 +46,10 @@ public class PBPlayer {
         if (player.getInventory().getItem(0) != item) {
             Inventory i = player.getInventory();
             int item_index = i.first(item);
+            while (item_index == -1) {
+                player.getInventory().addItem(item);
+                item_index = i.first(item);
+            }
             ItemStack tomove = i.getItem(0);
             i.clear(0);
             i.clear(item_index);
@@ -196,14 +200,14 @@ public class PBPlayer {
         LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
         LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
         if(getCurrentTeam().equals(game.getConfig().getBlueTeam())) {
-            if (bukkitP.getName().length() + 2 <= 16)
-                bukkitP.setPlayerListName(ChatColor.BLUE + bukkitP.getName());
+            //if (bukkitP.getName().length() + 2 <= 16)
+            //    bukkitP.setPlayerListName(ChatColor.BLUE + bukkitP.getName());
             chestIm.setColor(Color.BLUE);
             legsIm.setColor(Color.BLUE);
             bootsIm.setColor(Color.BLUE);
         } else { //Current Team is red
-            if (bukkitP.getName().length() + 2 <= 16)
-                bukkitP.setPlayerListName(ChatColor.RED + bukkitP.getName());
+            //if (bukkitP.getName().length() + 2 <= 16)
+            //    bukkitP.setPlayerListName(ChatColor.RED + bukkitP.getName());
             chestIm.setColor(Color.RED);
             legsIm.setColor(Color.RED);
             bootsIm.setColor(Color.RED);
@@ -234,8 +238,8 @@ public class PBPlayer {
         player.setHealth(20.0);
         player.setFoodLevel(20);
         player.setCanPickupItems(true);
-        if (player.getPlayerListName().contains("" + ChatColor.COLOR_CHAR))
-            player.setPlayerListName(player.getName());
+        //if (player.getPlayerListName().contains("" + ChatColor.COLOR_CHAR))
+        //    player.setPlayerListName(player.getName());
         player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
     }
 

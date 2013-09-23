@@ -39,12 +39,14 @@ public class ScoreManager {
         Team team = scoreboard.registerNewTeam(teamName);
         char[] teamChars = teamName.toCharArray();
         boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
-        team.setPrefix(ChatColor.translateAlternateColorCodes(ChatColor.COLOR_CHAR, (String) (hasColor ? ChatColor.COLOR_CHAR + teamChars[1] : ChatColor.GRAY)));
+        team.setPrefix(hasColor ? ("" + ChatColor.COLOR_CHAR + teamChars[1]) : "" + ChatColor.GRAY);
 
         //Add players to that team
         for (OfflinePlayer player : players) {
             team.addPlayer(player);
         }
+        Score score = objective.getScore(players[0]);
+        score.setScore(0);
     }
 
     /**
@@ -74,7 +76,9 @@ public class ScoreManager {
     public void addPlayersToTeam(String teamName, OfflinePlayer[] players) {
         //Get the team
         Team team = scoreboard.getTeam(teamName);
-
+        if (team == null) {
+            team = scoreboard.registerNewTeam(teamName);
+        }
         for (OfflinePlayer player : players) {
             team.addPlayer(player);
         }

@@ -31,7 +31,7 @@ public class Sniper extends AbstractWeapon {
 
     @Override
     public int startBullets() {
-        return 15;
+        return 50;
     }
 
     @Override
@@ -61,6 +61,6 @@ public class Sniper extends AbstractWeapon {
 
     @Override
     public Material getReloadItem() {
-        return null;
+        return Material.FLINT;
     }
 }

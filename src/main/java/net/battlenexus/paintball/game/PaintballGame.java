@@ -6,7 +6,9 @@ import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.listeners.Tick;
 import net.battlenexus.paintball.scoreboard.ScoreManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +16,15 @@ import java.util.Random;
 
 public abstract class PaintballGame implements Tick {
     protected Config config;
-    protected ScoreManager score;
+    protected ScoreManager score = new ScoreManager();
     protected boolean ended = false;
     protected boolean started = true;
 
+    public PaintballGame() {
+        score.setupScoreboard("Kills", "kills");
+    }
+
     public void beginGame() {
-        Paintball.INSTANCE.getTicker().addTick(this);
         onGameStart();
         for (int i = 20; i > 0; i--) {
             if (i > 15) {
@@ -113,7 +118,6 @@ public abstract class PaintballGame implements Tick {
 
     public void onPlayerJoin(PBPlayer player) {
         sendGameMessage(ChatColor.GREEN + "+" + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has joined the game.");
-
     }
 
     public void onPlayerLeave(PBPlayer player) {
@@ -184,5 +188,15 @@ public abstract class PaintballGame implements Tick {
                 break;
             super.wait(0L);
         }
+    }
+
+    public void setupScoreboard() {
+        Paintball.INSTANCE.getTicker().addTick(this);
+        OfflinePlayer[] blue = new OfflinePlayer[1];
+        OfflinePlayer[] red = new OfflinePlayer[1];
+        blue[0] = Bukkit.getOfflinePlayer(getConfig().getBlueTeam().getName());
+        red[0] = Bukkit.getOfflinePlayer(getConfig().getRedTeam().getName());
+        score.addTeam(getConfig().getBlueTeam().getName(), blue);
+        score.addTeam(getConfig().getRedTeam().getName(), red);
     }
 }
