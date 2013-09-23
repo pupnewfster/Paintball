@@ -39,7 +39,7 @@ public class ScoreManager {
         Team team = scoreboard.registerNewTeam(teamName);
         char[] teamChars = teamName.toCharArray();
         boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
-        team.setPrefix(hasColor ? ("" + ChatColor.COLOR_CHAR + teamChars[1]) : "" + ChatColor.GRAY);
+        team.setPrefix(hasColor ? ("" + ChatColor.COLOR_CHAR + teamChars[1]) : "" + ChatColor.RESET);
 
         //Add players to that team
         for (OfflinePlayer player : players) {
@@ -81,6 +81,23 @@ public class ScoreManager {
         }
         for (OfflinePlayer player : players) {
             team.addPlayer(player);
+        }
+    }
+
+    /**
+     * Removes players from a team
+     *
+     * @param teamName String The name of the team
+     * @param players OfflinePlayer[] Players you want to remove from the team
+     */
+    public void removePlayersFromTeam(String teamName, OfflinePlayer[] players) {
+        //Get the team
+        Team team = scoreboard.getTeam(teamName);
+        if (team == null) {
+            team = scoreboard.registerNewTeam(teamName);
+        }
+        for (OfflinePlayer player : players) {
+            team.removePlayer(player);
         }
     }
 
