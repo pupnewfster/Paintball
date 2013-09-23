@@ -202,14 +202,18 @@ public abstract class AbstractWeapon implements Weapon {
 
         if (lastFire == -1 || (System.currentTimeMillis() - lastFire) >= getFireDelay()) {
 
-            bullets -= getShotRate();
+            int fire = getShotRate();
+            bullets -= fire;
 
             updateGUI();
 
             called = false;
-            onShoot(spreadfactor);
-            if (!called)
-                throw new RuntimeException("super.onShoot was not called! Try putting super.onShoot at the top of your method!");
+            while (fire > 0) {
+                onShoot(spreadfactor);
+                if (!called)
+                    throw new RuntimeException("super.onShoot was not called! Try putting super.onShoot at the top of your method!");
+                fire--;
+            }
             lastFire = System.currentTimeMillis();
         }
     }
@@ -232,10 +236,10 @@ public abstract class AbstractWeapon implements Weapon {
             double dir = -ploc.getYaw() - 90;
             double pitch = -ploc.getPitch();
             double xwep = ((random.nextInt((int)(spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
-            double ywep = ((random.nextInt((int) (spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
+            //double ywep = ((random.nextInt((int) (spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
             double zwep = ((random.nextInt((int) (spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
             double xd = Math.cos(Math.toRadians(dir)) * Math.cos(Math.toRadians(pitch)) + xwep;
-            double yd = Math.sin(Math.toRadians(pitch)) + ywep;
+            double yd = Math.sin(Math.toRadians(pitch));
             double zd = -Math.sin(Math.toRadians(dir)) * Math.cos(Math.toRadians(pitch)) + zwep;
             vector = new Vector(xd, yd, zd).multiply(strength());
         }

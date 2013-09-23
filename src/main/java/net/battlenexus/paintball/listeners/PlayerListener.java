@@ -38,6 +38,13 @@ public class PlayerListener implements Listener {
         event.getPlayer().setHealth(20.0);
 
         Paintball.getGhostManager().addPlayer(event.getPlayer());
+
+        PBPlayer pbPlayer;
+        if ((pbPlayer = PBPlayer.getPlayer(event.getPlayer())) != null) {
+            if (pbPlayer.isInGame()) { //When he disconnected, was he in a game?
+                pbPlayer.getCurrentTeam().spawnPlayer(pbPlayer);
+            }
+        }
         //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
         //event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }
@@ -57,8 +64,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.isCancelled())
-            return;
         Player p = event.getPlayer();
         PBPlayer who;
         if ((who = PBPlayer.getPlayer(p)) == null) {
