@@ -127,7 +127,7 @@ public abstract class AbstractWeapon implements Weapon {
                         if (first_index == -1) {
                             reloading = false;
                             owner.sendMessage(ChatColor.DARK_RED + "You're all out!");
-                            return;
+                            break;
                         }
                         ItemStack item_to_move = i.getItem(first_index);
                         if (!item_to_move.hasItemMeta() || !item_to_move.getItemMeta().hasDisplayName() || !item_to_move.getItemMeta().hasLore()) {
