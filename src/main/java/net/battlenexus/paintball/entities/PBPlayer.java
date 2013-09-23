@@ -135,8 +135,10 @@ public class PBPlayer {
                 if(wouldDie(shooter.getCurrentWeapon().damage())) {
                     refillHealth();
                     kill(shooter);
+                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 20, 0);
                 } else {
                     damagePlayer(shooter.getCurrentWeapon().damage());
+                    player.playSound(player.getLocation(), Sound.ORB_PICKUP, 20, 0);
                 }
             }
         }
