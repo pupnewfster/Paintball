@@ -19,7 +19,7 @@ public abstract class AbstractWeapon implements Weapon {
 
     public static AbstractWeapon createWeapon(Class<? extends AbstractWeapon> class_, PBPlayer owner) {
         try {
-            AbstractWeapon w =  class_.newInstance();
+            AbstractWeapon w = class_.newInstance();
             w.owner = owner;
             w.addBullets(w.startBullets());
             return w;
@@ -35,8 +35,8 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     protected void updateGUI() {
-        float max = (float)getMaxBullets();
-        float percent = (max == 0.0f ? 0.0f : (float)bullets / max);
+        float max = (float) getMaxBullets();
+        float percent = (max == 0.0f ? 0.0f : (float) bullets / max);
         getOwner().getBukkitPlayer().setExp(percent); //TODO Display EXP properly
         getOwner().getBukkitPlayer().setLevel(bullets);
     }
@@ -91,6 +91,7 @@ public abstract class AbstractWeapon implements Weapon {
     public abstract Material getNormalMaterial();
 
     private boolean reloading = false;
+
     @Override
     public void reload(ItemStack item) {
         if (!reloading) {
@@ -127,7 +128,7 @@ public abstract class AbstractWeapon implements Weapon {
                         if (first_index == -1) {
                             reloading = false;
                             owner.sendMessage(ChatColor.DARK_RED + "You're all out!");
-                            return;
+                            break;
                         }
                         ItemStack item_to_move = i.getItem(first_index);
                         if (!item_to_move.hasItemMeta() || !item_to_move.getItemMeta().hasDisplayName() || !item_to_move.getItemMeta().hasLore()) {
@@ -144,6 +145,7 @@ public abstract class AbstractWeapon implements Weapon {
             }
             updateGUI();
             owner.getBukkitPlayer().sendMessage(Paintball.formatMessage("Reloading..."));
+            owner.getBukkitPlayer().playSound(owner.getBukkitPlayer().getLocation(), Sound.ANVIL_USE, 60, 1);
             displayReloadAnimation(reloadtime);
 
             Runnable stopReload = new Runnable() {
@@ -191,6 +193,7 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     long lastFire = -1;
+
     public void shoot(double spreadfactor) {
         if (reloading) {
             owner.sendMessage(ChatColor.DARK_RED + "You cant shoot while reloading!");
@@ -235,6 +238,7 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     private boolean called;
+
     protected void onFire(final Snowball snowball, Player bukkitPlayer, double spread) {
         snowball.setShooter(bukkitPlayer);
         snowball.setTicksLived(2400);
@@ -246,7 +250,7 @@ public abstract class AbstractWeapon implements Weapon {
             Location ploc = bukkitPlayer.getLocation();
             double dir = -ploc.getYaw() - 90;
             double pitch = -ploc.getPitch();
-            double xwep = ((random.nextInt((int)(spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
+            double xwep = ((random.nextInt((int) (spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
             //double ywep = ((random.nextInt((int) (spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
             double zwep = ((random.nextInt((int) (spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
             double xd = Math.cos(Math.toRadians(dir)) * Math.cos(Math.toRadians(pitch)) + xwep;
@@ -270,6 +274,7 @@ public abstract class AbstractWeapon implements Weapon {
             Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, task, 2L * i);
         }
     }
+
     protected void onShoot(double spread) {
         called = true;
         Player bukkitPlayer = owner.getBukkitPlayer();
