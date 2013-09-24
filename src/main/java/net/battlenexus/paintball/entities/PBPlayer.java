@@ -132,13 +132,11 @@ public class PBPlayer {
             if (shooter.getCurrentTeam().contains(this)) {
                 shooter.sendMessage("Watch out! " + getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
             } else {
-                if(wouldDie(shooter.getCurrentWeapon().damage())) {
+                if (wouldDie(shooter.getCurrentWeapon().damage())) {
                     refillHealth();
                     kill(shooter);
-                    player.playSound(player.getLocation(), Sound.LEVEL_UP, 20, 0);
                 } else {
                     damagePlayer(shooter.getCurrentWeapon().damage());
-                    player.playSound(player.getLocation(), Sound.ORB_PICKUP, 20, 0);
                 }
             }
         }
@@ -156,6 +154,9 @@ public class PBPlayer {
             killer.addKill();
         getCurrentTeam().spawnPlayer(this);
         getCurrentGame().onPlayerKill(killer, this);
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            p.playSound(p.getLocation(), Sound.AMBIENCE_THUNDER, 40, 0);
+        }
     }
 
     public void spectateGame(PaintballGame game) {
@@ -201,15 +202,11 @@ public class PBPlayer {
         LeatherArmorMeta chestIm = (LeatherArmorMeta) chest.getItemMeta();
         LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
         LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
-        if(getCurrentTeam().equals(game.getConfig().getBlueTeam())) {
-            //if (bukkitP.getName().length() + 2 <= 16)
-            //    bukkitP.setPlayerListName(ChatColor.BLUE + bukkitP.getName());
+        if (getCurrentTeam().equals(game.getConfig().getBlueTeam())) {
             chestIm.setColor(Color.BLUE);
             legsIm.setColor(Color.BLUE);
             bootsIm.setColor(Color.BLUE);
         } else { //Current Team is red
-            //if (bukkitP.getName().length() + 2 <= 16)
-            //    bukkitP.setPlayerListName(ChatColor.RED + bukkitP.getName());
             chestIm.setColor(Color.RED);
             legsIm.setColor(Color.RED);
             bootsIm.setColor(Color.RED);
@@ -240,8 +237,6 @@ public class PBPlayer {
         player.setHealth(20.0);
         player.setFoodLevel(20);
         player.setCanPickupItems(true);
-        //if (player.getPlayerListName().contains("" + ChatColor.COLOR_CHAR))
-        //    player.setPlayerListName(player.getName());
         player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
     }
 
@@ -250,8 +245,8 @@ public class PBPlayer {
     }
 
     public void damagePlayer(int damage) {
-        getBukkitPlayer().setMaxHealth((double)getBukkitPlayer().getMaxHealth() - damage);
-        getBukkitPlayer().setHealth((double)getBukkitPlayer().getMaxHealth());
+        getBukkitPlayer().setMaxHealth((double) getBukkitPlayer().getMaxHealth() - damage);
+        getBukkitPlayer().setHealth((double) getBukkitPlayer().getMaxHealth());
     }
 
     public void refillHealth() {
