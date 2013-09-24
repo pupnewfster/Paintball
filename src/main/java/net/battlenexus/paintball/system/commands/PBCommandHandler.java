@@ -1,6 +1,6 @@
-package net.battlenexus.paintball.commands;
+package net.battlenexus.paintball.system.commands;
 
-import net.battlenexus.paintball.commands.sign.PlaceSignCommand;
+import net.battlenexus.paintball.system.commands.sign.PlaceSignCommand;
 import net.battlenexus.paintball.entities.PBPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -1,13 +1,13 @@
 package net.battlenexus.paintball;
 
-import net.battlenexus.paintball.commands.PBCommandHandler;
-import net.battlenexus.paintball.commands.sign.SignStat;
+import net.battlenexus.paintball.system.commands.PBCommandHandler;
+import net.battlenexus.paintball.system.commands.sign.SignStat;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.GameService;
-import net.battlenexus.paintball.listeners.PlayerListener;
-import net.battlenexus.paintball.listeners.TickBukkitTask;
-import net.battlenexus.paintball.scoreboard.ScoreManager;
-import net.battlenexus.paintball.utils.GhostManager;
+import net.battlenexus.paintball.system.listeners.PlayerListener;
+import net.battlenexus.paintball.system.listeners.TickBukkitTask;
+import net.battlenexus.paintball.system.ScoreManager;
+import net.battlenexus.paintball.system.utils.GhostManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -49,7 +49,7 @@ public class Paintball extends JavaPlugin {
         registerListeners();
 
         tasks = new TickBukkitTask();
-        tasks.runTaskTimerAsynchronously(this, 1, 1);
+        tasks.runTaskTimer(this, 1, 1);
 
         new Thread(new Runnable() {
             @Override

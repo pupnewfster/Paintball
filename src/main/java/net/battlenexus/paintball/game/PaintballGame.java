@@ -4,8 +4,8 @@ import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.Config;
-import net.battlenexus.paintball.listeners.Tick;
-import net.battlenexus.paintball.scoreboard.ScoreManager;
+import net.battlenexus.paintball.system.listeners.Tick;
+import net.battlenexus.paintball.system.ScoreManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -18,14 +18,19 @@ public abstract class PaintballGame implements Tick {
     protected Config config;
     protected ScoreManager score = new ScoreManager();
     protected boolean ended = false;
-    protected boolean started = true;
+    protected boolean started = false;
+    private boolean countdown = false;
 
     public PaintballGame() {
-        score.setupScoreboard("Kills", "kills");
+        score.setupScoreboard(getGamemodeName(), getGamemodeName());
     }
 
+    public abstract String getGamemodeName();
+
     public void beginGame() {
+        Paintball.INSTANCE.getTicker().addTick(this);
         onGameStart();
+        countdown = true;
         for (int i = 20; i > 0; i--) {
             if (i > 15) {
                 sendGameMessage("Game will start in: " + ChatColor.WHITE + i);
@@ -40,6 +45,7 @@ public abstract class PaintballGame implements Tick {
                 e.printStackTrace();
             }
         }
+        countdown = false;
         for (PBPlayer player : getAllPlayers()) {
             player.unfreeze();
         }
@@ -86,6 +92,8 @@ public abstract class PaintballGame implements Tick {
                 config.getRedTeam().joinTeam(p);
             }
         }
+        if (countdown)
+            p.freeze();
     }
 
     public void leaveGame(PBPlayer p) {
@@ -133,11 +141,15 @@ public abstract class PaintballGame implements Tick {
         for (PBPlayer player : players) {
             try {
                 player.leaveGame(this);
+                if (score != null) {
+                    score.hideScoreboardFor(player.getBukkitPlayer());
+                }
             } catch (Throwable t) {
                 t.printStackTrace();
                 Paintball.INSTANCE.error("Error removing player \"" + player.getBukkitPlayer().getName() + "\" from paintball game!");
             }
         }
+        Paintball.INSTANCE.getTicker().removeTick(this);
         _wakeup();
     }
 
@@ -191,7 +203,6 @@ public abstract class PaintballGame implements Tick {
     }
 
     protected void setupScoreboard() {
-        Paintball.INSTANCE.getTicker().addTick(this);
         OfflinePlayer[] blue = new OfflinePlayer[1];
         OfflinePlayer[] red = new OfflinePlayer[1];
         blue[0] = Bukkit.getOfflinePlayer(getConfig().getBlueTeam().getName());

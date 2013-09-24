@@ -22,6 +22,11 @@ public class SimpleGame extends PaintballGame implements Listener {
     }
 
     @Override
+    public String getGamemodeName() {
+        return "Basic Paintball";
+    }
+
+    @Override
     protected void onGameStart() {
         sendGameMessage("First team to 20 kills win!");
         showScore();
@@ -37,6 +42,7 @@ public class SimpleGame extends PaintballGame implements Listener {
         OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
         thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getName());
         score.addPlayersToTeam(player.getCurrentTeam().getName(), thisPlayer);
+        score.showScoreboardFor(player.getBukkitPlayer());
     }
 
     public void onPlayerLeave(PBPlayer player) {
@@ -48,6 +54,7 @@ public class SimpleGame extends PaintballGame implements Listener {
         OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
         thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getName());
         score.removePlayersFromTeam(player.getCurrentTeam().getName(), thisPlayer);
+        score.hideScoreboardFor(player.getBukkitPlayer());
     }
 
     @Override

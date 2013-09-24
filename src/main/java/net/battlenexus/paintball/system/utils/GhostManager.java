@@ -1,4 +1,4 @@
-package net.battlenexus.paintball.utils;
+package net.battlenexus.paintball.system.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;

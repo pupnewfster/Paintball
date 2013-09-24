@@ -1,7 +1,7 @@
-package net.battlenexus.paintball.commands.sign;
+package net.battlenexus.paintball.system.commands.sign;
 
 import net.battlenexus.paintball.Paintball;
-import net.battlenexus.paintball.listeners.Tick;
+import net.battlenexus.paintball.system.listeners.Tick;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;

@@ -1,10 +1,12 @@
-package net.battlenexus.paintball.scoreboard;
+package net.battlenexus.paintball.system;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
+
+import java.util.Set;
 
 public class ScoreManager {
     private final ScoreboardManager scoreboardManager;
@@ -26,6 +28,10 @@ public class ScoreManager {
         objective = scoreboard.registerNewObjective(key, "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(name);
+    }
+
+    public void setDisplaySlot(DisplaySlot slot) {
+        objective.setDisplaySlot(slot);
     }
 
     /**
@@ -53,17 +59,33 @@ public class ScoreManager {
      * Shows this scoreboard to everyone on the server
      */
     public void showScoreboard() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            player.setScoreboard(scoreboard);
+        Set<OfflinePlayer> players = scoreboard.getPlayers();
+        for(OfflinePlayer player : players) {
+            Player p = player.getPlayer();
+            if (p != null) {
+                p.setScoreboard(scoreboard);
+            }
         }
+    }
+
+    public void showScoreboardFor(Player p) {
+        p.setScoreboard(scoreboard);
+    }
+
+    public void hideScoreboardFor(Player p) {
+        p.setScoreboard(scoreboardManager.getNewScoreboard());
     }
 
     /**
      * Removes this scoreboard to everyone on the server
      */
     public void hideScoreboard() {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            player.setScoreboard(scoreboardManager.getNewScoreboard());
+        Set<OfflinePlayer> players = scoreboard.getPlayers();
+        for(OfflinePlayer player : players) {
+            Player p = player.getPlayer();
+            if (p != null) {
+                p.setScoreboard(scoreboardManager.getNewScoreboard());
+            }
         }
     }
 

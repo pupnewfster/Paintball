@@ -1,7 +1,8 @@
-package net.battlenexus.paintball.listeners;
+package net.battlenexus.paintball.system.listeners;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.system.inventory.PaintballMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -15,7 +16,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -79,6 +82,18 @@ public class PlayerListener implements Listener {
             if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
                 who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
                 event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
+    public void inventoryClicked(InventoryClickEvent event) {
+        if (event.getWhoClicked() instanceof Player) {
+            Player p = (Player) event.getWhoClicked();
+            Inventory i = event.getInventory();
+            if (i.getHolder() != null && i.getHolder() instanceof PaintballMenu) {
+                PaintballMenu menu = (PaintballMenu)event.getInventory().getHolder();
+
             }
         }
     }

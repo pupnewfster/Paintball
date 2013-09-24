@@ -1,4 +1,4 @@
-package net.battlenexus.paintball.commands;
+package net.battlenexus.paintball.system.commands;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;

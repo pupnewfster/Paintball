@@ -1,7 +1,7 @@
-package net.battlenexus.paintball.commands.sign;
+package net.battlenexus.paintball.system.commands.sign;
 
 import net.battlenexus.paintball.Paintball;
-import net.battlenexus.paintball.commands.PBCommand;
+import net.battlenexus.paintball.system.commands.PBCommand;
 import net.battlenexus.paintball.entities.PBPlayer;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -38,7 +38,7 @@ public class PlaceSignCommand implements PBCommand, Listener {
         } else {
             String type = args[0];
             try {
-                Class<? extends SignStat> _class = (Class<? extends SignStat>) Class.forName("net.battlenexus.paintball.commands.sign." + type);
+                Class<? extends SignStat> _class = (Class<? extends SignStat>) Class.forName("net.battlenexus.paintball.system.commands.sign." + type);
                 player.sendMessage("Please hit the sign to attach this stat to...");
                 queue.put(player.getBukkitPlayer(), _class);
             } catch (ClassNotFoundException e) {

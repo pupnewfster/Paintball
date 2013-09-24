@@ -1,4 +1,4 @@
-package net.battlenexus.paintball.commands.sign;
+package net.battlenexus.paintball.system.commands.sign;
 
 import net.battlenexus.paintball.Paintball;
 import org.bukkit.ChatColor;

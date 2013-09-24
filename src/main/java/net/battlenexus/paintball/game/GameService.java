@@ -92,9 +92,9 @@ public class GameService {
                         p.joinGame(game);
                     }
                 }
+                waiting = true;
                 game.beginGame();
                 try {
-                    waiting = true;
                     game.waitForEnd();
                 } catch (InterruptedException e) {
                     Paintball.INSTANCE.error("Game interrupted!");

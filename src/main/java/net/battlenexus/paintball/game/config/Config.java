@@ -195,4 +195,8 @@ public class Config {
     public int getPlayerMax() {
         return playerMax;
     }
+
+    public void setPlayerMax(int playerMax) {
+        this.playerMax = playerMax;
+    }
 }

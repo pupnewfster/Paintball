@@ -1,4 +1,4 @@
-package net.battlenexus.paintball.listeners;
+package net.battlenexus.paintball.system.listeners;
 
 public interface Tick {
 
