@@ -190,7 +190,7 @@ public abstract class PaintballGame implements Tick {
         }
     }
 
-    public void setupScoreboard() {
+    protected void setupScoreboard() {
         Paintball.INSTANCE.getTicker().addTick(this);
         OfflinePlayer[] blue = new OfflinePlayer[1];
         OfflinePlayer[] red = new OfflinePlayer[1];

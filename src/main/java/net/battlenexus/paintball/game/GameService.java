@@ -3,6 +3,7 @@ package net.battlenexus.paintball.game;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.config.Config;
+import net.battlenexus.paintball.game.impl.OneHitMinute;
 import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -14,7 +15,8 @@ import java.util.Random;
 
 public class GameService {
     private static final Class<?>[] GAME_TYPES = new Class[] {
-            SimpleGame.class
+            SimpleGame.class,
+            OneHitMinute.class
     };
 
     private ArrayList<Config> configs = new ArrayList<Config>();

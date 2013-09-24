@@ -223,6 +223,17 @@ public abstract class AbstractWeapon implements Weapon {
         return owner;
     }
 
+    private boolean onehit;
+    @Override
+    public void setOneHitKill(boolean value) {
+        this.onehit = value;
+    }
+
+    @Override
+    public boolean isOneHitKill() {
+        return onehit;
+    }
+
     private boolean called;
     protected void onFire(final Snowball snowball, Player bukkitPlayer, double spread) {
         snowball.setShooter(bukkitPlayer);

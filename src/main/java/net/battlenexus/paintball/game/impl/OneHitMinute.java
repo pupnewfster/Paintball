@@ -6,37 +6,46 @@ import net.battlenexus.paintball.game.PaintballGame;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.event.Listener;
 
-public class SimpleGame extends PaintballGame implements Listener {
-    private int rscore, bscore;
-    private boolean didsetup;
-
-    @Override
-    public void tick() {
-    }
-
-    @Override
-    public int getTimeout() {
-        return 0;
-    }
+public class OneHitMinute extends PaintballGame {
+    private int seconds = 60;
+    private boolean setup;
+    private static final String TIME_LEFT_NAME = "Time Left";
+    private static final OfflinePlayer TIME_LEFT = Bukkit.getOfflinePlayer(TIME_LEFT_NAME);
+    private static final OfflinePlayer[] TIME_LEFT_ARRAY = new OfflinePlayer[] { TIME_LEFT };
+    private int bscore;
+    private int rscore;
 
     @Override
     protected void onGameStart() {
-        sendGameMessage("First team to 20 kills win!");
+        sendGameMessage(ChatColor.DARK_RED + "ONE HIT MINUTE!");
         showScore();
     }
 
     @Override
     public void onPlayerJoin(PBPlayer player) {
         super.onPlayerJoin(player);
-        if (!didsetup) {
+        if (!setup) {
             super.setupScoreboard();
-            didsetup = true;
+            setup = true;
         }
         OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
         thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getName());
         score.addPlayersToTeam(player.getCurrentTeam().getName(), thisPlayer);
+        player.getCurrentWeapon().setOneHitKill(true);
+    }
+
+    @Override
+    public void onPlayerLeave(PBPlayer player) {
+
+        player.getCurrentWeapon().setOneHitKill(false);
+    }
+
+    @Override
+    protected void setupScoreboard() {
+        score.addTeam(TIME_LEFT_NAME, TIME_LEFT_ARRAY);
+        score.addPoints(TIME_LEFT, seconds);
+        super.setupScoreboard();
     }
 
     @Override
@@ -61,14 +70,16 @@ public class SimpleGame extends PaintballGame implements Listener {
                 }
             }
         }
+    }
 
+    @Override
+    public void tick() {
+        seconds--;
+        score.addPoints(TIME_LEFT, -1);
+    }
 
-        if (bscore >= 20) {
-            sendGameMessage("The " + getConfig().getBlueTeam().getName() + ChatColor.GRAY + " team wins!");
-            super.endGame();
-        } else if (rscore >= 20) {
-            sendGameMessage("The " + getConfig().getRedTeam().getName() + ChatColor.GRAY + " team wins!");
-            super.endGame();
-        }
+    @Override
+    public int getTimeout() {
+        return 1000;
     }
 }

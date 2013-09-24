@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Random;
 
 public interface Weapon {
+    public void setOneHitKill(boolean value);
+
+    public boolean isOneHitKill();
+
     public String name();
 
     public int clipeSize();
