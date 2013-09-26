@@ -3,7 +3,6 @@ package net.battlenexus.paintball.system.listeners;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class TickBukkitTask extends BukkitRunnable {
     private final ArrayList<TickData> ticks = new ArrayList<TickData>();
@@ -11,11 +10,10 @@ public class TickBukkitTask extends BukkitRunnable {
     @Override
     public void run() {
         synchronized (ticks) {
-            Iterator<TickData> tickDataIterator = ticks.iterator();
-            while (tickDataIterator.hasNext()) {
-                TickData t = tickDataIterator.next();
+            TickData[] tick_array = ticks.toArray(new TickData[ticks.size()]);
+            for (TickData t : tick_array) {
                 if (t.tick == null) {
-                    tickDataIterator.remove();
+                    ticks.remove(t);
                     continue;
                 }
                 if (t.tick.getTimeout() == 0)

@@ -3,9 +3,10 @@ package net.battlenexus.paintball.game;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
-import net.battlenexus.paintball.game.config.Config;
-import net.battlenexus.paintball.system.listeners.Tick;
+import net.battlenexus.paintball.game.config.MapConfig;
+import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.system.ScoreManager;
+import net.battlenexus.paintball.system.listeners.Tick;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class PaintballGame implements Tick {
-    protected Config config;
+    protected MapConfig mapConfig;
     protected ScoreManager score = new ScoreManager();
     protected boolean ended = false;
     protected boolean started = false;
@@ -48,6 +49,11 @@ public abstract class PaintballGame implements Tick {
         countdown = false;
         for (PBPlayer player : getAllPlayers()) {
             player.unfreeze();
+            if (player.getCurrentWeapon() != null && player.getCurrentWeapon() instanceof AbstractWeapon) {
+                player.getCurrentWeapon().emptyGun();
+                player.setWeapon(player.getCurrentWeapon()); //ensure they have there own gun..
+                ((AbstractWeapon)player.getCurrentWeapon()).addBullets(player.getCurrentWeapon().startBullets());
+            }
         }
         started = true;
         sendGameMessage(ChatColor.GREEN + "GO!");
@@ -61,12 +67,12 @@ public abstract class PaintballGame implements Tick {
 
     protected abstract void onGameStart();
 
-    void setConfig(Config map_config) {
-        config = map_config;
+    void setConfig(MapConfig map_config) {
+        mapConfig = map_config;
     }
 
-    public final Config getConfig() {
-        return config;
+    public final MapConfig getConfig() {
+        return mapConfig;
     }
 
     public void sendGameMessage(String s) {
@@ -81,15 +87,15 @@ public abstract class PaintballGame implements Tick {
     }
 
     public void joinNextOpenTeam(PBPlayer p) {
-        if (config.getBlueTeam().size() < config.getRedTeam().size()) {
-            config.getBlueTeam().joinTeam(p);
-        } else if (config.getRedTeam().size() < config.getBlueTeam().size()) {
-            config.getRedTeam().joinTeam(p);
+        if (mapConfig.getBlueTeam().size() < mapConfig.getRedTeam().size()) {
+            mapConfig.getBlueTeam().joinTeam(p);
+        } else if (mapConfig.getRedTeam().size() < mapConfig.getBlueTeam().size()) {
+            mapConfig.getRedTeam().joinTeam(p);
         } else {
             if (new Random().nextBoolean()) {
-                config.getBlueTeam().joinTeam(p);
+                mapConfig.getBlueTeam().joinTeam(p);
             } else {
-                config.getRedTeam().joinTeam(p);
+                mapConfig.getRedTeam().joinTeam(p);
             }
         }
         if (countdown)
@@ -104,18 +110,18 @@ public abstract class PaintballGame implements Tick {
     }
 
     public Team getTeamForPlayer(PBPlayer p) {
-        if (config.getRedTeam().contains(p))
-            return config.getRedTeam();
-        else if (config.getBlueTeam().contains(p))
-            return config.getBlueTeam();
+        if (mapConfig.getRedTeam().contains(p))
+            return mapConfig.getRedTeam();
+        else if (mapConfig.getBlueTeam().contains(p))
+            return mapConfig.getBlueTeam();
         else
             return null;
     }
 
     public PBPlayer[] getAllPlayers() {
         List<PBPlayer> players = new ArrayList<PBPlayer>();
-        players.addAll(config.getBlueTeam().getAllPlayers());
-        players.addAll(config.getRedTeam().getAllPlayers());
+        players.addAll(mapConfig.getBlueTeam().getAllPlayers());
+        players.addAll(mapConfig.getRedTeam().getAllPlayers());
 
         return players.toArray(new PBPlayer[players.size()]);
     }

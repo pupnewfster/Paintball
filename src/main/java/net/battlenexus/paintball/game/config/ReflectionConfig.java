@@ -1,8 +1,6 @@
 package net.battlenexus.paintball.game.config;
 
 import net.battlenexus.paintball.Paintball;
-import net.battlenexus.paintball.entities.Team;
-import org.bukkit.Location;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -18,68 +16,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Formatter;
 
-public class Config {
+public abstract class ReflectionConfig {
     public static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
-
-    @ConfigItem
-    private Team blue_team;
-    @ConfigItem
-    private Team red_team;
-    @ConfigItem
-    private String map_name;
-    @ConfigItem
-    private int playerMax = 16;
-
-    public Config() {
-        blue_team = new Team();
-        red_team = new Team();
-    }
-
-    public Config(Config toClone) {
-        if (toClone == null)
-            throw new InvalidParameterException("toClone cannot be null!");
-        this.map_name = toClone.map_name;
-        //this.map_config = new Map(toClone.map_config);
-        this.blue_team = new Team(toClone.blue_team);
-        this.red_team = new Team(toClone.red_team);
-    }
-
-    public void setMapName(String mapName) {
-        this.map_name = mapName;
-    }
-
-    public void setTeamName(int team, String name) {
-        if (team == 0) {
-            blue_team.setTeamName(name);
-        } else if (team == 1) {
-            red_team.setTeamName(name);
-        }
-    }
-
-    public void setTeamSpawn(int team, Location spawn) {
-        if (team == 0) {
-            blue_team.setSpawn(spawn);
-        } else if (team == 1) {
-            red_team.setSpawn(spawn);
-        }
-    }
-
-    public Team getRedTeam() {
-        return red_team;
-    }
-
-    public Team getBlueTeam() {
-        return blue_team;
-    }
-
-    public String getMapName() {
-        return map_name;
-    }
-
 
     public void parseFile(File file) throws IOException {
         if (!file.exists())
@@ -106,21 +47,30 @@ public class Config {
                             if (isConfigItem(f)) {
                                 if (ConfigParser.class.isAssignableFrom(f.getType())) {
                                     ConfigParser parser = (ConfigParser) f.getType().getConstructor().newInstance();
-                                    parser.parse(this, item.getChildNodes());
+                                    parser.parse(item.getChildNodes());
                                     f.set(this, parser);
                                 } else {
                                     if (String.class.isAssignableFrom(f.getType())) {
                                         f.set(this, item.getFirstChild().getNodeValue());
                                     } else if (Integer.class.isAssignableFrom(f.getType())) {
-                                        f.set(this, Integer.parseInt(item.getFirstChild().getNodeName()));
+                                        f.set(this, Integer.parseInt(item.getFirstChild().getNodeValue()));
                                     } else if (Boolean.class.isAssignableFrom(f.getType())) {
                                         f.set(this, item.getFirstChild().getNodeValue().toLowerCase().contains("y"));
-                                    } else {
+                                    } else if (Float.class.isAssignableFrom(f.getType())) {
+                                        f.set(this, Float.parseFloat(item.getFirstChild().getNodeValue()));
+                                    } else if (Double.class.isAssignableFrom(f.getType())) {
+                                        f.set(this, Double.parseDouble(item.getFirstChild().getNodeValue()));
+                                    } else if (Long.class.isAssignableFrom(f.getType())) {
+                                        f.set(this, Long.parseLong(item.getFirstChild().getNodeValue()));
+                                    } else if (Float.class.isAssignableFrom(f.getType())) {
+                                        f.set(this, Float.parseFloat(item.getFirstChild().getNodeValue()));
+                                    }
+                                    else {
                                         Paintball.INSTANCE.error("Cannot assign value for item \"" + item_name + "\"");
                                     }
                                 }
                             } else {
-                                Paintball.INSTANCE.error("Unknown config item \"" + item_name + "\"");
+                                Paintball.INSTANCE.error("Unknown mapConfig item \"" + item_name + "\"");
                             }
                             break;
                         }
@@ -128,11 +78,11 @@ public class Config {
                 }
             }
         } catch (ParserConfigurationException e) {
-            throw new IOException("Error reading config!", e);
+            throw new IOException("Error reading mapConfig!", e);
         } catch (SAXException e) {
             throw new IOException("Error parsing file!", e);
         } catch (IllegalAccessException e) {
-            throw new IOException("Error setting value for config!", e);
+            throw new IOException("Error setting value for mapConfig!", e);
         } catch (NoSuchMethodException e) {
             throw new IOException("Field did not have a default constructor!", e);
         } catch (InstantiationException e) {
@@ -145,7 +95,7 @@ public class Config {
     public String[] save() {
         ArrayList<String> lines = new ArrayList<String>();
         Field[] fields = getClass().getDeclaredFields();
-        lines.add("<config>");
+        lines.add("<mapConfig>");
         for (Field f : fields) {
             if (isConfigItem(f)) {
                 Object obj;
@@ -168,7 +118,7 @@ public class Config {
                 }
             }
         }
-        lines.add("</config>");
+        lines.add("</mapConfig>");
 
         return lines.toArray(new String[lines.size()]);
     }
@@ -188,15 +138,7 @@ public class Config {
         formatter.close();
     }
 
-    private boolean isConfigItem(Field field) {
+    private static boolean isConfigItem(Field field) {
         return field.getAnnotation(ConfigItem.class) != null;
-    }
-
-    public int getPlayerMax() {
-        return playerMax;
-    }
-
-    public void setPlayerMax(int playerMax) {
-        this.playerMax = playerMax;
     }
 }

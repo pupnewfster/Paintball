@@ -19,6 +19,11 @@ public abstract class PaintballMenu implements InventoryHolder {
         addItems(inventory);
     }
 
+    public PaintballMenu(String menu) {
+        inventory = Bukkit.createInventory(this, slotCount(), menu);
+        addItems(inventory);
+    }
+
     public void displayInventory(PBPlayer p) {
         displayInventory(p.getBukkitPlayer());
     }

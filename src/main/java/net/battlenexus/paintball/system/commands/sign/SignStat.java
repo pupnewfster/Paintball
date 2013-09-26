@@ -51,7 +51,7 @@ public abstract class SignStat implements Tick {
         if (!dir.exists()) {
             boolean result = dir.mkdir();
         }
-        Formatter formatter = new Formatter(new FileWriter(new File(dir, lines[0] + lines[1] + lines[2] + ".dat"), true));
+        Formatter formatter = new Formatter(new FileWriter(new File(dir, lines[0] + lines[1] + lines[2] + ".dat"), false));
         for (String line : lines) {
             formatter.out().append(line).append("\n");
         }

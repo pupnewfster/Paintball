@@ -2,7 +2,7 @@ package net.battlenexus.paintball.game;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
-import net.battlenexus.paintball.game.config.Config;
+import net.battlenexus.paintball.game.config.MapConfig;
 import net.battlenexus.paintball.game.impl.OneHitMinute;
 import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
@@ -19,10 +19,10 @@ public class GameService {
             OneHitMinute.class
     };
 
-    private ArrayList<Config> configs = new ArrayList<Config>();
+    private ArrayList<MapConfig> mapConfigs = new ArrayList<MapConfig>();
     private PaintballGame game;
     private ArrayList<PBPlayer> joinnext = new ArrayList<PBPlayer>();
-    private Config nextconfig;
+    private MapConfig nextconfig;
     private boolean running = true;
     private boolean waiting = false;
     private Thread current_thread;
@@ -33,10 +33,10 @@ public class GameService {
         if (maps != null) {
             for (File f : maps) {
                 if (f.isFile() && f.getName().endsWith(".xml")) {
-                    Config c = new Config();
+                    MapConfig c = new MapConfig();
                     try {
                         c.parseFile(f);
-                        configs.add(c);
+                        mapConfigs.add(c);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -47,7 +47,7 @@ public class GameService {
 
 
     public void play() {
-        if (configs.size() == 0) {
+        if (mapConfigs.size() == 0) {
             Paintball.INSTANCE.error("No maps to play on!");
             return;
         }
@@ -60,8 +60,8 @@ public class GameService {
         final Random random = new Random();
         while (running) {
             try {
-                int map_id = random.nextInt(configs.size());
-                Config map_config = new Config(configs.get(map_id)); //Make a clone of the config
+                int map_id = random.nextInt(mapConfigs.size());
+                MapConfig map_config = new MapConfig(mapConfigs.get(map_id)); //Make a clone of the mapConfig
                 this.nextconfig = map_config;
                 int game_id = random.nextInt(GAME_TYPES.length);
                 game = createGame((Class<? extends PaintballGame>) GAME_TYPES[game_id]); //Weak typing because fuck it
@@ -142,10 +142,6 @@ public class GameService {
 
     public int getQueueCount() {
         return joinnext.size();
-    }
-
-    public void showScore() {
-        game.showScore();
     }
 
     public boolean joinNextGame(Player p) {

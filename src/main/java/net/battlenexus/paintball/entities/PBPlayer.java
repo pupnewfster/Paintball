@@ -40,7 +40,8 @@ public class PBPlayer {
     public void setWeapon(Weapon weapon) {
         this.weapon = weapon;
         ItemStack item = Weapon.WeaponUtils.toItemStack(weapon);
-
+        if (player.getInventory().contains(item))
+            return;
         player.getInventory().addItem(item);
 
         if (player.getInventory().getItem(0) != item) {
@@ -143,7 +144,7 @@ public class PBPlayer {
     }
 
     public boolean isInGame() {
-        return current_game != null && getCurrentTeam() != null;
+        return current_game != null && getCurrentTeam() != null && !current_game.hasEnded();
     }
 
     public void kill(final PBPlayer killer) {
@@ -233,6 +234,10 @@ public class PBPlayer {
         player.getInventory().setChestplate(new ItemStack(Material.AIR));
         player.getInventory().setLeggings(new ItemStack(Material.AIR));
         player.getInventory().setBoots(new ItemStack(Material.AIR));
+        if (getCurrentWeapon() != null) {
+            weapon.emptyGun();
+            setWeapon(weapon); //Give the player back there gun..
+        }
         player.setMaxHealth(20.0);
         player.setHealth(20.0);
         player.setFoodLevel(20);

@@ -3,12 +3,18 @@ package net.battlenexus.paintball.system.commands;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.GameService;
+import net.battlenexus.paintball.system.inventory.impl.WeaponShopMenu;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class JoinQueue implements PBCommand {
     @Override
     public void executePlayer(PBPlayer player, String[] args) {
         GameService service = Paintball.INSTANCE.getGameService();
+        if (player.getCurrentWeapon() == null) {
+            WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "CHOOSE A WEAPON");
+            menu.displayInventory(player.getBukkitPlayer());
+        }
         if (!service.isGameInProgress() || !service.canJoin()) {
             boolean result = service.joinNextGame(player);
             if (!result) {

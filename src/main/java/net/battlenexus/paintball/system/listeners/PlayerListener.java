@@ -4,6 +4,7 @@ import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.system.inventory.PaintballMenu;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -45,7 +46,6 @@ public class PlayerListener implements Listener {
             event.getPlayer().getInventory().setMaxStackSize(1);
             event.getPlayer().setMaxHealth(20.0);
             event.getPlayer().setHealth(20.0);
-            Paintball.INSTANCE.getGameService().showScore();
         }
         Paintball.getGhostManager().addPlayer(event.getPlayer());
         //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
@@ -84,6 +84,9 @@ public class PlayerListener implements Listener {
                 event.setCancelled(true);
             }
         }
+        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (event.getClickedBlock().getType().equals(Material.ANVIL))) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -93,7 +96,7 @@ public class PlayerListener implements Listener {
             Inventory i = event.getInventory();
             if (i.getHolder() != null && i.getHolder() instanceof PaintballMenu) {
                 PaintballMenu menu = (PaintballMenu)event.getInventory().getHolder();
-
+                menu.onItemClicked(event);
             }
         }
     }

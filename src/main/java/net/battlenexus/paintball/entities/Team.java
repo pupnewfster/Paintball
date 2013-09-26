@@ -1,10 +1,9 @@
 package net.battlenexus.paintball.entities;
 
 import net.battlenexus.paintball.Paintball;
-import net.battlenexus.paintball.game.config.Config;
 import net.battlenexus.paintball.game.config.ConfigParser;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
-import net.battlenexus.paintball.game.weapon.impl.Sniper;
+import net.battlenexus.paintball.game.weapon.impl.BasicPaintball;
 import org.bukkit.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -80,7 +79,9 @@ public class Team implements ConfigParser {
     public void joinTeam(PBPlayer player) {
         players.add(player);
         spawnPlayer(player);
-        player.setWeapon(AbstractWeapon.createWeapon(Sniper.class, player)); //TODO Temp code, remove
+        if (player.getCurrentWeapon() == null) {
+            player.setWeapon(AbstractWeapon.createWeapon(BasicPaintball.class, player));
+        }
     }
 
     public void leaveTeam(PBPlayer player) {
@@ -91,7 +92,7 @@ public class Team implements ConfigParser {
 
 
     @Override
-    public void parse(Config config, NodeList childNodes) {
+    public void parse(NodeList childNodes) {
         if (childNodes != null && childNodes.getLength() > 0) {
             double x = 0, y = 0, z = 0, yaw = 0, pitch = 0;
             for (int i = 0; i < childNodes.getLength(); i++) {

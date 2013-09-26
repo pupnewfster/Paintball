@@ -39,6 +39,8 @@ public interface Weapon {
 
     public void shoot();
 
+    public void emptyGun();
+
     public int currentClipSize();
 
     public int totalBullets();

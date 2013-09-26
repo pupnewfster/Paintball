@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface ConfigParser {
 
-    public void parse(Config config, NodeList childNodes);
+    public void parse(NodeList childNodes);
 
     public void save(ArrayList<String> lines);
 }

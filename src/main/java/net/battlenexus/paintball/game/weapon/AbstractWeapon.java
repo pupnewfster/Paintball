@@ -21,7 +21,6 @@ public abstract class AbstractWeapon implements Weapon {
         try {
             AbstractWeapon w = class_.newInstance();
             w.owner = owner;
-            w.addBullets(w.startBullets());
             return w;
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -35,13 +34,34 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     protected void updateGUI() {
+        if (owner == null)
+            return;
         float max = (float) getMaxBullets();
         float percent = (max == 0.0f ? 0.0f : (float) bullets / max);
         getOwner().getBukkitPlayer().setExp(percent); //TODO Display EXP properly
         getOwner().getBukkitPlayer().setLevel(bullets);
     }
 
+    @Override
+    public void emptyGun() {
+        bullets = 0;
+        if (owner == null)
+            return;
+
+        Inventory inventory = owner.getBukkitPlayer().getInventory();
+        ItemStack[] items = owner.getBukkitPlayer().getInventory().getContents();
+        for (ItemStack i : items) {
+            int c = Weapon.WeaponUtils.getBulletCount(i);
+            if (c == 0)
+                continue;
+            inventory.remove(i);
+        }
+        owner.getBukkitPlayer().updateInventory();
+    }
+
     public int getMaxBullets() {
+        if (owner == null)
+            return 0;
         ItemStack[] items = owner.getBukkitPlayer().getInventory().getContents();
         int i = 0;
         for (ItemStack item : items) {
@@ -52,7 +72,7 @@ public abstract class AbstractWeapon implements Weapon {
 
     @Override
     public Material getMaterial() {
-        if (getOwner().getCurrentGame() == null || getOwner().getCurrentTeam() == null)
+        if (owner == null || getOwner().getCurrentGame() == null || getOwner().getCurrentTeam() == null)
             return getNormalMaterial();
         else {
             PaintballGame pg = getOwner().getCurrentGame();
@@ -65,6 +85,8 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     public void addBullets(int amount) {
+        if (owner == null)
+            return;
         if (amount <= clipeSize()) {
             ItemStack item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), amount);
             owner.getBukkitPlayer().getInventory().addItem(item);
@@ -94,6 +116,8 @@ public abstract class AbstractWeapon implements Weapon {
 
     @Override
     public void reload(ItemStack item) {
+        if (owner == null)
+            return;
         if (!reloading) {
             int c = Weapon.WeaponUtils.getBulletCount(item);
             if (c == 0)
@@ -162,6 +186,8 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     private void displayReloadAnimation(float speed) {
+        if (owner == null)
+            return;
         owner.getBukkitPlayer().setExp(0);
         final Player thePlayer = owner.getBukkitPlayer();
         final int finalspeed = Math.round((speed / 10) * 20);
@@ -195,6 +221,8 @@ public abstract class AbstractWeapon implements Weapon {
     long lastFire = -1;
 
     public void shoot(double spreadfactor) {
+        if (owner == null)
+            return;
         if (reloading) {
             owner.sendMessage(ChatColor.DARK_RED + "You cant shoot while reloading!");
             return;
@@ -240,6 +268,8 @@ public abstract class AbstractWeapon implements Weapon {
     private boolean called;
 
     protected void onFire(final Snowball snowball, Player bukkitPlayer, double spread) {
+        if (bukkitPlayer == null)
+            return;
         snowball.setShooter(bukkitPlayer);
         snowball.setTicksLived(2400);
         Vector vector;
@@ -276,6 +306,8 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     protected void onShoot(double spread) {
+        if (owner == null)
+            return;
         called = true;
         Player bukkitPlayer = owner.getBukkitPlayer();
         bukkitPlayer.playEffect(bukkitPlayer.getLocation(), Effect.CLICK1, 10);
