@@ -104,7 +104,7 @@ public class CreatePBMap implements PBCommand, Listener {
                     event.getPlayer().sendMessage(Paintball.formatMessage("Please wait while I save this to a map file.."));
 
                     try {
-                        ch.mapConfig.saveToFile(ch.mapConfig.getMapName().toLowerCase());
+                        ch.mapConfig.saveToFile(ch.mapConfig.getMapName().toLowerCase() + ".xml");
                         event.getPlayer().sendMessage(Paintball.formatMessage(ChatColor.GREEN + "All set!"));
                         event.getPlayer().sendMessage(Paintball.formatMessage("Thanks for using the Map Creator!"));
                         event.getPlayer().sendMessage(Paintball.formatMessage("Goodbye."));

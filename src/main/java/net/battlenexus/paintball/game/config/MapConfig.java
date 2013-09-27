@@ -28,7 +28,6 @@ public class MapConfig extends ReflectionConfig {
         if (toClone == null)
             throw new InvalidParameterException("toClone cannot be null!");
         this.map_name = toClone.map_name;
-        //this.map_config = new Map(toClone.map_config);
         this.blue_team = new Team(toClone.blue_team);
         this.red_team = new Team(toClone.red_team);
     }

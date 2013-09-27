@@ -131,7 +131,7 @@ public abstract class ReflectionConfig {
             if (!result)
                 throw new IOException("Error creating maps directory!");
         }
-        Formatter formatter = new Formatter(new FileWriter(new File(dir, map_name + ".xml"), true));
+        Formatter formatter = new Formatter(new FileWriter(new File(dir, map_name), true));
         for (String line : lines) {
             formatter.out().append(line).append("\n");
         }
