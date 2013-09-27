@@ -10,3 +10,6 @@ on death of like cactus or falling send to team spawn not server spawn
 also have it remove from queue when you leave the game....
 also the way to get more bullets chests or signs or from killing people some bullets
 also when one whole team leaves game to have other team win
+
+Cvar system
+traceline functions
