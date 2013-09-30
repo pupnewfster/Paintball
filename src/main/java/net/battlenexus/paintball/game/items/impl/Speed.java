@@ -16,6 +16,11 @@ public class Speed extends AbstractItem {
         return Material.FEATHER;
     }
 
+    @Override
+    public String getName() {
+        return "Speed Boost";
+    }
+
     //Options for amplifier should be 0, or 1
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {

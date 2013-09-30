@@ -17,6 +17,11 @@ public class Health extends AbstractItem {
         return Material.EMERALD;
     }
 
+    @Override
+    public String getName() {
+        return "Increased Health";
+    }
+
     //Options for amplifier should be more than 0
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {

@@ -12,6 +12,7 @@ import java.util.List;
 
 public abstract class AbstractItem {
     public abstract Material getMaterial();
+    public abstract String getName();
     public abstract void addEffect(PBPlayer p, ItemStack is);
 
     protected AbstractItem() {
@@ -19,8 +20,13 @@ public abstract class AbstractItem {
 
     //For when we add item to their inventory so we get ItemStack
     public static ItemStack createItem(Material material, int duration, int amplifier) {
+        AbstractItem item = getItem(material);
+        if(item == null) {
+            return new ItemStack(Material.AIR);
+        }
         ItemStack itemStack = new ItemStack(material);
         ItemMeta im = itemStack.getItemMeta();
+        im.setDisplayName(item.getName());
         List<String> lore = new ArrayList<String>();
         String dur = Integer.toString(duration / 60) + ":" + Integer.toString(duration % 60);
         lore.add("Duration: " + dur);
