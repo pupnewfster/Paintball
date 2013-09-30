@@ -3,7 +3,7 @@ package net.battlenexus.paintball.game.weapon.impl;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import org.bukkit.Material;
 
-public class BasicPaintball extends AbstractWeapon {
+public class Pistol extends AbstractWeapon {
     @Override
     public Material getBlueTeamMaterial() {
         return Material.ARROW;
@@ -21,22 +21,22 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public String name() {
-        return "Basic Paintball Gun";
+        return "Pistol";
     }
 
     @Override
     public int clipeSize() {
-        return 40;
+        return 10;
     }
 
     @Override
     public int startBullets() {
-        return 500;
+        return 160;
     }
 
     @Override
     public int damage() {
-        return 4;
+        return 2;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public int reloadDelay() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BasicPaintball extends AbstractWeapon {
 
     @Override
     public int getFireDelay() {
-        return 0;
+        return 500;
     }
 
     @Override
