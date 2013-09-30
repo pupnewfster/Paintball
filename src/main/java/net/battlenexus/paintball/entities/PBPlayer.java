@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.potion.PotionEffect;
 
 import java.util.HashMap;
 
@@ -21,7 +22,8 @@ public class PBPlayer {
     private boolean isSpectating;
     private Weapon weapon;
     private PaintballGame current_game;
-    private double maxHealth = 18; //Can change to have more items and things but this is default max health
+    private double defaultMaxHealth = 18;
+    private double maxHealth = 18;
 
     public HashMap<PBPlayer, Integer> kill_cache = new HashMap<PBPlayer, Integer>();
 
@@ -230,6 +232,9 @@ public class PBPlayer {
             game.onPlayerLeave(this);
         getCurrentTeam().leaveTeam(null);
         setCurrentGame(null);
+        maxHealth = defaultMaxHealth;
+        for (PotionEffect effect : player.getActivePotionEffects())
+            player.removePotionEffect(effect.getType());
         player.getInventory().clear();
         player.getInventory().setChestplate(new ItemStack(Material.AIR));
         player.getInventory().setLeggings(new ItemStack(Material.AIR));
@@ -281,6 +286,10 @@ public class PBPlayer {
 
     public void addDeath() {
         this.deaths++;
+    }
+
+    public void increasMaxHealth(double halfHearts) {
+        maxHealth  += halfHearts;
     }
 
     public void sendMessage(String s) {
