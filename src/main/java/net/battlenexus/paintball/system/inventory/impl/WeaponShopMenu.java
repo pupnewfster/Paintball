@@ -3,10 +3,7 @@ package net.battlenexus.paintball.system.inventory.impl;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.Weapon;
-import net.battlenexus.paintball.game.weapon.impl.BasicPaintball;
-import net.battlenexus.paintball.game.weapon.impl.MachineGun;
-import net.battlenexus.paintball.game.weapon.impl.Shotgun;
-import net.battlenexus.paintball.game.weapon.impl.Sniper;
+import net.battlenexus.paintball.game.weapon.impl.*;
 import net.battlenexus.paintball.system.inventory.PaintballMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -20,10 +17,10 @@ import java.util.List;
 
 public class WeaponShopMenu extends PaintballMenu {
     private static final Class<?>[] WEAPONS = new Class[] { //MUST BE A MULTIPLE OF 9!
-            BasicPaintball.class, MachineGun.class, Sniper.class, Shotgun.class, null, null, null, null, null
+            BasicPaintball.class, Pistol.class, MachineGun.class, Sniper.class, Shotgun.class, null, null, null, null
     };
     private static final int[] PRICES = new int[] {
-            0,  10, 10, 10, 0, 0, 0,  0,  0
+            0, 5, 10, 10, 10, 0, 0, 0, 0
     };
 
     public WeaponShopMenu(String s) {

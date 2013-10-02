@@ -21,7 +21,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import net.battlenexus.paintball.game.items.AbstractItem;
 import java.util.HashMap;
 
 public class PlayerListener implements Listener {
@@ -81,6 +81,12 @@ public class PlayerListener implements Listener {
             //RELOAD
             if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
                 who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
+                event.setCancelled(true);
+            }
+            AbstractItem item = AbstractItem.getItem(p.getInventory().getItemInHand().getType());
+            //POWERUP
+            if (item != null && who.isInGame()) {
+                item.addEffect(who, p.getInventory().getItemInHand());
                 event.setCancelled(true);
             }
         }
