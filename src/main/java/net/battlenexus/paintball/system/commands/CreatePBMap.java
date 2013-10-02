@@ -5,10 +5,13 @@ import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.config.MapConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.io.IOException;
@@ -41,6 +44,25 @@ public class CreatePBMap implements PBCommand, Listener {
     }
 
     @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (creators.containsKey(event.getPlayer())) {
+            CreationHelper ch = creators.get(event.getPlayer());
+            if (ch.step == 2) {
+                event.setCancelled(true);
+                Block b = event.getBlock();
+                if (b.getType() == Material.CHEST) {
+                    Location l = b.getLocation();
+                    ch.mapConfig.addChest(l);
+                    event.getPlayer().sendMessage(Paintball.formatMessage(ChatColor.GREEN + "Chest added!"));
+                } else {
+                    event.getPlayer().sendMessage(Paintball.formatMessage(ChatColor.RED + "Thats not a chest!"));
+                    event.getPlayer().sendMessage(Paintball.formatMessage(ChatColor.RED + "If your done with this step, say \"pineapple\""));
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         if (creators.containsKey(event.getPlayer())) {
             CreationHelper ch = creators.get(event.getPlayer());
@@ -68,15 +90,23 @@ public class CreatePBMap implements PBCommand, Listener {
                 ch.mapConfig.setPlayerMax(number);
                 ch.step++;
                 event.getPlayer().sendMessage(Paintball.formatMessage("So this map is for " + (number >= 1000 ? "everyone!" : number + " players!")));
-                event.getPlayer().sendMessage(Paintball.formatMessage("Ok. Whats the name of the first team?"));
+                event.getPlayer().sendMessage(Paintball.formatMessage("Ok. Next, hit all chests in this map"));
+                event.getPlayer().sendMessage(Paintball.formatMessage("Once you've hit all the chests, say \"pineapple\""));
             } else if (ch.step == 2) {
+                if (event.getMessage().equalsIgnoreCase("pineapple")) {
+                    event.setCancelled(true);
+                    ch.step++;
+                    event.getPlayer().sendMessage(Paintball.formatMessage("Ok. Next step!"));
+                    event.getPlayer().sendMessage(Paintball.formatMessage("Whats the name of the first team?"));
+                }
+            } else if (ch.step == 3) {
                 String blue = event.getMessage();
                 event.setCancelled(true);
                 ch.step++;
                 ch.mapConfig.setTeamName(0, blue);
                 event.getPlayer().sendMessage(Paintball.formatMessage("Ok."));
                 event.getPlayer().sendMessage(Paintball.formatMessage("Whats the name of the second team?"));
-            } else if (ch.step == 3) {
+            } else if (ch.step == 4) {
                 String red = event.getMessage();
                 event.setCancelled(true);
                 ch.step++;
@@ -84,7 +114,7 @@ public class CreatePBMap implements PBCommand, Listener {
                 event.getPlayer().sendMessage(Paintball.formatMessage("Awesome!"));
                 event.getPlayer().sendMessage(Paintball.formatMessage("Please stand on the spawn for the team \"" + ch.mapConfig.getBlueTeam().getName() + "\""));
                 event.getPlayer().sendMessage(Paintball.formatMessage("Then say \"set\""));
-            } else if (ch.step == 4) {
+            } else if (ch.step == 5) {
                 if (event.getMessage().toLowerCase().equals("set")) {
                     Location spawn = event.getPlayer().getLocation();
                     event.setCancelled(true);
@@ -94,7 +124,7 @@ public class CreatePBMap implements PBCommand, Listener {
                     event.getPlayer().sendMessage(Paintball.formatMessage("Please stand on the spawn for the team \"" + ch.mapConfig.getRedTeam().getName() + "\""));
                     event.getPlayer().sendMessage(Paintball.formatMessage("Then say \"set\""));
                 }
-            } else if (ch.step == 5) {
+            } else if (ch.step == 6) {
                 if (event.getMessage().toLowerCase().equals("set")) {
                     Location spawn = event.getPlayer().getLocation();
                     event.setCancelled(true);

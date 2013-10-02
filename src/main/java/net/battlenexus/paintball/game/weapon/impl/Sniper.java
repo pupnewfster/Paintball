@@ -31,7 +31,7 @@ public class Sniper extends AbstractWeapon {
 
     @Override
     public int startBullets() {
-        return 50;
+        return 350;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class Sniper extends AbstractWeapon {
 
     @Override
     public float strength() {
-        return 4;
+        return 400;
     }
 
     @Override

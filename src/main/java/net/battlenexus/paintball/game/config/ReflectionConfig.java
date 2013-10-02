@@ -48,21 +48,29 @@ public abstract class ReflectionConfig {
                                 if (ConfigParser.class.isAssignableFrom(f.getType())) {
                                     ConfigParser parser = (ConfigParser) f.getType().getConstructor().newInstance();
                                     parser.parse(item.getChildNodes());
+                                    f.setAccessible(true);
                                     f.set(this, parser);
                                 } else {
                                     if (String.class.isAssignableFrom(f.getType())) {
+                                        f.setAccessible(true);
                                         f.set(this, item.getFirstChild().getNodeValue());
                                     } else if (Integer.class.isAssignableFrom(f.getType())) {
+                                        f.setAccessible(true);
                                         f.set(this, Integer.parseInt(item.getFirstChild().getNodeValue()));
                                     } else if (Boolean.class.isAssignableFrom(f.getType())) {
+                                        f.setAccessible(true);
                                         f.set(this, item.getFirstChild().getNodeValue().toLowerCase().contains("y"));
                                     } else if (Float.class.isAssignableFrom(f.getType())) {
+                                        f.setAccessible(true);
                                         f.set(this, Float.parseFloat(item.getFirstChild().getNodeValue()));
                                     } else if (Double.class.isAssignableFrom(f.getType())) {
+                                        f.setAccessible(true);
                                         f.set(this, Double.parseDouble(item.getFirstChild().getNodeValue()));
                                     } else if (Long.class.isAssignableFrom(f.getType())) {
+                                        f.setAccessible(true);
                                         f.set(this, Long.parseLong(item.getFirstChild().getNodeValue()));
                                     } else if (Float.class.isAssignableFrom(f.getType())) {
+                                        f.setAccessible(true);
                                         f.set(this, Float.parseFloat(item.getFirstChild().getNodeValue()));
                                     }
                                     else {

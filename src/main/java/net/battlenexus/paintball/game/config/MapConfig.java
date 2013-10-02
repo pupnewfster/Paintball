@@ -9,15 +9,15 @@ import java.security.InvalidParameterException;
 
 public class MapConfig extends ReflectionConfig {
     @ConfigItem
-    private Team blue_team;
+    protected Team blue_team;
     @ConfigItem
-    private Team red_team;
+    protected Team red_team;
     @ConfigItem
-    private String map_name;
+    protected String map_name;
     @ConfigItem
-    private Integer playerMax = 16;
+    protected Integer playerMax = 16;
     @ConfigItem
-    public ArrayListConfig<LocationConfig> chests = new ArrayListConfig<LocationConfig>();
+    protected ArrayListConfig<LocationConfig> chests = new ArrayListConfig<LocationConfig>();
 
     public MapConfig() {
         blue_team = new Team();
@@ -31,6 +31,13 @@ public class MapConfig extends ReflectionConfig {
         this.blue_team = new Team(toClone.blue_team);
         this.red_team = new Team(toClone.red_team);
     }
+
+    public void addChest(Location l) {
+        LocationConfig lc = new LocationConfig();
+        lc.location = l;
+        chests.add(lc);
+    }
+
 
     public void setMapName(String mapName) {
         this.map_name = mapName;

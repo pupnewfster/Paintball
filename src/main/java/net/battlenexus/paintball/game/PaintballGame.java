@@ -59,6 +59,14 @@ public abstract class PaintballGame implements Tick {
         sendGameMessage(ChatColor.GREEN + "GO!");
     }
 
+    public boolean hasStarted() {
+        return started;
+    }
+
+    public boolean inCountdown() {
+        return countdown;
+    }
+
     public void showScore() {
         if(score != null) {
             score.showScoreboard();
@@ -84,6 +92,9 @@ public abstract class PaintballGame implements Tick {
 
     public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
         announceKill(killer, victim);
+        if (killer.getCurrentWeapon() != null) {
+            killer.getCurrentWeapon().addBullets(killer.getCurrentWeapon().clipeSize());
+        }
     }
 
     public void joinNextOpenTeam(PBPlayer p) {
@@ -100,6 +111,13 @@ public abstract class PaintballGame implements Tick {
         }
         if (countdown)
             p.freeze();
+        else {
+            if (p.getCurrentWeapon() != null && p.getCurrentWeapon() instanceof AbstractWeapon) {
+                p.getCurrentWeapon().emptyGun();
+                p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
+                ((AbstractWeapon)p.getCurrentWeapon()).addBullets(p.getCurrentWeapon().startBullets());
+            }
+        }
     }
 
     public void leaveGame(PBPlayer p) {
@@ -137,9 +155,9 @@ public abstract class PaintballGame implements Tick {
     public void onPlayerLeave(PBPlayer player) {
         sendGameMessage(ChatColor.DARK_RED + "-" + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has left the game.");
     }
-
+    private boolean ending = false;
     protected void endGame() {
-        ended = true;
+        ending = true;
         PBPlayer[] players = getAllPlayers();
         if(score != null) {
             score.hideScoreboard();
@@ -155,8 +173,14 @@ public abstract class PaintballGame implements Tick {
                 Paintball.INSTANCE.error("Error removing player \"" + player.getBukkitPlayer().getName() + "\" from paintball game!");
             }
         }
+        ending = false;
+        ended = true;
         Paintball.INSTANCE.getTicker().removeTick(this);
         _wakeup();
+    }
+
+    public boolean isEnding() {
+        return ending;
     }
 
     protected void announceKill(PBPlayer killer, PBPlayer victim) {

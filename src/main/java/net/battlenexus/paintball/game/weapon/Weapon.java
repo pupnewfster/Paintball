@@ -45,6 +45,8 @@ public interface Weapon {
 
     public int totalBullets();
 
+    public void addBullets(int bullets);
+
     public void reload(ItemStack item);
 
     public class WeaponUtils {

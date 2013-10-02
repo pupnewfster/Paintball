@@ -7,7 +7,6 @@ import net.battlenexus.paintball.system.commands.PBCommandHandler;
 import net.battlenexus.paintball.system.commands.sign.SignStat;
 import net.battlenexus.paintball.system.listeners.PlayerListener;
 import net.battlenexus.paintball.system.listeners.TickBukkitTask;
-import net.battlenexus.paintball.system.utils.CVar;
 import net.battlenexus.paintball.system.utils.GhostManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -34,8 +33,6 @@ public class Paintball extends JavaPlugin {
     @Override
     public void onEnable() {
         INSTANCE = this;
-
-        CVar.loadVars();
 
         loadPluginConfig();
 

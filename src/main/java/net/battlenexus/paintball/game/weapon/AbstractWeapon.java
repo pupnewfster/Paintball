@@ -57,6 +57,7 @@ public abstract class AbstractWeapon implements Weapon {
             inventory.remove(i);
         }
         owner.getBukkitPlayer().updateInventory();
+        updateGUI();
     }
 
     public int getMaxBullets() {
@@ -84,9 +85,17 @@ public abstract class AbstractWeapon implements Weapon {
         }
     }
 
+    @Override
     public void addBullets(int amount) {
         if (owner == null)
             return;
+        if (owner.getBukkitPlayer().getInventory().firstEmpty() == -1) {
+            combineBullets();
+            combineBullets();
+            combineBullets();
+            if (owner.getBukkitPlayer().getInventory().firstEmpty() == -1)
+                return;
+        }
         if (amount <= clipeSize()) {
             ItemStack item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), amount);
             owner.getBukkitPlayer().getInventory().addItem(item);
@@ -104,6 +113,27 @@ public abstract class AbstractWeapon implements Weapon {
                 amount -= t;
             }
         }
+    }
+
+    public void combineBullets() {
+        final Inventory inventory = owner.getBukkitPlayer().getInventory();
+        int i = inventory.first(getReloadItem());
+        ItemStack item = inventory.getItem(i);
+        int bulletCount = Weapon.WeaponUtils.getBulletCount(item);
+        inventory.remove(i);
+
+        i = inventory.first(getReloadItem());
+        if (i == -1) {
+            inventory.addItem(item);
+            return;
+        }
+        item = inventory.getItem(i);
+        int bulletCount2 = Weapon.WeaponUtils.getBulletCount(item);
+        inventory.remove(i);
+
+        int newAmount = bulletCount + bulletCount2;
+        item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), newAmount);
+        inventory.addItem(item);
     }
 
     public abstract Material getBlueTeamMaterial();

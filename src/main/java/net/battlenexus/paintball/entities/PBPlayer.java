@@ -226,7 +226,7 @@ public class PBPlayer {
     public void leaveGame(PaintballGame game) {
         if (!isInGame())
             return;
-        if (!game.hasEnded())
+        if (!game.hasEnded() && !game.isEnding())
             game.onPlayerLeave(this);
         getCurrentTeam().leaveTeam(null);
         setCurrentGame(null);
@@ -236,6 +236,7 @@ public class PBPlayer {
         player.getInventory().setBoots(new ItemStack(Material.AIR));
         if (getCurrentWeapon() != null) {
             weapon.emptyGun();
+            weapon.setOneHitKill(false);
             setWeapon(weapon); //Give the player back there gun..
         }
         player.setMaxHealth(20.0);
