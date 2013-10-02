@@ -128,7 +128,7 @@ public abstract class PaintballGame implements Tick {
                             refilled = true;
                             break;
                         case 1:
-                            List<AbstractItem> ii = AbstractItem.getItems();
+                            List<AbstractItem> ii = AbstractItem.getChestItems();
                             int index = random.nextInt(ii.size());
 
                             ItemStack item1 = AbstractItem.createItem(ii.get(index).getMaterial(), random.nextInt(100) + 20, random.nextInt(3) + 1);

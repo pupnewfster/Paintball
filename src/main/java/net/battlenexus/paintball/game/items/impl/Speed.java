@@ -21,7 +21,27 @@ public class Speed extends AbstractItem {
         return "Speed Boost";
     }
 
-    //Options for amplifier should be 0, or 1
+    @Override
+    public boolean canGoInChest() {
+        return true;
+    }
+
+    @Override
+    public String durationMessage() {
+        return ""; //Does not get called because there is a timer
+    }
+
+    @Override
+    public boolean hasAmplifier() {
+        return true;
+    }
+
+    @Override
+    public boolean hasTimer() {
+        return true;
+    }
+
+    //Options for amplifier should be 0, or 1, max ever 3
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {
         ItemMeta im = is.getItemMeta();
