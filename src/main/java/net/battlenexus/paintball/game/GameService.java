@@ -87,7 +87,7 @@ public class GameService {
                 }
                 PBPlayer[] bukkit_players = joinnext.toArray(new PBPlayer[joinnext.size()]);
                 for (PBPlayer p : bukkit_players) {
-                    if (Paintball.INSTANCE.isPlayingPaintball(p)) {
+                    if (Paintball.INSTANCE.isPlayingPaintball(p) && !p.isInGame()) {
                         joinnext.remove(p);
                         p.joinGame(game);
                     }

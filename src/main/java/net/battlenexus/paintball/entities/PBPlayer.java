@@ -162,6 +162,14 @@ public class PBPlayer {
         }
     }
 
+    public void showLobbyItems() {
+
+    }
+
+    public void hideLobbyItems() {
+
+    }
+
     public void spectateGame(PaintballGame game) {
         Paintball.makePlayerGhost(player);
         player.setFlying(true);

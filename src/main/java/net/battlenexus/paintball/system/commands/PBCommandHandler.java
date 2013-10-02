@@ -44,4 +44,14 @@ public class PBCommandHandler implements CommandExecutor {
         }
         return false;
     }
+
+    public PBCommand getCommand(String name) {
+        for (PBCommand cmd : COMMANDS) {
+            for (String ss : cmd.getNames()) {
+                if (ss.equalsIgnoreCase(name))
+                    return cmd;
+            }
+        }
+        return null;
+    }
 }

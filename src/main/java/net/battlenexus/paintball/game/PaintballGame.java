@@ -159,7 +159,7 @@ public abstract class PaintballGame implements Tick {
         }
         if (countdown)
             p.freeze();
-        else {
+        else if (started) {
             if (p.getCurrentWeapon() != null && p.getCurrentWeapon() instanceof AbstractWeapon) {
                 p.getCurrentWeapon().emptyGun();
                 p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
