@@ -5,25 +5,23 @@ import net.battlenexus.paintball.game.items.AbstractItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
-public class Health extends AbstractItem {
+public class Food extends AbstractItem {
     @Override
     public Material getMaterial() {
-        return Material.EMERALD;
+        return Material.GOLD_NUGGET;
     }
 
     @Override
     public String getName() {
-        return "Increased Health";
+        return "Food Refill";
     }
 
     @Override
     public boolean canGoInChest() {
-        return false;
+        return true;
     }
 
     @Override
@@ -33,24 +31,21 @@ public class Health extends AbstractItem {
 
     @Override
     public boolean hasAmplifier() {
-        return true;
+        return false;
     }
 
     @Override
     public String durationMessage() {
-        return "Rest of game";
+        return "Instant";
     }
 
     //Options for amplifier should be more than 0
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {
-        ItemMeta im = is.getItemMeta();
         if(!is.getItemMeta().hasLore()) {
             return;
         }
         p.getBukkitPlayer().getInventory().remove(is);
-        List<String> lore = im.getLore();
-        int amount = Integer.parseInt(lore.get(1).split(" ")[1]);
-        p.increasMaxHealth(amount);
+        p.getBukkitPlayer().setFoodLevel(20);
     }
 }

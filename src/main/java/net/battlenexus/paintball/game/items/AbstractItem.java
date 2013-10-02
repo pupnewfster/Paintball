@@ -1,8 +1,7 @@
 package net.battlenexus.paintball.game.items;
 
 import net.battlenexus.paintball.entities.PBPlayer;
-import net.battlenexus.paintball.game.items.impl.Health;
-import net.battlenexus.paintball.game.items.impl.Speed;
+import net.battlenexus.paintball.game.items.impl.*;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -13,12 +12,17 @@ import java.util.List;
 public abstract class AbstractItem {
     private static final Class<?>[] ITEMS = new Class[] {
             Speed.class,
-            Health.class
+            Health.class,
+            Food.class
     };
 
     public abstract Material getMaterial();
     public abstract String getName();
     public abstract void addEffect(PBPlayer p, ItemStack is);
+    public abstract boolean canGoInChest();
+    public abstract String durationMessage(); //Only used if there is not a timer
+    public abstract boolean hasTimer();
+    public abstract boolean hasAmplifier();
 
     protected AbstractItem() {
     }
@@ -33,10 +37,17 @@ public abstract class AbstractItem {
         ItemMeta im = itemStack.getItemMeta();
         im.setDisplayName(item.getName());
         List<String> lore = new ArrayList<String>();
-        int temp = duration % 60;
-        String dur = Integer.toString(duration / 60) + ":" + (temp == 0 ? "00" : (temp < 10 ? "0" + Integer.toString(temp) : Integer.toString(temp)));
+        String dur;
+        if(item.hasTimer()) {
+            int temp = duration % 60;
+            dur = Integer.toString(duration / 60) + ":" + (temp == 0 ? "00" : (temp < 10 ? "0" + Integer.toString(temp) : Integer.toString(temp)));
+        } else {
+            dur = item.durationMessage();
+        }
         lore.add("Duration: " + dur);
-        lore.add("Amplifier: " + amplifier);
+        if(item.hasAmplifier()) {
+            lore.add("Amplifier: " + amplifier);
+        }
         im.setLore(lore);
         itemStack.setItemMeta(im);
         return itemStack;
@@ -57,6 +68,25 @@ public abstract class AbstractItem {
         for (Class<?> class_ : ITEMS) {
             try {
                 items.add((AbstractItem) class_.newInstance());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+
+        return items;
+    }
+
+    public static ArrayList<AbstractItem> getChestItems() {
+        ArrayList<AbstractItem> items = new ArrayList<AbstractItem>();
+        for (Class<?> class_ : ITEMS) {
+            try {
+                if(((AbstractItem) class_.newInstance()).canGoInChest()) {
+                    items.add((AbstractItem) class_.newInstance());
+                }
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
