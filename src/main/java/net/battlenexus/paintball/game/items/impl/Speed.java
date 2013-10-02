@@ -33,7 +33,7 @@ public class Speed extends AbstractItem {
         String duration = lore.get(0).split(" ")[1];
         int amplifier = Integer.parseInt(lore.get(1).split(" ")[1]);
         int dur = Integer.parseInt(duration.split(":")[0]) * 60 + Integer.parseInt(duration.split(":")[1]);
-        dur *= 2; //Turns seconds into ticks
+        dur *= 20; //Turns seconds into ticks
         PotionEffect potion = new PotionEffect(PotionEffectType.SPEED, dur, amplifier);
         p.getBukkitPlayer().addPotionEffect(potion);
     }

@@ -1,16 +1,21 @@
 package net.battlenexus.paintball.game.items;
 
-import net.battlenexus.paintball.game.items.impl.*;
-import org.bukkit.ChatColor;
+import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.game.items.impl.Health;
+import net.battlenexus.paintball.game.items.impl.Speed;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import net.battlenexus.paintball.entities.PBPlayer;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractItem {
+    private static final Class<?>[] ITEMS = new Class[] {
+            Speed.class,
+            Health.class
+    };
+
     public abstract Material getMaterial();
     public abstract String getName();
     public abstract void addEffect(PBPlayer p, ItemStack is);
@@ -28,7 +33,8 @@ public abstract class AbstractItem {
         ItemMeta im = itemStack.getItemMeta();
         im.setDisplayName(item.getName());
         List<String> lore = new ArrayList<String>();
-        String dur = Integer.toString(duration / 60) + ":" + Integer.toString(duration % 60);
+        int temp = duration % 60;
+        String dur = Integer.toString(duration / 60) + ":" + (temp == 0 ? "00" : (temp < 10 ? "0" + Integer.toString(temp) : Integer.toString(temp)));
         lore.add("Duration: " + dur);
         lore.add("Amplifier: " + amplifier);
         im.setLore(lore);
@@ -37,10 +43,29 @@ public abstract class AbstractItem {
     }
 
     public static AbstractItem getItem(Material mat) {
-        if((new Speed()).getMaterial().equals(mat))
-            return new Speed();
-        else if((new Health()).getMaterial().equals(mat))
-            return new Health();
+        List<AbstractItem> items = getItems();
+        for (AbstractItem i : items) {
+            if (i.getMaterial().equals(mat))
+                return i;
+        }
+
         return null;
+    }
+
+    public static ArrayList<AbstractItem> getItems() {
+        ArrayList<AbstractItem> items = new ArrayList<AbstractItem>();
+        for (Class<?> class_ : ITEMS) {
+            try {
+                items.add((AbstractItem) class_.newInstance());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+
+        return items;
     }
 }

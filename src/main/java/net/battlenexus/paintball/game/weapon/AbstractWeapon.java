@@ -113,6 +113,7 @@ public abstract class AbstractWeapon implements Weapon {
                 amount -= t;
             }
         }
+        updateGUI();
     }
 
     public void combineBullets() {

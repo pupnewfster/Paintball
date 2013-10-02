@@ -30,6 +30,7 @@ public class MapConfig extends ReflectionConfig {
         this.map_name = toClone.map_name;
         this.blue_team = new Team(toClone.blue_team);
         this.red_team = new Team(toClone.red_team);
+        this.chests = toClone.chests.clone();
     }
 
     public void addChest(Location l) {
@@ -77,5 +78,9 @@ public class MapConfig extends ReflectionConfig {
 
     public void setPlayerMax(int playerMax) {
         this.playerMax = playerMax;
+    }
+
+    public ArrayListConfig<LocationConfig> getChests() {
+        return chests;
     }
 }

@@ -31,7 +31,7 @@ public class Shotgun extends AbstractWeapon {
 
     @Override
     public int startBullets() {
-        return 550;
+        return 350;
     }
 
     @Override

@@ -4,12 +4,20 @@ import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.MapConfig;
+import net.battlenexus.paintball.game.config.impl.LocationConfig;
+import net.battlenexus.paintball.game.items.AbstractItem;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
+import net.battlenexus.paintball.game.weapon.Weapon;
 import net.battlenexus.paintball.system.ScoreManager;
 import net.battlenexus.paintball.system.listeners.Tick;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +63,7 @@ public abstract class PaintballGame implements Tick {
                 ((AbstractWeapon)player.getCurrentWeapon()).addBullets(player.getCurrentWeapon().startBullets());
             }
         }
+        refillChests(false);
         started = true;
         sendGameMessage(ChatColor.GREEN + "GO!");
     }
@@ -95,6 +104,45 @@ public abstract class PaintballGame implements Tick {
         if (killer.getCurrentWeapon() != null) {
             killer.getCurrentWeapon().addBullets(killer.getCurrentWeapon().clipeSize());
         }
+    }
+
+    public void refillChests(boolean announce) {
+        final Random random = new Random();
+        boolean refilled = false;
+        for (LocationConfig lc : getConfig().getChests()) {
+            Block b = lc.location.getBlock();
+            if (b.getType() == Material.CHEST) {
+                Chest c = (Chest)b.getState();
+                Inventory i = c.getInventory();
+
+                i.clear();
+
+                int item_amount = random.nextInt(i.getSize() / 2);
+                while (item_amount > 0) {
+                    int type = random.nextInt(2);
+                    switch (type) {
+                        case 0:
+                            int bullet_count = random.nextInt(100);
+                            ItemStack item = Weapon.WeaponUtils.createReloadItem(Material.FLINT, bullet_count);
+                            i.addItem(item);
+                            refilled = true;
+                            break;
+                        case 1:
+                            List<AbstractItem> ii = AbstractItem.getItems();
+                            int index = random.nextInt(ii.size());
+
+                            ItemStack item1 = AbstractItem.createItem(ii.get(index).getMaterial(), random.nextInt(100) + 20, random.nextInt(3) + 1);
+                            i.addItem(item1);
+                            refilled = true;
+                            break;
+                    }
+
+                    item_amount--;
+                }
+            }
+        }
+        if (refilled && announce)
+            sendGameMessage(ChatColor.GREEN + "All chests have been refilled!");
     }
 
     public void joinNextOpenTeam(PBPlayer p) {

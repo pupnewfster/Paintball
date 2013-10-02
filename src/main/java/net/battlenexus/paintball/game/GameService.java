@@ -133,10 +133,14 @@ public class GameService {
     }
 
     public int getMaxPlayers() {
+        if (nextconfig == null)
+            return 0;
         return nextconfig.getPlayerMax();
     }
 
     public String getMapName() {
+        if (nextconfig == null)
+            return "";
         return nextconfig.getMapName();
     }
 

@@ -20,6 +20,7 @@ public class Team implements ConfigParser {
 
     public Team(Team blue_team) {
         this.team_name = blue_team.team_name;
+        this.world_name = blue_team.world_name;
         this.spawn = new Location(blue_team.spawn.getWorld(), blue_team.spawn.getX(), blue_team.spawn.getY(), blue_team.spawn.getZ(), blue_team.spawn.getYaw(), blue_team.spawn.getPitch());
     }
 

@@ -291,6 +291,10 @@ public class PBPlayer {
 
     public void increasMaxHealth(double halfHearts) {
         maxHealth  += halfHearts;
+        player.setMaxHealth(player.getMaxHealth() + halfHearts);
+        if(player.getHealth() + halfHearts <= player.getMaxHealth()) {
+            player.setHealth(player.getHealth() + halfHearts);
+        }
     }
 
     public void sendMessage(String s) {
