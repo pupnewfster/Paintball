@@ -35,23 +35,14 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        PBPlayer pbPlayer;
-        if ((pbPlayer = PBPlayer.getPlayer(event.getPlayer())) != null) {
-            if (pbPlayer.isInGame()) { //When he disconnected, was he in a game?
-                pbPlayer.getCurrentTeam().spawnPlayer(pbPlayer);
-            } else {
-                pbPlayer.showLobbyItems();
-            }
-        } else {
-            event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
-            event.getPlayer().setFoodLevel(20);
-            event.getPlayer().getInventory().clear();
-            event.getPlayer().getInventory().setMaxStackSize(1);
-            event.getPlayer().setMaxHealth(20.0);
-            event.getPlayer().setHealth(20.0);
-            pbPlayer = PBPlayer.newPlayer(event.getPlayer());
-            pbPlayer.showLobbyItems();
-        }
+        PBPlayer pbPlayer = PBPlayer.toPBPlayer(event.getPlayer());
+        event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
+        event.getPlayer().setFoodLevel(20);
+        event.getPlayer().getInventory().clear();
+        event.getPlayer().getInventory().setMaxStackSize(1);
+        event.getPlayer().setMaxHealth(20.0);
+        event.getPlayer().setHealth(20.0);
+        pbPlayer.showLobbyItems();
         Paintball.getGhostManager().addPlayer(event.getPlayer());
     }
 
@@ -65,6 +56,7 @@ public class PlayerListener implements Listener {
         //Removes from queue if in queue when leaving
         Paintball.INSTANCE.getGameService().leaveQueue(who);
         //TODO leave game if in a game
+        who.dispose();
         Paintball.getGhostManager().removePlayer(event.getPlayer());
     }
 

@@ -86,6 +86,8 @@ public class PBPlayer {
      */
     public static PBPlayer newPlayer(Player player) {
         PBPlayer pbPlayer = new PBPlayer(player);
+        if (pbPlayer.hasSaveData())
+            pbPlayer.load();
         players.put(player.getName(), pbPlayer);
 
         return pbPlayer;
@@ -202,6 +204,21 @@ public class PBPlayer {
 
         getBukkitPlayer().updateInventory();
     }
+
+    public void save() {
+        //TODO Save data
+    }
+
+    public boolean hasSaveData() {
+        //TODO Check if save data is available
+
+        return false;
+    }
+
+    public void load() {
+        //TODO Load save data, if hasSaveData returns false, then dont do anything.
+    }
+
 
     public void spectateGame(PaintballGame game) {
         Paintball.makePlayerGhost(player);
@@ -350,5 +367,21 @@ public class PBPlayer {
 
     public void sendMessage(String s) {
         getBukkitPlayer().sendMessage(Paintball.formatMessage(s));
+    }
+
+    public void dispose() {
+        save();
+
+
+        players.remove(player.getName());
+
+        if (isInGame()) {
+            current_game.leaveGame(this);
+        }
+
+        player = null;
+        weapon = null;
+        current_game = null;
+        frozen_location = null;
     }
 }
