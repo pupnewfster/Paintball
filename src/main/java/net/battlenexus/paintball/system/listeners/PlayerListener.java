@@ -3,6 +3,7 @@ package net.battlenexus.paintball.system.listeners;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.system.inventory.PaintballMenu;
+import net.battlenexus.paintball.system.inventory.impl.WeaponShopMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,6 +39,8 @@ public class PlayerListener implements Listener {
         if ((pbPlayer = PBPlayer.getPlayer(event.getPlayer())) != null) {
             if (pbPlayer.isInGame()) { //When he disconnected, was he in a game?
                 pbPlayer.getCurrentTeam().spawnPlayer(pbPlayer);
+            } else {
+                pbPlayer.showLobbyItems();
             }
         } else {
             event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
@@ -46,10 +49,10 @@ public class PlayerListener implements Listener {
             event.getPlayer().getInventory().setMaxStackSize(1);
             event.getPlayer().setMaxHealth(20.0);
             event.getPlayer().setHealth(20.0);
+            pbPlayer = PBPlayer.newPlayer(event.getPlayer());
+            pbPlayer.showLobbyItems();
         }
         Paintball.getGhostManager().addPlayer(event.getPlayer());
-        //PBPlayer.newPlayer(event.getPlayer()); This really isnt need here..
-        //event.setJoinMessage("The faggot " + event.getPlayer().getDisplayName() + " has joined the game");
     }
 
     @EventHandler
@@ -68,6 +71,16 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
+
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+            if (p.getInventory().getItemInHand().getItemMeta() != null && p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals("Weapon Shop")) {
+                WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "Weapon Shop");
+                menu.displayInventory(p);
+                event.setCancelled(true);
+                return;
+            }
+        }
+
         PBPlayer who;
         if ((who = PBPlayer.getPlayer(p)) == null) {
             return;
@@ -79,7 +92,7 @@ public class PlayerListener implements Listener {
                 event.setCancelled(true);
             }
             //RELOAD
-            if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
+            else if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
                 who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
                 event.setCancelled(true);
             }
@@ -89,6 +102,8 @@ public class PlayerListener implements Listener {
                 item.addEffect(who, p.getInventory().getItemInHand());
                 event.setCancelled(true);
             }
+
+
         }
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (event.getClickedBlock().getType().equals(Material.ANVIL))) {
             event.setCancelled(true);

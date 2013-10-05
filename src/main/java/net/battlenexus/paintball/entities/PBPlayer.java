@@ -7,12 +7,15 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 
 public class PBPlayer {
+    private static ItemStack[] lobby_items;
     private static HashMap<String, PBPlayer> players = new HashMap<String, PBPlayer>();
     private Player player;
     private boolean frozen;
@@ -26,6 +29,17 @@ public class PBPlayer {
     private double maxHealth = 18;
 
     public HashMap<PBPlayer, Integer> kill_cache = new HashMap<PBPlayer, Integer>();
+
+    private static void createLobbyItems() {
+        if (lobby_items != null)
+            return;
+        lobby_items = new ItemStack[1];
+
+        lobby_items[0] = new ItemStack(Material.EMERALD);
+        ItemMeta meta = lobby_items[0].getItemMeta();
+        meta.setDisplayName("Weapon Shop");
+        lobby_items[0].setItemMeta(meta);
+    }
 
     private PBPlayer(Player player) {
         this.player = player;
@@ -163,20 +177,47 @@ public class PBPlayer {
     }
 
     public void showLobbyItems() {
+        createLobbyItems();
+        final Inventory inventory = getBukkitPlayer().getInventory();
 
+        for (int i = 0; i < lobby_items.length; i++) {
+            int index = 8 - i;
+
+            inventory.remove(inventory.getItem(index));
+            inventory.setItem(index, lobby_items[i]);
+        }
+
+        getBukkitPlayer().updateInventory();
     }
 
     public void hideLobbyItems() {
+        createLobbyItems();
+        final Inventory inventory = getBukkitPlayer().getInventory();
 
+        for (int i = 0; i < lobby_items.length; i++) {
+            int index = 8 - i;
+
+            inventory.remove(inventory.getItem(index));
+        }
+
+        getBukkitPlayer().updateInventory();
     }
 
     public void spectateGame(PaintballGame game) {
         Paintball.makePlayerGhost(player);
-        player.setFlying(true);
         player.setAllowFlight(true);
+        player.setFlying(true);
 
-        Team firstTeam = game.getConfig().getBlueTeam();
-        player.teleport(firstTeam.getSpawn());
+        Vector firstTeam = game.getConfig().getBlueTeam().getSpawn().toVector();
+        Vector secondTeam = game.getConfig().getRedTeam().getSpawn().toVector();
+
+        Vector midpoint = firstTeam.midpoint(secondTeam);
+        Location lmidpoint = midpoint.toLocation(game.getConfig().getBlueTeam().getSpawn().getWorld());
+        while (lmidpoint.getBlock().getType() != Material.AIR) {
+            lmidpoint.add(0, 1, 0);
+        }
+
+        player.teleport(lmidpoint);
         isSpectating = true;
 
     }
@@ -202,6 +243,7 @@ public class PBPlayer {
             leaveGame(getCurrentGame());
         }
         setCurrentGame(game);
+        hideLobbyItems();
         game.joinNextOpenTeam(this);
         game.onPlayerJoin(this);
         Player bukkitP = getBukkitPlayer();
@@ -252,6 +294,7 @@ public class PBPlayer {
             weapon.setOneHitKill(false);
             setWeapon(weapon); //Give the player back there gun..
         }
+        showLobbyItems();
         player.setMaxHealth(20.0);
         player.setHealth(20.0);
         player.setFoodLevel(20);

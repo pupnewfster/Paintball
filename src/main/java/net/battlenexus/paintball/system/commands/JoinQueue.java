@@ -9,11 +9,24 @@ import org.bukkit.command.CommandSender;
 
 public class JoinQueue implements PBCommand {
     @Override
-    public void executePlayer(PBPlayer player, String[] args) {
+    public void executePlayer(final PBPlayer player, final String[] args) {
         GameService service = Paintball.INSTANCE.getGameService();
         if (player.getCurrentWeapon() == null) {
-            WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "CHOOSE A WEAPON");
-            menu.displayInventory(player.getBukkitPlayer());
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "CHOOSE A WEAPON");
+                    menu.displayInventory(player.getBukkitPlayer());
+                    try {
+                        menu.waitForClose();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    executePlayer(player, args);
+                }
+            }).start();
+            return;
         }
         if (!service.isGameInProgress() || !service.canJoin()) {
             boolean result = service.joinNextGame(player);

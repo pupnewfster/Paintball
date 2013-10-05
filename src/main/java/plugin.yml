@@ -23,3 +23,9 @@ commands:
    signstat:
      description: Place a sign with game stats.
      usage: /<command>
+   spectate:
+     aliases:
+       - s
+       - spec
+     description: Spectate a game.
+     usage: /<command>

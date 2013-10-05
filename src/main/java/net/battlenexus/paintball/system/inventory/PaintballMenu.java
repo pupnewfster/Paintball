@@ -13,6 +13,7 @@ import org.bukkit.inventory.InventoryView;
 
 public abstract class PaintballMenu implements InventoryHolder {
     private Inventory inventory;
+    private boolean closed = false;
 
     public PaintballMenu() {
         inventory = Bukkit.createInventory(this, slotCount(), getName());
@@ -50,7 +51,7 @@ public abstract class PaintballMenu implements InventoryHolder {
 
             @Override
             public void run() {
-                entity.closeInventory();
+                entity.closeInventory(); wakeUp();
             }
         });
     }
@@ -90,12 +91,25 @@ public abstract class PaintballMenu implements InventoryHolder {
 
             @Override
             public void run() {
-                view.close();
+                view.close(); wakeUp();
             }
         });
     }
 
     protected void runNextTick(Runnable runnable) {
         Bukkit.getScheduler().runTask(Paintball.INSTANCE, runnable);
+    }
+
+    protected synchronized void wakeUp() {
+        closed = true;
+        super.notifyAll();
+    }
+
+    public synchronized void waitForClose() throws InterruptedException {
+        while (true) {
+            if (closed)
+                break;
+            super.wait(0L);
+        }
     }
 }

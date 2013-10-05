@@ -44,6 +44,7 @@ public class Paintball extends JavaPlugin {
         getCommand("join").setExecutor(handler);
         getCommand("leave").setExecutor(handler);
         getCommand("signstat").setExecutor(handler);
+        getCommand("spectate").setExecutor(handler);
 
         //Register Listeners
         registerListeners();
@@ -140,12 +141,12 @@ public class Paintball extends JavaPlugin {
     }
 
     public void loadPluginConfig() {
-        saveDefaultConfig();
-
         String world_name = getConfig().getString("game.world.name", "world");
         WorldCreator creator = new WorldCreator(world_name);
         paintball_world = getServer().createWorld(creator);
 
+
+        saveDefaultConfig();
 
         double world_x = getConfig().getDouble("game.world.lobbyx", paintball_world.getSpawnLocation().getX());
         double world_y = getConfig().getDouble("game.world.lobbyy", paintball_world.getSpawnLocation().getY());

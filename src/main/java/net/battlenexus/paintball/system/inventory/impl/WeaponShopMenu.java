@@ -79,8 +79,11 @@ public class WeaponShopMenu extends PaintballMenu {
                 @Override
                 public void run() {
                     p.getInventory().clear();
+                    if (!player.isInGame())
+                        player.showLobbyItems();
                     player.setWeapon(AbstractWeapon.createWeapon((Class<? extends AbstractWeapon>) WEAPONS[slot], player)); //dude...that's weak..
                     p.closeInventory();
+                    wakeUp();
                 }
             });
         }

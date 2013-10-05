@@ -44,6 +44,13 @@ public class Team implements ConfigParser {
 
 
     public Location getSpawn() {
+        if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
+            World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
+            if (w == null) {
+                return spawn;
+            }
+            spawn.setWorld(w);
+        }
         return spawn;
     }
 
@@ -54,8 +61,8 @@ public class Team implements ConfigParser {
     public void spawnPlayer(PBPlayer player) {
         if (!contains(player))
             return;
-        if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
-            World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
+         if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
+                World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
             if (w == null) {
                 player.getBukkitPlayer().sendMessage(Paintball.formatMessage("Could not find world \"" + world_name + "\"!"));
                 return;

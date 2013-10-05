@@ -12,7 +12,8 @@ public class PBCommandHandler implements CommandExecutor {
             new CreatePBMap(),
             new JoinQueue(),
             new LeaveQueue(),
-            new PlaceSignCommand()
+            new PlaceSignCommand(),
+            new Spectator()
     };
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
