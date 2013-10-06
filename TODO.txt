@@ -5,5 +5,8 @@ auto joining from sign
 Team spectatorism
 also when one whole team leaves game to have other team win
 
-Cvar system
+Cvar system -- half done
 traceline functions
+
+Multiple weps in hotbar
+redo/New reloading method
