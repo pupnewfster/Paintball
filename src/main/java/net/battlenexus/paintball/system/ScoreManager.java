@@ -46,7 +46,6 @@ public class ScoreManager {
         char[] teamChars = teamName.toCharArray();
         boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
         team.setPrefix(hasColor ? ("" + ChatColor.COLOR_CHAR + teamChars[1]) : "" + ChatColor.RESET);
-
         //Add players to that team
         for (OfflinePlayer player : players) {
             team.addPlayer(player);

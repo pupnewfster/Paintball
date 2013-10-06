@@ -48,7 +48,9 @@ public class Speed extends AbstractItem {
         if(!is.getItemMeta().hasLore()) {
             return;
         }
-        p.getBukkitPlayer().getInventory().remove(is);
+        ItemStack other = is.clone();
+        other.setAmount(1);
+        p.getBukkitPlayer().getInventory().setItem(p.getBukkitPlayer().getInventory().first(is), other);
         List<String> lore = im.getLore();
         String duration = lore.get(0).split(" ")[1];
         int amplifier = Integer.parseInt(lore.get(1).split(" ")[1]);

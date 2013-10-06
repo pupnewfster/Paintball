@@ -102,8 +102,8 @@ public abstract class PaintballGame implements Tick {
 
     public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
         announceKill(killer, victim);
-        if (killer.getCurrentWeapon() != null) {
-            killer.getCurrentWeapon().addBullets(killer.getCurrentWeapon().clipeSize());
+        if (victim.getCurrentWeapon() != null) {
+            victim.getCurrentWeapon().addBullets(victim.getCurrentWeapon().clipeSize());
         }
     }
 

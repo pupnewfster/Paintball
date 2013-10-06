@@ -13,7 +13,7 @@ import java.util.List;
 public class Health extends AbstractItem {
     @Override
     public Material getMaterial() {
-        return Material.EMERALD;
+        return Material.IRON_INGOT;
     }
 
     @Override
@@ -48,7 +48,9 @@ public class Health extends AbstractItem {
         if(!is.getItemMeta().hasLore()) {
             return;
         }
-        p.getBukkitPlayer().getInventory().remove(is);
+        ItemStack other = is.clone();
+        other.setAmount(1);
+        p.getBukkitPlayer().getInventory().setItem(p.getBukkitPlayer().getInventory().first(is), other);
         List<String> lore = im.getLore();
         int amount = Integer.parseInt(lore.get(1).split(" ")[1]);
         p.increasMaxHealth(amount);

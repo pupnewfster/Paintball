@@ -4,6 +4,7 @@ import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.PaintballGame;
 import net.battlenexus.paintball.game.weapon.Weapon;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -272,7 +273,9 @@ public class PBPlayer {
         LeatherArmorMeta chestIm = (LeatherArmorMeta) chest.getItemMeta();
         LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
         LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
-        if (getCurrentTeam().equals(game.getConfig().getBlueTeam())) {
+        char[] teamChars = getCurrentTeam().getName().toCharArray();
+        boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
+        if (hasColor && teamChars[1] == '9') {
             chestIm.setColor(Color.BLUE);
             legsIm.setColor(Color.BLUE);
             bootsIm.setColor(Color.BLUE);
@@ -281,6 +284,9 @@ public class PBPlayer {
             legsIm.setColor(Color.RED);
             bootsIm.setColor(Color.RED);
         }
+        chestIm.addEnchant(Enchantment.DURABILITY, 100, false);
+        legsIm.addEnchant(Enchantment.DURABILITY, 100, false);
+        bootsIm.addEnchant(Enchantment.DURABILITY, 100, false);
         chest.setItemMeta(chestIm);
         legs.setItemMeta(legsIm);
         boots.setItemMeta(bootsIm);
