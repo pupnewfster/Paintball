@@ -46,7 +46,7 @@ public class Food extends AbstractItem {
             return;
         }
         ItemStack other = is.clone();
-        other.setAmount(1);
+        other.setAmount(is.getAmount() - 1);
         p.getBukkitPlayer().getInventory().setItem(p.getBukkitPlayer().getInventory().first(is), other);
         p.getBukkitPlayer().setFoodLevel(20);
     }
