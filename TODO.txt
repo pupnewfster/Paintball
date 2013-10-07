@@ -1,9 +1,6 @@
-TODO list we thought of in that skype chat
+TODO list of things we thought of
 
-xp doesnt empty at end
-auto joining from sign
-Team spectatorism
-also when one whole team leaves game to have other team win
+also when one whole team leaves game to have other team win or teams balance
 
 Fix shotgun
 
@@ -12,3 +9,11 @@ traceline functions
 
 Multiple weps in hotbar
 redo/New reloading method
+
+1. Better kill messages
+2. Redo weapon specs
+3. Multiple weapons
+4. Left click on weapon to reload
+6. Dedicated gun for one hit minute or at least same delay between shots
+"ticks alive for" as a weapon spec which determines how long a snowball is alive for (kinda like range)
+Classes
