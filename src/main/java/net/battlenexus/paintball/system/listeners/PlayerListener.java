@@ -37,10 +37,10 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         PBPlayer pbPlayer = PBPlayer.toPBPlayer(event.getPlayer());
         event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
-        event.getPlayer().setFoodLevel(20);
-        event.getPlayer().getInventory().clear();
-        event.getPlayer().getInventory().setMaxStackSize(1);
+        pbPlayer.clearInventory();
+        event.getPlayer().getInventory().setMaxStackSize(1); //TODO is this really needed anymore?
         event.getPlayer().setMaxHealth(20.0);
+        event.getPlayer().setFoodLevel(20);
         event.getPlayer().setHealth(20.0);
         pbPlayer.showLobbyItems();
         Paintball.getGhostManager().addPlayer(event.getPlayer());
@@ -77,25 +77,25 @@ public class PlayerListener implements Listener {
         if ((who = PBPlayer.getPlayer(p)) == null) {
             return;
         }
-        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            //GUN
-            if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getMaterial())) {
-                who.getCurrentWeapon().shoot();
-                event.setCancelled(true);
+        if(!event.getClickedBlock().getType().equals(Material.CHEST) && !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST)) {
+            if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+                //GUN
+                if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getMaterial())) {
+                    who.getCurrentWeapon().shoot();
+                    event.setCancelled(true);
+                }
+                //RELOAD
+                else if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
+                    who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
+                    event.setCancelled(true);
+                }
+                AbstractItem item = AbstractItem.getItem(p.getInventory().getItemInHand().getType());
+                //POWERUP
+                if (item != null && who.isInGame()) {
+                    item.addEffect(who, p.getInventory().getItemInHand());
+                    event.setCancelled(true);
+                }
             }
-            //RELOAD
-            else if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
-                who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
-                event.setCancelled(true);
-            }
-            AbstractItem item = AbstractItem.getItem(p.getInventory().getItemInHand().getType());
-            //POWERUP
-            if (item != null && who.isInGame()) {
-                item.addEffect(who, p.getInventory().getItemInHand());
-                event.setCancelled(true);
-            }
-
-
         }
         if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (event.getClickedBlock().getType().equals(Material.ANVIL))) {
             event.setCancelled(true);
