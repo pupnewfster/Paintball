@@ -284,12 +284,12 @@ public class PBPlayer {
             legsIm.setColor(Color.RED);
             bootsIm.setColor(Color.RED);
         }
-        chestIm.addEnchant(Enchantment.DURABILITY, 100, false);
-        legsIm.addEnchant(Enchantment.DURABILITY, 100, false);
-        bootsIm.addEnchant(Enchantment.DURABILITY, 100, false);
         chest.setItemMeta(chestIm);
         legs.setItemMeta(legsIm);
         boots.setItemMeta(bootsIm);
+        chest.addUnsafeEnchantment(Enchantment.DURABILITY, 100);
+        legs.addUnsafeEnchantment(Enchantment.DURABILITY, 100);
+        boots.addUnsafeEnchantment(Enchantment.DURABILITY, 100);
         bukkitP.getInventory().setChestplate(chest);
         bukkitP.getInventory().setLeggings(legs);
         bukkitP.getInventory().setBoots(boots);
@@ -308,21 +308,26 @@ public class PBPlayer {
         maxHealth = defaultMaxHealth;
         for (PotionEffect effect : player.getActivePotionEffects())
             player.removePotionEffect(effect.getType());
-        player.getInventory().clear();
-        player.getInventory().setChestplate(new ItemStack(Material.AIR));
-        player.getInventory().setLeggings(new ItemStack(Material.AIR));
-        player.getInventory().setBoots(new ItemStack(Material.AIR));
+        clearInventory();
         if (getCurrentWeapon() != null) {
             weapon.emptyGun();
             weapon.setOneHitKill(false);
             setWeapon(weapon); //Give the player back there gun..
         }
         showLobbyItems();
+        kill_cache.clear(); //Empty kills if they leave game or game ends
         player.setMaxHealth(20.0);
         player.setHealth(20.0);
         player.setFoodLevel(20);
         player.setCanPickupItems(true);
         player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
+    }
+
+    public void clearInventory() {
+        player.getInventory().clear();
+        player.getInventory().setChestplate(new ItemStack(Material.AIR));
+        player.getInventory().setLeggings(new ItemStack(Material.AIR));
+        player.getInventory().setBoots(new ItemStack(Material.AIR));
     }
 
     public boolean wouldDie(int damage) {
