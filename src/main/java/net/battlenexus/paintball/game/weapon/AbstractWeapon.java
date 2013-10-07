@@ -160,7 +160,7 @@ public abstract class AbstractWeapon implements Weapon {
                 return;
             }
             int take = 0;
-            float reloadtime = (bneeded / clipeSize()) * (reloadDelay() * 2);
+            float reloadtime = (bneeded / clipeSize()) * reloadDelay();
             if (bneeded == c) {
                 take = c;
             } else if (bneeded < c) {
@@ -221,16 +221,16 @@ public abstract class AbstractWeapon implements Weapon {
             return;
         owner.getBukkitPlayer().setExp(0);
         final Player thePlayer = owner.getBukkitPlayer();
-        final int finalspeed = Math.round((speed / 10) * 20);
+        final float percentage = 1 / speed;
         Runnable fixTask = new Runnable() {
 
             @Override
             public void run() {
-                thePlayer.setExp((float) (thePlayer.getExp() + 0.1));
+                thePlayer.setExp(thePlayer.getExp() + percentage);
             }
         };
-        for (int i = 1; i <= 10; i++) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, fixTask, (long) finalspeed * i);
+        for (int i = 1; i <= speed; i++) {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, fixTask, (long) 20 * i);
         }
     }
 
