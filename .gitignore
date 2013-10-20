@@ -7,3 +7,10 @@ build.xml
 manifest.mf
 lib/CopyLibs/
 target/
+=======
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
