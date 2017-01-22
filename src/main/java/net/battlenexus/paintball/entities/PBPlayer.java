@@ -302,7 +302,7 @@ public class PBPlayer {
         player.setHealth(20.0);
         player.setFoodLevel(20);
         player.setCanPickupItems(true);
-        player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
+        Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation()));
     }
 
     public void clearInventory() {
