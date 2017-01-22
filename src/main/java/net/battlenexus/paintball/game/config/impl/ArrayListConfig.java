@@ -36,7 +36,6 @@ public class ArrayListConfig<T extends ConfigParser> extends ArrayList<T> implem
     public ArrayListConfig<T> clone() {
         ArrayListConfig<T> new_list = (ArrayListConfig<T>) super.clone();
         new_list.addAll(this);
-
         return new_list;
     }
 }

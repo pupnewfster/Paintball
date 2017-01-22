@@ -11,7 +11,6 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public class GhostManager {
@@ -30,7 +29,7 @@ public class GhostManager {
     private boolean closed;
 
     // Players that are actually ghosts
-    private Set<String> ghosts = new HashSet<String>();
+    private Set<String> ghosts = new HashSet<>();
 
     public GhostManager(Plugin plugin) {
         // Initialize
@@ -53,19 +52,16 @@ public class GhostManager {
     }
 
     private void createTask(Plugin plugin) {
-        task = Bukkit.getScheduler().runTaskTimer(plugin, new Runnable() {
-            @Override
-            public void run() {
-                for (OfflinePlayer member : getMembers()) {
-                    Player player = member.getPlayer();
+        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (OfflinePlayer member : getMembers()) {
+                Player player = member.getPlayer();
 
-                    if (player != null) {
-                        // Update invisibility effect
-                        setGhost(player, isGhost(player));
-                    } else {
-                        ghosts.remove(member.getName());
-                        ghostTeam.removePlayer(member);
-                    }
+                if (player != null)
+                    // Update invisibility effect
+                    setGhost(player, isGhost(player));
+                else {
+                    ghosts.remove(member.getName());
+                    ghostTeam.removePlayer(member);
                 }
             }
         }, UPDATE_DELAY, UPDATE_DELAY);
@@ -155,14 +151,10 @@ public class GhostManager {
      */
     public OfflinePlayer[] getGhosts() {
         validateState();
-        Set<OfflinePlayer> players = new HashSet<OfflinePlayer>(ghostTeam.getPlayers());
+        Set<OfflinePlayer> players = new HashSet<>(ghostTeam.getPlayers());
 
         // Remove all non-ghost players
-        for (Iterator<OfflinePlayer> it = players.iterator(); it.hasNext(); ) {
-            if (!ghosts.contains(it.next().getName())) {
-                it.remove();
-            }
-        }
+        players.removeIf(offlinePlayer -> !ghosts.contains(offlinePlayer.getName()));
         return toArray(players);
     }
 

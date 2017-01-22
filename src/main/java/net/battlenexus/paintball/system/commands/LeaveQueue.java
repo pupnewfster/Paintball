@@ -9,14 +9,12 @@ public class LeaveQueue implements PBCommand {
     public void executePlayer(PBPlayer player, String[] args) {
         if (!player.isInGame()) {
             boolean result = Paintball.INSTANCE.getGameService().leaveQueue(player);
-            if (!result) {
+            if (!result)
                 player.sendMessage("You are not in the queue!");
-            } else {
+            else
                 player.sendMessage("You have been removed from the queue!");
-            }
-        } else {
+        } else
             player.leaveGame(player.getCurrentGame());
-        }
     }
 
     @Override

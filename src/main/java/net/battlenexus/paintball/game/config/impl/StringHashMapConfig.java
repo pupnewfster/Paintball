@@ -24,13 +24,12 @@ public class StringHashMapConfig extends HashMap<String, String> implements Conf
                             if (!(list.item(ii) instanceof Element))
                                 continue;
                             Element item2 = (Element) list.item(ii);
-                            if (item2.getNodeName().equals("key")) {
+                            if (item2.getNodeName().equals("key"))
                                 key = item2.getFirstChild().getNodeValue();
-                            } else if (item2.getNodeName().equals("value")) {
+                            else if (item2.getNodeName().equals("value")) {
                                 value = item2.getFirstChild().getNodeValue();
-                                if (key != null) {
+                                if (key != null)
                                     put(key, value);
-                                }
                             }
                         }
                     }

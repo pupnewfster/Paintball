@@ -19,9 +19,9 @@ public class GameService {
             OneHitMinute.class
     };
 
-    private ArrayList<MapConfig> mapConfigs = new ArrayList<MapConfig>();
+    private ArrayList<MapConfig> mapConfigs = new ArrayList<>();
     private PaintballGame game;
-    private ArrayList<PBPlayer> joinnext = new ArrayList<PBPlayer>();
+    private ArrayList<PBPlayer> joinnext = new ArrayList<>();
     private MapConfig nextconfig;
     private boolean running = true;
     private boolean waiting = false;
@@ -30,8 +30,8 @@ public class GameService {
     public void loadMaps() {
         File dir = Paintball.INSTANCE.getDataFolder();
         File[] maps = dir.listFiles();
-        if (maps != null) {
-            for (File f : maps) {
+        if (maps != null)
+            for (File f : maps)
                 if (f.isFile() && f.getName().endsWith(".xml")) {
                     MapConfig c = new MapConfig();
                     try {
@@ -41,8 +41,6 @@ public class GameService {
                         e.printStackTrace();
                     }
                 }
-            }
-        }
     }
 
 
@@ -86,26 +84,22 @@ public class GameService {
                         break;
                 }
                 PBPlayer[] bukkit_players = joinnext.toArray(new PBPlayer[joinnext.size()]);
-                for (PBPlayer p : bukkit_players) {
+                for (PBPlayer p : bukkit_players)
                     if (Paintball.INSTANCE.isPlayingPaintball(p) && !p.isInGame()) {
                         joinnext.remove(p);
                         p.joinGame(game);
                     }
-                }
                 waiting = true;
                 game.beginGame();
                 try {
                     game.waitForEnd();
                 } catch (InterruptedException e) {
                     Paintball.INSTANCE.error("Game interrupted!");
-                    if (!game.ended) {
+                    if (!game.ended)
                         game.endGame();
-                    }
                 }
                 waiting = false;
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
+            } catch (IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
         }

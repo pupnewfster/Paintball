@@ -22,9 +22,7 @@ public abstract class AbstractWeapon implements Weapon {
             AbstractWeapon w = class_.newInstance();
             w.owner = owner;
             return w;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;
@@ -65,9 +63,8 @@ public abstract class AbstractWeapon implements Weapon {
             return 0;
         ItemStack[] items = owner.getBukkitPlayer().getInventory().getContents();
         int i = 0;
-        for (ItemStack item : items) {
+        for (ItemStack item : items)
             i += Weapon.WeaponUtils.getBulletCount(item);
-        }
         return i;
     }
 
@@ -77,11 +74,10 @@ public abstract class AbstractWeapon implements Weapon {
             return getNormalMaterial();
         else {
             PaintballGame pg = getOwner().getCurrentGame();
-            if (pg.getConfig().getBlueTeam().equals(getOwner().getCurrentTeam())) {
+            if (pg.getConfig().getBlueTeam().equals(getOwner().getCurrentTeam()))
                 return getBlueTeamMaterial();
-            } else {
+            else
                 return getRedTeamMaterial();
-            }
         }
     }
 
@@ -102,11 +98,10 @@ public abstract class AbstractWeapon implements Weapon {
         } else {
             while (amount > 0) {
                 int t;
-                if (amount - clipeSize() >= 0) {
+                if (amount - clipeSize() >= 0)
                     t = clipeSize();
-                } else {
+                else
                     t = amount;
-                }
 
                 ItemStack item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), t);
                 owner.getBukkitPlayer().getInventory().addItem(item);
@@ -161,21 +156,20 @@ public abstract class AbstractWeapon implements Weapon {
             }
             int take = 0;
             float reloadtime = (bneeded / clipeSize()) * reloadDelay();
-            if (bneeded == c) {
+            if (bneeded == c)
                 take = c;
-            } else if (bneeded < c) {
+            else if (bneeded < c)
                 take = bneeded;
-            } else if (bneeded > c) {
+            else if (bneeded > c)
                 take = c;
-            }
             bullets += take;
             reloading = true;
-            if (c - take > 0) {
+            if (c - take > 0)
                 Weapon.WeaponUtils.setBulletCount(item, c - take);
-            } else {
-                if (item.getAmount() > 1) {
+            else {
+                if (item.getAmount() > 1)
                     item.setAmount(item.getAmount() - 1);
-                } else {
+                else {
                     owner.getBukkitPlayer().getInventory().clear(owner.getBukkitPlayer().getInventory().getHeldItemSlot());
                     final Inventory i = owner.getBukkitPlayer().getInventory();
                     while (true) {
@@ -200,17 +194,13 @@ public abstract class AbstractWeapon implements Weapon {
             }
             updateGUI();
             owner.getBukkitPlayer().sendMessage(Paintball.formatMessage("Reloading..."));
-            owner.getBukkitPlayer().playSound(owner.getBukkitPlayer().getLocation(), Sound.ANVIL_USE, 60, 1);
+            owner.getBukkitPlayer().playSound(owner.getBukkitPlayer().getLocation(), Sound.BLOCK_ANVIL_USE, 60, 1);
             displayReloadAnimation(reloadtime);
 
-            Runnable stopReload = new Runnable() {
-
-                @Override
-                public void run() {
-                    reloading = false;
-                    owner.getBukkitPlayer().sendMessage(Paintball.formatMessage(ChatColor.GREEN + "Reloaded!"));
-                    updateGUI();
-                }
+            Runnable stopReload = () -> {
+                reloading = false;
+                owner.getBukkitPlayer().sendMessage(Paintball.formatMessage(ChatColor.GREEN + "Reloaded!"));
+                updateGUI();
             };
             Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, stopReload, (long) Math.round(reloadtime * 20));
         }
@@ -222,16 +212,9 @@ public abstract class AbstractWeapon implements Weapon {
         owner.getBukkitPlayer().setExp(0);
         final Player thePlayer = owner.getBukkitPlayer();
         final float percentage = 1 / speed;
-        Runnable fixTask = new Runnable() {
-
-            @Override
-            public void run() {
-                thePlayer.setExp(thePlayer.getExp() + percentage);
-            }
-        };
-        for (int i = 1; i <= speed; i++) {
+        Runnable fixTask = () -> thePlayer.setExp(thePlayer.getExp() + percentage);
+        for (int i = 1; i <= speed; i++)
             Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, fixTask, (long) 20 * i);
-        }
     }
 
     @Override
@@ -258,12 +241,10 @@ public abstract class AbstractWeapon implements Weapon {
             owner.sendMessage(ChatColor.DARK_RED + "You cant shoot while reloading!");
             return;
         }
-        if (bullets < getShotRate()) {
+        if (bullets < getShotRate())
             return;
-        }
 
         if (lastFire == -1 || (System.currentTimeMillis() - lastFire) >= getFireDelay()) {
-
             int fire = getShotRate();
             bullets -= fire;
 
@@ -305,9 +286,9 @@ public abstract class AbstractWeapon implements Weapon {
         snowball.setShooter(bukkitPlayer);
         snowball.setTicksLived(2400);
         Vector vector;
-        if (spread == 0) {
+        if (spread == 0)
             vector = bukkitPlayer.getLocation().getDirection().multiply(strength());
-        } else {
+        else {
             final Random random = new Random();
             Location ploc = bukkitPlayer.getLocation();
             double dir = -ploc.getYaw() - 90;
@@ -322,19 +303,13 @@ public abstract class AbstractWeapon implements Weapon {
         }
         snowball.setVelocity(vector);
 
-        Runnable task = new Runnable() {
-
-            @Override
-            public void run() {
-                Location loc = snowball.getLocation();
-                for (int a = 1; a <= 2; a++) {
-                    snowball.getWorld().playEffect(loc, Effect.SMOKE, 10);
-                }
-            }
+        Runnable task = () -> {
+            Location loc = snowball.getLocation();
+            for (int a = 1; a <= 2; a++)
+                snowball.getWorld().playEffect(loc, Effect.SMOKE, 10);
         };
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 10; i++)
             Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, task, 2L * i);
-        }
     }
 
     protected void onShoot(double spread) {

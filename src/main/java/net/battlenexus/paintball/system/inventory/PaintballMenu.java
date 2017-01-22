@@ -47,54 +47,28 @@ public abstract class PaintballMenu implements InventoryHolder {
     public abstract void onItemClicked(InventoryClickEvent event);
 
     protected void closeInventory(final HumanEntity entity) {
-        runNextTick(new Runnable() {
-
-            @Override
-            public void run() {
-                entity.closeInventory();
-                wakeUp();
-            }
+        runNextTick(() -> {
+            entity.closeInventory();
+            wakeUp();
         });
     }
 
     protected void openInventory(final HumanEntity entity, final Inventory i) {
-        runNextTick(new Runnable() {
-
-            @Override
-            public void run() {
-                entity.openInventory(i);
-            }
-        });
+        runNextTick(() -> entity.openInventory(i));
     }
 
     protected void openWorkbench(final HumanEntity entity, final Location loc, final boolean value) {
-        runNextTick(new Runnable() {
-
-            @Override
-            public void run() {
-                entity.openWorkbench(loc, value);
-            }
-        });
+        runNextTick(() -> entity.openWorkbench(loc, value));
     }
 
     protected void openEnchanting(final HumanEntity entity, final Location loc, final boolean value) {
-        runNextTick(new Runnable() {
-
-            @Override
-            public void run() {
-                entity.openEnchanting(loc, value);
-            }
-        });
+        runNextTick(() -> entity.openEnchanting(loc, value));
     }
 
     protected void close(final InventoryView view) {
-        runNextTick(new Runnable() {
-
-            @Override
-            public void run() {
-                view.close();
-                wakeUp();
-            }
+        runNextTick(() -> {
+            view.close();
+            wakeUp();
         });
     }
 

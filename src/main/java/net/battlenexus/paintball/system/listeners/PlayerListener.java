@@ -27,8 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 
 public class PlayerListener implements Listener {
-
-    protected HashMap<String, String> deathMessages = new HashMap<String, String>();
+    protected HashMap<String, String> deathMessages = new HashMap<>();
 
     public PlayerListener(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -75,9 +74,8 @@ public class PlayerListener implements Listener {
         }
 
         PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null) {
+        if ((who = PBPlayer.getPlayer(p)) == null)
             return;
-        }
         if (!event.getClickedBlock().getType().equals(Material.CHEST) && !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST)) {
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 //GUN

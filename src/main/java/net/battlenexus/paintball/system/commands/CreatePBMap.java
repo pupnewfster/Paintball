@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class CreatePBMap implements PBCommand, Listener {
-    private HashMap<Player, CreationHelper> creators = new HashMap<Player, CreationHelper>();
+    private HashMap<Player, CreationHelper> creators = new HashMap<>();
 
     public CreatePBMap() {
         Paintball.INSTANCE.getServer().getPluginManager().registerEvents(this, Paintball.INSTANCE);
@@ -75,7 +75,7 @@ public class CreatePBMap implements PBCommand, Listener {
                 event.getPlayer().sendMessage(Paintball.formatMessage("How many players is this map for? (1000 for no limit)"));
             } else if (ch.step == 1) {
                 String text = event.getMessage();
-                int number = 0;
+                int number;
                 try {
                     number = Integer.parseInt(text);
                 } catch (Throwable t) {

@@ -24,22 +24,21 @@ public class LocationConfig implements ConfigParser {
                 if (!(childNodes.item(i) instanceof Element))
                     continue;
                 Element item = (Element) childNodes.item(i);
-                if (item.getNodeName().equals("x")) {
+                if (item.getNodeName().equals("x"))
                     x = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("y")) {
+                else if (item.getNodeName().equals("y"))
                     y = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("z")) {
+                else if (item.getNodeName().equals("z"))
                     z = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("yaw")) {
+                else if (item.getNodeName().equals("yaw"))
                     yaw = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("pitch")) {
+                else if (item.getNodeName().equals("pitch"))
                     pitch = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("world")) {
+                else if (item.getNodeName().equals("world")) {
                     world_name = item.getFirstChild().getNodeValue();
                     world = Bukkit.getServer().createWorld(new WorldCreator(world_name));
-                    if (world == null) {
+                    if (world == null)
                         world = Paintball.INSTANCE.paintball_world;
-                    }
                 }
             }
             location = new Location(world, x, y, z, (float) yaw, (float) pitch);

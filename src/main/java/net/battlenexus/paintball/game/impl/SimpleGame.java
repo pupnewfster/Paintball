@@ -72,14 +72,12 @@ public class SimpleGame extends PaintballGame implements Listener {
         } else if (killer == null) {
             if (victim.getCurrentTeam() != null) {
                 Team t = victim.getCurrentTeam();
-                if (t == super.getConfig().getBlueTeam()) {
+                if (t == super.getConfig().getBlueTeam())
                     rscore++;
-                } else {
+                else
                     bscore++;
-                }
             }
         }
-
 
         if (bscore >= 20) {
             sendGameMessage("The " + getConfig().getBlueTeam().getName() + ChatColor.GRAY + " team wins!");

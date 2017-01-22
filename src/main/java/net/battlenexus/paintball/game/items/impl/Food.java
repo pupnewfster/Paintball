@@ -39,9 +39,8 @@ public class Food extends AbstractItem {
     //Options for amplifier should be more than 0
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {
-        if (!is.getItemMeta().hasLore()) {
+        if (!is.getItemMeta().hasLore())
             return;
-        }
         ItemStack other = is.clone();
         other.setAmount(is.getAmount() - 1);
         p.getBukkitPlayer().getInventory().setItem(p.getBukkitPlayer().getInventory().first(is), other);

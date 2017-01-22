@@ -5,8 +5,7 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 
 public interface ConfigParser {
+    void parse(NodeList childNodes);
 
-    public void parse(NodeList childNodes);
-
-    public void save(ArrayList<String> lines);
+    void save(ArrayList<String> lines);
 }

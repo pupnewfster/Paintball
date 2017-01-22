@@ -52,15 +52,11 @@ public class Paintball extends JavaPlugin {
         tasks = new TickBukkitTask();
         tasks.runTaskTimer(this, 1, 1);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                game = new GameService();
-                game.loadMaps();
-                game.play();
-            }
+        new Thread(() -> {
+            game = new GameService();
+            game.loadMaps();
+            game.play();
         }).start();
-
 
         try {
             SignStat.loadStats();
@@ -116,12 +112,9 @@ public class Paintball extends JavaPlugin {
     }
 
     public void sendWorldMessage(String message) {
-        Player[] players = getServer().getOnlinePlayers();
-        for (Player p : players) {
-            if (p.getLocation().getWorld().getName().equals(paintball_world.getName())) {
+        for (Player p : getServer().getOnlinePlayers())
+            if (p.getLocation().getWorld().getName().equals(paintball_world.getName()))
                 p.sendMessage(message);
-            }
-        }
     }
 
     public boolean isPlayingPaintball(Player player) {
@@ -144,7 +137,6 @@ public class Paintball extends JavaPlugin {
         String world_name = getConfig().getString("game.world.name", "world");
         WorldCreator creator = new WorldCreator(world_name);
         paintball_world = getServer().createWorld(creator);
-
 
         saveDefaultConfig();
 

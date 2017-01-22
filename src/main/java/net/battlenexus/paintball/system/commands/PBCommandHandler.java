@@ -24,22 +24,17 @@ public class PBCommandHandler implements CommandExecutor {
                     String[] newargs;
                     if (strings.length > 0) {
                         newargs = new String[strings.length - 1];
-
-                        if (newargs.length >= 2) {
+                        if (newargs.length >= 2)
                             System.arraycopy(strings, 0, newargs, 0, newargs.length);
-                        } else if (newargs.length == 1) {
+                        else if (newargs.length == 1)
                             newargs[0] = strings[0];
-                        }
-                    } else {
+                    } else
                         newargs = new String[0];
-                    }
 
-                    if (commandSender instanceof Player) {
-                        PBPlayer pb = PBPlayer.toPBPlayer((Player) commandSender);
-                        cmd.executePlayer(pb, newargs);
-                    } else {
+                    if (commandSender instanceof Player)
+                        cmd.executePlayer(PBPlayer.toPBPlayer((Player) commandSender), newargs);
+                    else
                         cmd.execute(commandSender, newargs);
-                    }
                     return true;
                 }
             }
@@ -48,12 +43,10 @@ public class PBCommandHandler implements CommandExecutor {
     }
 
     public PBCommand getCommand(String name) {
-        for (PBCommand cmd : COMMANDS) {
-            for (String ss : cmd.getNames()) {
+        for (PBCommand cmd : COMMANDS)
+            for (String ss : cmd.getNames())
                 if (ss.equalsIgnoreCase(name))
                     return cmd;
-            }
-        }
         return null;
     }
 }

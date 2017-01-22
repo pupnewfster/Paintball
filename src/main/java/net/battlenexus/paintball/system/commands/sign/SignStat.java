@@ -17,7 +17,7 @@ import java.util.Scanner;
 
 public abstract class SignStat implements Tick {
     private Sign sign;
-    private static ArrayList<SignStat> stats = new ArrayList<SignStat>();
+    private static ArrayList<SignStat> stats = new ArrayList<>();
 
     public static void addStat(SignStat s) {
         stats.add(s);
@@ -68,8 +68,7 @@ public abstract class SignStat implements Tick {
                     String w = null;
                     Class<?> class_ = null;
                     String NL = System.getProperty("line.separator");
-                    Scanner scanner = new Scanner(new FileInputStream(f));
-                    try {
+                    try (Scanner scanner = new Scanner(new FileInputStream(f))) {
                         int i = 0;
                         while (scanner.hasNextLine()) {
                             switch (i) {
@@ -113,16 +112,8 @@ public abstract class SignStat implements Tick {
                         Sign s = (Sign) b.getState();
                         SignStat sign = (SignStat) class_.getConstructor(Sign.class).newInstance(s);
                         stats.add(sign);
-                    } catch (InvocationTargetException e) {
+                    } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
                         e.printStackTrace();
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } finally {
-                        scanner.close();
                     }
                 }
             }

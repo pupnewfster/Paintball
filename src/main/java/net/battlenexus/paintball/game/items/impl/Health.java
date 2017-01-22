@@ -43,14 +43,12 @@ public class Health extends AbstractItem {
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {
         ItemMeta im = is.getItemMeta();
-        if (!is.getItemMeta().hasLore()) {
+        if (!is.getItemMeta().hasLore())
             return;
-        }
         ItemStack other = is.clone();
         other.setAmount(is.getAmount() - 1);
         p.getBukkitPlayer().getInventory().setItem(p.getBukkitPlayer().getInventory().first(is), other);
         List<String> lore = im.getLore();
-        int amount = Integer.parseInt(lore.get(1).split(" ")[1]);
-        p.increasMaxHealth(amount);
+        p.increasMaxHealth(Integer.parseInt(lore.get(1).split(" ")[1]));
     }
 }

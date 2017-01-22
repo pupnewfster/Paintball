@@ -5,7 +5,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 
 public class TickBukkitTask extends BukkitRunnable {
-    private final ArrayList<TickData> ticks = new ArrayList<TickData>();
+    private final ArrayList<TickData> ticks = new ArrayList<>();
 
     @Override
     public void run() {
@@ -35,12 +35,11 @@ public class TickBukkitTask extends BukkitRunnable {
 
     public void removeTick(Tick tick) {
         synchronized (ticks) {
-            for (int i = 0; i < ticks.size(); i++) {
+            for (int i = 0; i < ticks.size(); i++)
                 if (ticks.get(i).tick.equals(tick)) {
                     ticks.remove(i);
                     break;
                 }
-            }
         }
     }
 

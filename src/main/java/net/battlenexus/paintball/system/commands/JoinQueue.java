@@ -12,34 +12,28 @@ public class JoinQueue implements PBCommand {
     public void executePlayer(final PBPlayer player, final String[] args) {
         GameService service = Paintball.INSTANCE.getGameService();
         if (player.getCurrentWeapon() == null) {
-            new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "CHOOSE A WEAPON");
-                    menu.displayInventory(player.getBukkitPlayer());
-                    try {
-                        menu.waitForClose();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    executePlayer(player, args);
+            new Thread(() -> {
+                WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "CHOOSE A WEAPON");
+                menu.displayInventory(player.getBukkitPlayer());
+                try {
+                    menu.waitForClose();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                executePlayer(player, args);
             }).start();
             return;
         }
         if (!service.isGameInProgress() || !service.canJoin()) {
             boolean result = service.joinNextGame(player);
-            if (!result) {
+            if (!result)
                 player.sendMessage("You are already in the queue!");
-            } else {
+            else
                 player.sendMessage("You have been added to the queue for the next game!");
-            }
         } else {
             player.joinGame(service.getCurrentGame());
-            if (!service.getCurrentGame().inCountdown()) {
+            if (!service.getCurrentGame().inCountdown())
                 player.unfreeze();
-            }
         }
     }
 

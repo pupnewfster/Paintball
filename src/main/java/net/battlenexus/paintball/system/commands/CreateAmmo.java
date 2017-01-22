@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 public class CreateAmmo implements PBCommand {
     @Override
     public void executePlayer(PBPlayer player, String[] args) {
-
     }
 
     @Override

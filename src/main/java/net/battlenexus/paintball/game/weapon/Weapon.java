@@ -11,51 +11,51 @@ import java.util.List;
 import java.util.Random;
 
 public interface Weapon {
-    public void setOneHitKill(boolean value);
+    void setOneHitKill(boolean value);
 
-    public boolean isOneHitKill();
+    boolean isOneHitKill();
 
-    public String name();
+    String name();
 
-    public int clipeSize();
+    int clipeSize();
 
-    public int startBullets();
+    int startBullets();
 
-    public int damage();
+    int damage();
 
-    public float strength();
+    float strength();
 
-    public int reloadDelay();
+    int reloadDelay();
 
-    public int getShotRate();
+    int getShotRate();
 
-    public int getFireDelay();
+    int getFireDelay();
 
-    public Material getMaterial();
+    Material getMaterial();
 
-    public Material getReloadItem();
+    Material getReloadItem();
 
-    public PBPlayer getOwner();
+    PBPlayer getOwner();
 
-    public void shoot();
+    void shoot();
 
-    public void emptyGun();
+    void emptyGun();
 
-    public int currentClipSize();
+    int currentClipSize();
 
-    public int totalBullets();
+    int totalBullets();
 
-    public void addBullets(int bullets);
+    void addBullets(int bullets);
 
-    public void reload(ItemStack item);
+    void reload(ItemStack item);
 
-    public class WeaponUtils {
+    class WeaponUtils {
         public static ItemStack toItemStack(Weapon weapon) {
             ItemStack itemStack = new ItemStack(weapon.getMaterial());
 
             ItemMeta im = itemStack.getItemMeta();
             im.setDisplayName(weapon.name());
-            List<String> lore = new ArrayList<String>();
+            List<String> lore = new ArrayList<>();
             lore.add("Clip Size: " + weapon.clipeSize());
             lore.add("Strength: " + weapon.damage());
             lore.add("Fire Rate: " + weapon.getShotRate());
@@ -71,7 +71,7 @@ public interface Weapon {
 
             ItemMeta im = itemStack.getItemMeta();
             im.setDisplayName(ChatColor.GREEN + "Ammo Clip (" + amount + ")");
-            List<String> lore = new ArrayList<String>();
+            List<String> lore = new ArrayList<>();
             lore.add("Bullet Count: " + amount);
             long id = random.nextLong();
             lore.add("ID: " + id); //TODO Find a better way to make these not stack
@@ -107,7 +107,7 @@ public interface Weapon {
             m.setDisplayName(ChatColor.GREEN + "Ammo Clip (" + amount + ")");
             List<String> lore;
             if (!m.hasLore()) {
-                lore = new ArrayList<String>();
+                lore = new ArrayList<>();
                 lore.add("Bullet Count: " + amount);
                 lore.add("ID: " + random.nextLong()); //TODO Find a better way to make these not stack
             } else {

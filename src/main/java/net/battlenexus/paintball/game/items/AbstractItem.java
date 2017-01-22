@@ -36,24 +36,21 @@ public abstract class AbstractItem {
     //For when we add item to their inventory so we get ItemStack
     public static ItemStack createItem(Material material, int duration, int amplifier) {
         AbstractItem item = getItem(material);
-        if (item == null) {
+        if (item == null)
             return new ItemStack(Material.AIR);
-        }
         ItemStack itemStack = new ItemStack(material);
         ItemMeta im = itemStack.getItemMeta();
         im.setDisplayName(item.getName());
-        List<String> lore = new ArrayList<String>();
+        List<String> lore = new ArrayList<>();
         String dur;
         if (item.hasTimer()) {
             int temp = duration % 60;
             dur = Integer.toString(duration / 60) + ":" + (temp == 0 ? "00" : (temp < 10 ? "0" + Integer.toString(temp) : Integer.toString(temp)));
-        } else {
+        } else
             dur = item.durationMessage();
-        }
         lore.add("Duration: " + dur);
-        if (item.hasAmplifier()) {
+        if (item.hasAmplifier())
             lore.add("Amplifier: " + amplifier);
-        }
         im.setLore(lore);
         itemStack.setItemMeta(im);
         return itemStack;
@@ -61,23 +58,17 @@ public abstract class AbstractItem {
 
     public static AbstractItem getItem(Material mat) {
         List<AbstractItem> items = getItems();
-        for (AbstractItem i : items) {
+        for (AbstractItem i : items)
             if (i.getMaterial().equals(mat))
                 return i;
-        }
-
         return null;
     }
 
     public static ArrayList<AbstractItem> getItems() {
-        ArrayList<AbstractItem> items = new ArrayList<AbstractItem>();
+        ArrayList<AbstractItem> items = new ArrayList<>();
         for (Class<?> class_ : ITEMS) {
             try {
                 items.add((AbstractItem) class_.newInstance());
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
             } catch (Throwable t) {
                 t.printStackTrace();
             }
@@ -87,16 +78,11 @@ public abstract class AbstractItem {
     }
 
     public static ArrayList<AbstractItem> getChestItems() {
-        ArrayList<AbstractItem> items = new ArrayList<AbstractItem>();
+        ArrayList<AbstractItem> items = new ArrayList<>();
         for (Class<?> class_ : ITEMS) {
             try {
-                if (((AbstractItem) class_.newInstance()).canGoInChest()) {
+                if (((AbstractItem) class_.newInstance()).canGoInChest())
                     items.add((AbstractItem) class_.newInstance());
-                }
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
             } catch (Throwable t) {
                 t.printStackTrace();
             }

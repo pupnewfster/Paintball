@@ -14,9 +14,9 @@ public class GenericConfigParse {
                 if (!(list.item(ii) instanceof Element))
                     continue;
                 Element item2 = (Element) list.item(ii);
-                if (item2.getNodeName().equals("class")) {
+                if (item2.getNodeName().equals("class"))
                     class_ = item2.getFirstChild().getNodeValue();
-                } else if (item2.getNodeName().equals("parse")) {
+                else if (item2.getNodeName().equals("parse")) {
                     if (class_ == null)
                         break;
                     try {
@@ -25,11 +25,7 @@ public class GenericConfigParse {
                         NodeList children = item2.getChildNodes();
                         object.parse(children);
                         return object;
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                    } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
                         e.printStackTrace();
                     }
                 }

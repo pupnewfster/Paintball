@@ -40,22 +40,19 @@ public class WeaponShopMenu extends PaintballMenu {
     @Override
     public void addItems(Inventory inventory) {
         for (int i = 0; i < WEAPONS.length; i++) {
-            if (WEAPONS[i] == null) {
+            if (WEAPONS[i] == null)
                 continue;
-            }
             int price = PRICES[i];
             ItemStack item = toItemStack((Class<? extends Weapon>) WEAPONS[i]); //GOD DAMN WEAK TYPING
             ItemMeta meta = item.getItemMeta();
             List<String> lore;
-            if (meta.hasLore()) {
+            if (meta.hasLore())
                 lore = meta.getLore();
-            } else {
-                lore = new ArrayList<String>();
-            }
+            else
+                lore = new ArrayList<>();
             lore.add(ChatColor.GREEN + "Price: " + price);
             meta.setLore(lore);
             item.setItemMeta(meta);
-
             inventory.setItem(i, item);
         }
     }
@@ -74,17 +71,14 @@ public class WeaponShopMenu extends PaintballMenu {
 
             //TODO Check for money and stuff
 
-            runNextTick(new Runnable() { //Prevent any form of error..
-
-                @Override
-                public void run() {
-                    p.getInventory().clear();
-                    if (!player.isInGame())
-                        player.showLobbyItems();
-                    player.setWeapon(AbstractWeapon.createWeapon((Class<? extends AbstractWeapon>) WEAPONS[slot], player)); //dude...that's weak..
-                    p.closeInventory();
-                    wakeUp();
-                }
+            //Prevent any form of error..
+            runNextTick(() -> {
+                p.getInventory().clear();
+                if (!player.isInGame())
+                    player.showLobbyItems();
+                player.setWeapon(AbstractWeapon.createWeapon((Class<? extends AbstractWeapon>) WEAPONS[slot], player)); //dude...that's weak..
+                p.closeInventory();
+                wakeUp();
             });
         }
     }
@@ -93,9 +87,7 @@ public class WeaponShopMenu extends PaintballMenu {
         try {
             Weapon w = class_.newInstance();
             return Weapon.WeaponUtils.toItemStack(w);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return null;

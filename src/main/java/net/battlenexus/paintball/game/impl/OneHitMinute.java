@@ -85,11 +85,10 @@ public class OneHitMinute extends PaintballGame {
         } else if (killer == null) {
             if (victim.getCurrentTeam() != null) {
                 Team t = victim.getCurrentTeam();
-                if (t == super.getConfig().getBlueTeam()) {
+                if (t == super.getConfig().getBlueTeam())
                     rscore++;
-                } else {
+                else
                     bscore++;
-                }
             }
         }
     }

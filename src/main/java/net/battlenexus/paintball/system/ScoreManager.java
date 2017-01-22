@@ -47,9 +47,8 @@ public class ScoreManager {
         boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
         team.setPrefix(hasColor ? ("" + ChatColor.COLOR_CHAR + teamChars[1]) : "" + ChatColor.RESET);
         //Add players to that team
-        for (OfflinePlayer player : players) {
+        for (OfflinePlayer player : players)
             team.addPlayer(player);
-        }
         Score score = objective.getScore(players[0]);
         score.setScore(0);
     }
@@ -82,9 +81,8 @@ public class ScoreManager {
         Set<OfflinePlayer> players = scoreboard.getPlayers();
         for (OfflinePlayer player : players) {
             Player p = player.getPlayer();
-            if (p != null) {
+            if (p != null)
                 p.setScoreboard(scoreboardManager.getNewScoreboard());
-            }
         }
     }
 
@@ -97,12 +95,10 @@ public class ScoreManager {
     public void addPlayersToTeam(String teamName, OfflinePlayer[] players) {
         //Get the team
         Team team = scoreboard.getTeam(teamName);
-        if (team == null) {
+        if (team == null)
             team = scoreboard.registerNewTeam(teamName);
-        }
-        for (OfflinePlayer player : players) {
+        for (OfflinePlayer player : players)
             team.addPlayer(player);
-        }
     }
 
     /**
@@ -114,12 +110,10 @@ public class ScoreManager {
     public void removePlayersFromTeam(String teamName, OfflinePlayer[] players) {
         //Get the team
         Team team = scoreboard.getTeam(teamName);
-        if (team == null) {
+        if (team == null)
             team = scoreboard.registerNewTeam(teamName);
-        }
-        for (OfflinePlayer player : players) {
+        for (OfflinePlayer player : players)
             team.removePlayer(player);
-        }
     }
 
     /**

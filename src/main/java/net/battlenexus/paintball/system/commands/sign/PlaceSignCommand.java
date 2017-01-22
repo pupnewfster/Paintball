@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 public class PlaceSignCommand implements PBCommand, Listener {
-    private HashMap<Player, Class<?>> queue = new HashMap<Player, Class<?>>();
+    private HashMap<Player, Class<?>> queue = new HashMap<>();
 
     public PlaceSignCommand() {
         Paintball.INSTANCE.getServer().getPluginManager().registerEvents(this, Paintball.INSTANCE);
@@ -72,16 +72,7 @@ public class PlaceSignCommand implements PBCommand, Listener {
             try {
                 SignStat stat = (SignStat) queue.get(p).getConstructor(Sign.class).newInstance(s);
                 SignStat.addStat(stat);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-                p.sendMessage("There was an error creating the Sign!");
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-                p.sendMessage("There was an error creating the Sign!");
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-                p.sendMessage("There was an error creating the Sign!");
-            } catch (NoSuchMethodException e) {
+            } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
                 p.sendMessage("There was an error creating the Sign!");
             }

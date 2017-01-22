@@ -72,13 +72,11 @@ public abstract class ReflectionConfig {
                                     } else if (Float.class.isAssignableFrom(f.getType())) {
                                         f.setAccessible(true);
                                         f.set(this, Float.parseFloat(item.getFirstChild().getNodeValue()));
-                                    } else {
+                                    } else
                                         Paintball.INSTANCE.error("Cannot assign value for item \"" + item_name + "\"");
-                                    }
                                 }
-                            } else {
+                            } else
                                 Paintball.INSTANCE.error("Unknown mapConfig item \"" + item_name + "\"");
-                            }
                             break;
                         }
                     }
@@ -100,7 +98,7 @@ public abstract class ReflectionConfig {
     }
 
     public String[] save() {
-        ArrayList<String> lines = new ArrayList<String>();
+        ArrayList<String> lines = new ArrayList<>();
         Field[] fields = getClass().getDeclaredFields();
         lines.add("<mapConfig>");
         for (Field f : fields) {
@@ -119,29 +117,23 @@ public abstract class ReflectionConfig {
                     lines.add("</" + f.getName() + ">");
                 } else {
                     String item_name = f.getName();
-                    if (!Modifier.isTransient(f.getModifiers())) {
+                    if (!Modifier.isTransient(f.getModifiers()))
                         lines.add("<" + item_name + ">" + obj.toString() + "</" + item_name + ">");
-                    }
                 }
             }
         }
         lines.add("</mapConfig>");
-
         return lines.toArray(new String[lines.size()]);
     }
 
     public void saveToFile(String map_name) throws IOException {
         String[] lines = save();
         File dir = Paintball.INSTANCE.getDataFolder();
-        if (!dir.exists()) {
-            boolean result = dir.mkdir();
-            if (!result)
-                throw new IOException("Error creating maps directory!");
-        }
+        if (!dir.exists() && !dir.mkdir())
+            throw new IOException("Error creating maps directory!");
         Formatter formatter = new Formatter(new FileWriter(new File(dir, map_name), true));
-        for (String line : lines) {
+        for (String line : lines)
             formatter.out().append(line).append("\n");
-        }
         formatter.close();
     }
 

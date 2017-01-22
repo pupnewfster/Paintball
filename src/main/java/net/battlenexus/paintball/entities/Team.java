@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Team implements ConfigParser {
-    private ArrayList<PBPlayer> players = new ArrayList<PBPlayer>();
+    private ArrayList<PBPlayer> players = new ArrayList<>();
     private String team_name;
     private Location spawn;
     private String world_name;
@@ -30,12 +30,11 @@ public class Team implements ConfigParser {
     public void setTeamName(String team) {
         //This automates colors for team names.
         //So Team Blue or Blue Team will automatically get a blue color.
-        for (ChatColor c : ChatColor.values()) {
+        for (ChatColor c : ChatColor.values())
             if (team.toLowerCase().contains(c.name().toLowerCase())) {
                 team = c + team;
                 break;
             }
-        }
         this.team_name = team;
     }
 
@@ -47,9 +46,8 @@ public class Team implements ConfigParser {
     public Location getSpawn() {
         if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
             World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
-            if (w == null) {
+            if (w == null)
                 return spawn;
-            }
             spawn.setWorld(w);
         }
         return spawn;
@@ -88,9 +86,8 @@ public class Team implements ConfigParser {
     public void joinTeam(PBPlayer player) {
         players.add(player);
         spawnPlayer(player);
-        if (player.getCurrentWeapon() == null) {
+        if (player.getCurrentWeapon() == null)
             player.setWeapon(AbstractWeapon.createWeapon(BasicPaintball.class, player));
-        }
     }
 
     public void leaveTeam(PBPlayer player) {
@@ -108,21 +105,20 @@ public class Team implements ConfigParser {
                 if (!(childNodes.item(i) instanceof Element))
                     continue;
                 Element item = (Element) childNodes.item(i);
-                if (item.getNodeName().equals("name")) {
+                if (item.getNodeName().equals("name"))
                     team_name = item.getFirstChild().getNodeValue().replaceAll("@", "" + ChatColor.COLOR_CHAR);
-                } else if (item.getNodeName().equals("x")) {
+                else if (item.getNodeName().equals("x"))
                     x = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("y")) {
+                else if (item.getNodeName().equals("y"))
                     y = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("z")) {
+                else if (item.getNodeName().equals("z"))
                     z = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("yaw")) {
+                else if (item.getNodeName().equals("yaw"))
                     yaw = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("pitch")) {
+                else if (item.getNodeName().equals("pitch"))
                     pitch = Double.parseDouble(item.getFirstChild().getNodeValue());
-                } else if (item.getNodeName().equals("world")) {
+                else if (item.getNodeName().equals("world"))
                     world_name = item.getFirstChild().getNodeValue();
-                }
             }
             spawn = new Location(Paintball.INSTANCE.paintball_world, x, y, z, (float) yaw, (float) pitch); //Use lobby as spawn world until a player needs to be spawned
         }

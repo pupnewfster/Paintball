@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class PBPlayer {
     private static ItemStack[] lobby_items;
-    private static HashMap<String, PBPlayer> players = new HashMap<String, PBPlayer>();
+    private static HashMap<String, PBPlayer> players = new HashMap<>();
     private Player player;
     private boolean frozen;
     private Location frozen_location;
@@ -29,7 +29,7 @@ public class PBPlayer {
     private double defaultMaxHealth = 18;
     private double maxHealth = 18;
 
-    public HashMap<PBPlayer, Integer> kill_cache = new HashMap<PBPlayer, Integer>();
+    public HashMap<PBPlayer, Integer> kill_cache = new HashMap<>();
 
     private static void createLobbyItems() {
         if (lobby_items != null)
@@ -95,9 +95,8 @@ public class PBPlayer {
     }
 
     public void setCurrentGame(PaintballGame game) {
-        if (current_game != null) {
+        if (current_game != null)
             current_game.leaveGame(this);
-        }
         current_game = game;
     }
 
@@ -140,24 +139,22 @@ public class PBPlayer {
     }
 
     public static PBPlayer toPBPlayer(Player player) {
-        if (players.containsKey(player.getName())) {
+        if (players.containsKey(player.getName()))
             return players.get(player.getName());
-        } else {
+        else
             return newPlayer(player);
-        }
     }
 
     public void hit(PBPlayer shooter) {
         if (shooter.getCurrentTeam() != null) {
-            if (shooter.getCurrentTeam().contains(this)) {
+            if (shooter.getCurrentTeam().contains(this))
                 shooter.sendMessage("Watch out! " + getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
-            } else {
+            else {
                 if (shooter.getCurrentWeapon().isOneHitKill() || wouldDie(shooter.getCurrentWeapon().damage())) {
                     refillHealth();
                     kill(shooter);
-                } else {
+                } else
                     damagePlayer(shooter.getCurrentWeapon().damage());
-                }
             }
         }
     }
@@ -174,9 +171,7 @@ public class PBPlayer {
             killer.addKill();
         getCurrentTeam().spawnPlayer(this);
         getCurrentGame().onPlayerKill(killer, this);
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.playSound(p.getLocation(), Sound.AMBIENCE_THUNDER, 40, 0);
-        }
+        Bukkit.getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 40, 0));
     }
 
     public void showLobbyItems() {
@@ -185,7 +180,6 @@ public class PBPlayer {
 
         for (int i = 0; i < lobby_items.length; i++) {
             int index = 8 - i;
-
             inventory.remove(inventory.getItem(index));
             inventory.setItem(index, lobby_items[i]);
         }
@@ -196,13 +190,8 @@ public class PBPlayer {
     public void hideLobbyItems() {
         createLobbyItems();
         final Inventory inventory = getBukkitPlayer().getInventory();
-
-        for (int i = 0; i < lobby_items.length; i++) {
-            int index = 8 - i;
-
-            inventory.remove(inventory.getItem(index));
-        }
-
+        for (int i = 0; i < lobby_items.length; i++)
+            inventory.remove(inventory.getItem(8 - i));
         getBukkitPlayer().updateInventory();
     }
 
@@ -231,9 +220,8 @@ public class PBPlayer {
 
         Vector midpoint = firstTeam.midpoint(secondTeam);
         Location lmidpoint = midpoint.toLocation(game.getConfig().getBlueTeam().getSpawn().getWorld());
-        while (lmidpoint.getBlock().getType() != Material.AIR) {
+        while (lmidpoint.getBlock().getType() != Material.AIR)
             lmidpoint.add(0, 1, 0);
-        }
 
         player.teleport(lmidpoint);
         isSpectating = true;
@@ -257,9 +245,8 @@ public class PBPlayer {
 
 
     public void joinGame(PaintballGame game) {
-        if (isInGame()) {
+        if (isInGame())
             leaveGame(getCurrentGame());
-        }
         setCurrentGame(game);
         hideLobbyItems();
         game.joinNextOpenTeam(this);
@@ -335,8 +322,8 @@ public class PBPlayer {
     }
 
     public void damagePlayer(int damage) {
-        getBukkitPlayer().setMaxHealth((double) getBukkitPlayer().getMaxHealth() - damage);
-        getBukkitPlayer().setHealth((double) getBukkitPlayer().getMaxHealth());
+        getBukkitPlayer().setMaxHealth(getBukkitPlayer().getMaxHealth() - damage);
+        getBukkitPlayer().setHealth(getBukkitPlayer().getMaxHealth());
     }
 
     public void refillHealth() {
@@ -371,9 +358,8 @@ public class PBPlayer {
     public void increasMaxHealth(double halfHearts) {
         maxHealth += halfHearts;
         player.setMaxHealth(player.getMaxHealth() + halfHearts);
-        if (player.getHealth() + halfHearts <= player.getMaxHealth()) {
+        if (player.getHealth() + halfHearts <= player.getMaxHealth())
             player.setHealth(player.getHealth() + halfHearts);
-        }
     }
 
     public void sendMessage(String s) {
@@ -383,12 +369,10 @@ public class PBPlayer {
     public void dispose() {
         save();
 
-
         players.remove(player.getName());
 
-        if (isInGame()) {
+        if (isInGame())
             current_game.leaveGame(this);
-        }
 
         player = null;
         weapon = null;

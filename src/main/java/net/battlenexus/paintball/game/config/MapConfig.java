@@ -17,7 +17,7 @@ public class MapConfig extends ReflectionConfig {
     @ConfigItem
     protected Integer playerMax = 16;
     @ConfigItem
-    protected ArrayListConfig<LocationConfig> chests = new ArrayListConfig<LocationConfig>();
+    protected ArrayListConfig<LocationConfig> chests = new ArrayListConfig<>();
 
     public MapConfig() {
         blue_team = new Team();
@@ -45,19 +45,17 @@ public class MapConfig extends ReflectionConfig {
     }
 
     public void setTeamName(int team, String name) {
-        if (team == 0) {
+        if (team == 0)
             blue_team.setTeamName(name);
-        } else if (team == 1) {
+        else if (team == 1)
             red_team.setTeamName(name);
-        }
     }
 
     public void setTeamSpawn(int team, Location spawn) {
-        if (team == 0) {
+        if (team == 0)
             blue_team.setSpawn(spawn);
-        } else if (team == 1) {
+        else if (team == 1)
             red_team.setSpawn(spawn);
-        }
     }
 
     public Team getRedTeam() {

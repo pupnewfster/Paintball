@@ -41,13 +41,12 @@ public abstract class PaintballGame implements Tick {
         onGameStart();
         countdown = true;
         for (int i = 20; i > 0; i--) {
-            if (i > 15) {
+            if (i > 15)
                 sendGameMessage("Game will start in: " + ChatColor.WHITE + i);
-            } else if (i > 5) {
+            else if (i > 5)
                 sendGameMessage("Game will start in: " + ChatColor.YELLOW + i);
-            } else {
+            else
                 sendGameMessage("Game will start in: " + ChatColor.DARK_RED + i);
-            }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -78,9 +77,8 @@ public abstract class PaintballGame implements Tick {
     }
 
     public void showScore() {
-        if (score != null) {
+        if (score != null)
             score.showScoreboard();
-        }
     }
 
     protected abstract void onGameStart();
@@ -95,16 +93,14 @@ public abstract class PaintballGame implements Tick {
 
     public void sendGameMessage(String s) {
         PBPlayer[] players = getAllPlayers();
-        for (PBPlayer p : players) {
+        for (PBPlayer p : players)
             p.sendMessage(s);
-        }
     }
 
     public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
         announceKill(killer, victim);
-        if (victim.getCurrentWeapon() != null) {
+        if (victim.getCurrentWeapon() != null)
             victim.getCurrentWeapon().addBullets(victim.getCurrentWeapon().clipeSize());
-        }
     }
 
     public void refillChests(boolean announce) {
@@ -147,16 +143,15 @@ public abstract class PaintballGame implements Tick {
     }
 
     public void joinNextOpenTeam(PBPlayer p) {
-        if (mapConfig.getBlueTeam().size() < mapConfig.getRedTeam().size()) {
+        if (mapConfig.getBlueTeam().size() < mapConfig.getRedTeam().size())
             mapConfig.getBlueTeam().joinTeam(p);
-        } else if (mapConfig.getRedTeam().size() < mapConfig.getBlueTeam().size()) {
+        else if (mapConfig.getRedTeam().size() < mapConfig.getBlueTeam().size())
             mapConfig.getRedTeam().joinTeam(p);
-        } else {
-            if (new Random().nextBoolean()) {
+        else {
+            if (new Random().nextBoolean())
                 mapConfig.getBlueTeam().joinTeam(p);
-            } else {
+            else
                 mapConfig.getRedTeam().joinTeam(p);
-            }
         }
         if (countdown)
             p.freeze();
@@ -164,7 +159,7 @@ public abstract class PaintballGame implements Tick {
             if (p.getCurrentWeapon() != null && p.getCurrentWeapon() instanceof AbstractWeapon) {
                 p.getCurrentWeapon().emptyGun();
                 p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
-                ((AbstractWeapon) p.getCurrentWeapon()).addBullets(p.getCurrentWeapon().startBullets());
+                p.getCurrentWeapon().addBullets(p.getCurrentWeapon().startBullets());
             }
         }
     }
@@ -186,7 +181,7 @@ public abstract class PaintballGame implements Tick {
     }
 
     public PBPlayer[] getAllPlayers() {
-        List<PBPlayer> players = new ArrayList<PBPlayer>();
+        List<PBPlayer> players = new ArrayList<>();
         players.addAll(mapConfig.getBlueTeam().getAllPlayers());
         players.addAll(mapConfig.getRedTeam().getAllPlayers());
 
@@ -210,15 +205,13 @@ public abstract class PaintballGame implements Tick {
     protected void endGame() {
         ending = true;
         PBPlayer[] players = getAllPlayers();
-        if (score != null) {
+        if (score != null)
             score.hideScoreboard();
-        }
         for (PBPlayer player : players) {
             try {
                 player.leaveGame(this);
-                if (score != null) {
+                if (score != null)
                     score.hideScoreboardFor(player.getBukkitPlayer());
-                }
             } catch (Throwable t) {
                 t.printStackTrace();
                 Paintball.INSTANCE.error("Error removing player \"" + player.getBukkitPlayer().getName() + "\" from paintball game!");
@@ -240,35 +233,30 @@ public abstract class PaintballGame implements Tick {
             sendGameMessage(victim.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " killed himself!");
             return;
         }
-        if (!killer.kill_cache.containsKey(victim)) {
+        if (!killer.kill_cache.containsKey(victim))
             killer.kill_cache.put(victim, 1);
-        } else if (victim.kill_cache.containsKey(killer)) {
+        else if (victim.kill_cache.containsKey(killer)) {
             int kills = victim.kill_cache.get(killer);
-            if (kills > 3) {
+            if (kills > 3)
                 message = "took revenge on";
-            }
             victim.kill_cache.remove(killer);
         } else {
             Integer kills = killer.kill_cache.get(victim);
             kills++;
             killer.kill_cache.put(victim, kills);
 
-            if (kills > 25) {
+            if (kills > 25)
                 message = ChatColor.DARK_RED + "WONT STOP KILLING" + ChatColor.GRAY;
-            } else if (kills > 20) {
+            else if (kills > 20)
                 message = ChatColor.RED + "IS OWNING" + ChatColor.GRAY;
-            } else if (kills > 15) {
+            else if (kills > 15)
                 message = ChatColor.RED + "IS DOMINATING" + ChatColor.GRAY;
-            } else if (kills > 10) {
+            else if (kills > 10)
                 message = "is hunting down";
-            } else if (kills > 3) {
+            else if (kills > 3)
                 message = "is killing";
-            }
         }
-
         sendGameMessage(killer.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " " + message + " " + victim.getBukkitPlayer().getDisplayName());
-
-
     }
 
     private synchronized void _wakeup() {

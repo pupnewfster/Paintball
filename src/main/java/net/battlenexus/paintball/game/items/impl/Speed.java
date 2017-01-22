@@ -45,9 +45,8 @@ public class Speed extends AbstractItem {
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {
         ItemMeta im = is.getItemMeta();
-        if (!is.getItemMeta().hasLore()) {
+        if (!is.getItemMeta().hasLore())
             return;
-        }
         ItemStack other = is.clone();
         other.setAmount(is.getAmount() - 1);
         p.getBukkitPlayer().getInventory().setItem(p.getBukkitPlayer().getInventory().first(is), other);
