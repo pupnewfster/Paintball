@@ -20,3 +20,8 @@ Classes
 
 
 Make offhand slot not break things
+Make it so you cannot remove your armor
+Remove the Game will start in 20 message, thus getting around fixing the freeze code by removing it and removing excess waiting time
+Reset the score for teams at least on onehit minute
+Make only pistol in one hit minute
+Ability to change gun mid round without leaving and then it will just give
