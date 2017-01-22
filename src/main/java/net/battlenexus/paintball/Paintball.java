@@ -152,7 +152,7 @@ public class Paintball extends JavaPlugin {
         double world_y = getConfig().getDouble("game.world.lobbyy", paintball_world.getSpawnLocation().getY());
         double world_z = getConfig().getDouble("game.world.lobbyz", paintball_world.getSpawnLocation().getZ());
         float world_yaw = (float) getConfig().getDouble("game.world.lobby_yaw", paintball_world.getSpawnLocation().getYaw());
-        float world_pitch = (float)getConfig().getDouble("game.world.lobby_pitch", paintball_world.getSpawnLocation().getPitch());
+        float world_pitch = (float) getConfig().getDouble("game.world.lobby_pitch", paintball_world.getSpawnLocation().getPitch());
 
         lobby_spawn = new Location(paintball_world, world_x, world_y, world_z, world_yaw, world_pitch);
     }

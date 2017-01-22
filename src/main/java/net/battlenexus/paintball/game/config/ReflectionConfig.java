@@ -72,8 +72,7 @@ public abstract class ReflectionConfig {
                                     } else if (Float.class.isAssignableFrom(f.getType())) {
                                         f.setAccessible(true);
                                         f.set(this, Float.parseFloat(item.getFirstChild().getNodeValue()));
-                                    }
-                                    else {
+                                    } else {
                                         Paintball.INSTANCE.error("Cannot assign value for item \"" + item_name + "\"");
                                     }
                                 }
@@ -115,13 +114,13 @@ public abstract class ReflectionConfig {
                 }
                 if (obj instanceof ConfigParser) {
                     lines.add("<" + f.getName() + ">");
-                    ConfigParser parser = (ConfigParser)obj;
+                    ConfigParser parser = (ConfigParser) obj;
                     parser.save(lines);
                     lines.add("</" + f.getName() + ">");
                 } else {
                     String item_name = f.getName();
                     if (!Modifier.isTransient(f.getModifiers())) {
-                        lines.add("<" + item_name + ">" + obj.toString() + "</" + item_name +">");
+                        lines.add("<" + item_name + ">" + obj.toString() + "</" + item_name + ">");
                     }
                 }
             }

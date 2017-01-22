@@ -286,6 +286,7 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     private boolean onehit;
+
     @Override
     public void setOneHitKill(boolean value) {
         this.onehit = value;

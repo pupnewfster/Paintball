@@ -10,18 +10,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractItem {
-    private static final Class<?>[] ITEMS = new Class[] {
+    private static final Class<?>[] ITEMS = new Class[]{
             Speed.class,
             Health.class,
             Food.class
     };
 
     public abstract Material getMaterial();
+
     public abstract String getName();
+
     public abstract void addEffect(PBPlayer p, ItemStack is);
+
     public abstract boolean canGoInChest();
+
     public abstract String durationMessage(); //Only used if there is not a timer
+
     public abstract boolean hasTimer();
+
     public abstract boolean hasAmplifier();
 
     protected AbstractItem() {
@@ -30,7 +36,7 @@ public abstract class AbstractItem {
     //For when we add item to their inventory so we get ItemStack
     public static ItemStack createItem(Material material, int duration, int amplifier) {
         AbstractItem item = getItem(material);
-        if(item == null) {
+        if (item == null) {
             return new ItemStack(Material.AIR);
         }
         ItemStack itemStack = new ItemStack(material);
@@ -38,14 +44,14 @@ public abstract class AbstractItem {
         im.setDisplayName(item.getName());
         List<String> lore = new ArrayList<String>();
         String dur;
-        if(item.hasTimer()) {
+        if (item.hasTimer()) {
             int temp = duration % 60;
             dur = Integer.toString(duration / 60) + ":" + (temp == 0 ? "00" : (temp < 10 ? "0" + Integer.toString(temp) : Integer.toString(temp)));
         } else {
             dur = item.durationMessage();
         }
         lore.add("Duration: " + dur);
-        if(item.hasAmplifier()) {
+        if (item.hasAmplifier()) {
             lore.add("Amplifier: " + amplifier);
         }
         im.setLore(lore);
@@ -84,7 +90,7 @@ public abstract class AbstractItem {
         ArrayList<AbstractItem> items = new ArrayList<AbstractItem>();
         for (Class<?> class_ : ITEMS) {
             try {
-                if(((AbstractItem) class_.newInstance()).canGoInChest()) {
+                if (((AbstractItem) class_.newInstance()).canGoInChest()) {
                     items.add((AbstractItem) class_.newInstance());
                 }
             } catch (InstantiationException e) {

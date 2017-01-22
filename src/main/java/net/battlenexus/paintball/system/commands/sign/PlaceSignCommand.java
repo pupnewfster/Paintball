@@ -1,8 +1,8 @@
 package net.battlenexus.paintball.system.commands.sign;
 
 import net.battlenexus.paintball.Paintball;
-import net.battlenexus.paintball.system.commands.PBCommand;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.system.commands.PBCommand;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -22,6 +22,7 @@ public class PlaceSignCommand implements PBCommand, Listener {
     public PlaceSignCommand() {
         Paintball.INSTANCE.getServer().getPluginManager().registerEvents(this, Paintball.INSTANCE);
     }
+
     @Override
     public void executePlayer(PBPlayer player, String[] args) {
         if (!player.getBukkitPlayer().isOp()) {
@@ -54,7 +55,7 @@ public class PlaceSignCommand implements PBCommand, Listener {
 
     @Override
     public String[] getNames() {
-        return new String[] {
+        return new String[]{
                 "signstat"
         };
     }
@@ -66,7 +67,7 @@ public class PlaceSignCommand implements PBCommand, Listener {
             Block b = event.getBlock();
             if (b.getType() != Material.SIGN && b.getType() != Material.WALL_SIGN && b.getType() != Material.SIGN_POST)
                 return;
-            Sign s = (Sign)b.getState();
+            Sign s = (Sign) b.getState();
             event.setCancelled(true);
             try {
                 SignStat stat = (SignStat) queue.get(p).getConstructor(Sign.class).newInstance(s);

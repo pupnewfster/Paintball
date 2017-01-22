@@ -2,6 +2,7 @@ package net.battlenexus.paintball.system.listeners;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.game.items.AbstractItem;
 import net.battlenexus.paintball.system.inventory.PaintballMenu;
 import net.battlenexus.paintball.system.inventory.impl.WeaponShopMenu;
 import org.bukkit.ChatColor;
@@ -22,7 +23,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
-import net.battlenexus.paintball.game.items.AbstractItem;
+
 import java.util.HashMap;
 
 public class PlayerListener implements Listener {
@@ -77,7 +78,7 @@ public class PlayerListener implements Listener {
         if ((who = PBPlayer.getPlayer(p)) == null) {
             return;
         }
-        if(!event.getClickedBlock().getType().equals(Material.CHEST) && !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST)) {
+        if (!event.getClickedBlock().getType().equals(Material.CHEST) && !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST)) {
             if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 //GUN
                 if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getMaterial())) {
@@ -97,7 +98,7 @@ public class PlayerListener implements Listener {
                 }
             }
         }
-        if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (event.getClickedBlock().getType().equals(Material.ANVIL))) {
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (event.getClickedBlock().getType().equals(Material.ANVIL))) {
             event.setCancelled(true);
         }
     }
@@ -108,7 +109,7 @@ public class PlayerListener implements Listener {
             Player p = (Player) event.getWhoClicked();
             Inventory i = event.getInventory();
             if (i.getHolder() != null && i.getHolder() instanceof PaintballMenu) {
-                PaintballMenu menu = (PaintballMenu)event.getInventory().getHolder();
+                PaintballMenu menu = (PaintballMenu) event.getInventory().getHolder();
                 menu.onItemClicked(event);
             }
         }
@@ -119,7 +120,7 @@ public class PlayerListener implements Listener {
         if (event.getEntity() instanceof Player) {
             Player victim = (Player) event.getEntity();
             PBPlayer pbvictim;
-            if(!(event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) && !(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
+            if (!(event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) && !(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
                 if ((pbvictim = PBPlayer.getPlayer(victim)) == null) {
                     return;
                 }
@@ -132,12 +133,12 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerHit(EntityDamageByEntityEvent event) {
-        if(!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player) || !(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
+        if (!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player) || !(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
             event.setCancelled(true);
             return;
         }
         PBPlayer victim;
-        PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball)event.getDamager()).getShooter());
+        PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball) event.getDamager()).getShooter());
 
         if ((victim = PBPlayer.getPlayer((Player) event.getEntity())) == null) {
             return;
@@ -174,7 +175,7 @@ public class PlayerListener implements Listener {
             return;
         }
         //Stop them if they are ingame
-        if(who.isInGame() || who.isSpectating()) {
+        if (who.isInGame() || who.isSpectating()) {
             event.setCancelled(true);
         }
     }
@@ -188,7 +189,7 @@ public class PlayerListener implements Listener {
             return;
         }
         //Stop them if they are ingame
-        if(who.isInGame() || who.isSpectating()) {
+        if (who.isInGame() || who.isSpectating()) {
             event.setCancelled(true);
         }
     }
@@ -201,7 +202,7 @@ public class PlayerListener implements Listener {
             return;
         }
         //Stops them from dropping items if they are inGame
-        if(who.isInGame() || who.isSpectating()) {
+        if (who.isInGame() || who.isSpectating()) {
             event.setCancelled(true);
         }
     }
@@ -213,7 +214,7 @@ public class PlayerListener implements Listener {
         if ((who = PBPlayer.getPlayer(p)) == null) {
             return;
         }
-        if(who.isInGame()) {
+        if (who.isInGame()) {
             String team = "(" + ChatColor.translateAlternateColorCodes(ChatColor.COLOR_CHAR, who.getCurrentTeam().getName()) + ChatColor.RESET + ") ";
             event.setFormat(team + event.getFormat());
         } else if (who.isSpectating()) {

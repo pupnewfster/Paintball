@@ -12,7 +12,7 @@ public class OneHitMinute extends PaintballGame {
     private boolean setup;
     private static final String TIME_LEFT_NAME = "Time";
     private static final OfflinePlayer TIME_LEFT = Bukkit.getOfflinePlayer(TIME_LEFT_NAME);
-    private static final OfflinePlayer[] TIME_LEFT_ARRAY = new OfflinePlayer[] { TIME_LEFT };
+    private static final OfflinePlayer[] TIME_LEFT_ARRAY = new OfflinePlayer[]{TIME_LEFT};
     private int bscore;
     private int rscore;
 
@@ -95,6 +95,7 @@ public class OneHitMinute extends PaintballGame {
     }
 
     private boolean sd;
+
     @Override
     public void tick() {
         if (!started)

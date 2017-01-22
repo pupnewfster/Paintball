@@ -65,6 +65,7 @@ public interface Weapon {
         }
 
         private static final Random random = new Random();
+
         public static ItemStack createReloadItem(Material material, int amount) {
             ItemStack itemStack = new ItemStack(material);
 

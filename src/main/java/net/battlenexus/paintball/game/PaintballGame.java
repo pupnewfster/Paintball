@@ -78,7 +78,7 @@ public abstract class PaintballGame implements Tick {
     }
 
     public void showScore() {
-        if(score != null) {
+        if (score != null) {
             score.showScoreboard();
         }
     }
@@ -113,7 +113,7 @@ public abstract class PaintballGame implements Tick {
         for (LocationConfig lc : getConfig().getChests()) {
             Block b = lc.location.getBlock();
             if (b.getType() == Material.CHEST) {
-                Chest c = (Chest)b.getState();
+                Chest c = (Chest) b.getState();
                 Inventory i = c.getInventory();
 
                 i.clear();
@@ -164,7 +164,7 @@ public abstract class PaintballGame implements Tick {
             if (p.getCurrentWeapon() != null && p.getCurrentWeapon() instanceof AbstractWeapon) {
                 p.getCurrentWeapon().emptyGun();
                 p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
-                ((AbstractWeapon)p.getCurrentWeapon()).addBullets(p.getCurrentWeapon().startBullets());
+                ((AbstractWeapon) p.getCurrentWeapon()).addBullets(p.getCurrentWeapon().startBullets());
             }
         }
     }
@@ -204,11 +204,13 @@ public abstract class PaintballGame implements Tick {
     public void onPlayerLeave(PBPlayer player) {
         sendGameMessage(ChatColor.DARK_RED + "-" + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has left the game.");
     }
+
     private boolean ending = false;
+
     protected void endGame() {
         ending = true;
         PBPlayer[] players = getAllPlayers();
-        if(score != null) {
+        if (score != null) {
             score.hideScoreboard();
         }
         for (PBPlayer player : players) {

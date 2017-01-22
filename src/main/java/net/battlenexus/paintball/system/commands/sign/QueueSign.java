@@ -17,6 +17,7 @@ public class QueueSign extends SignStat implements Listener {
     }
 
     int oldvalue = -1;
+
     @Override
     public void tick() {
         if (Paintball.INSTANCE.getGameService().getQueueCount() != oldvalue) {

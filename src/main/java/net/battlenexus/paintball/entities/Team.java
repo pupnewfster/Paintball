@@ -24,7 +24,8 @@ public class Team implements ConfigParser {
         this.spawn = new Location(blue_team.spawn.getWorld(), blue_team.spawn.getX(), blue_team.spawn.getY(), blue_team.spawn.getZ(), blue_team.spawn.getYaw(), blue_team.spawn.getPitch());
     }
 
-    public Team() { }
+    public Team() {
+    }
 
     public void setTeamName(String team) {
         //This automates colors for team names.
@@ -61,8 +62,8 @@ public class Team implements ConfigParser {
     public void spawnPlayer(PBPlayer player) {
         if (!contains(player))
             return;
-         if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
-                World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
+        if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
+            World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
             if (w == null) {
                 player.getBukkitPlayer().sendMessage(Paintball.formatMessage("Could not find world \"" + world_name + "\"!"));
                 return;
@@ -106,7 +107,7 @@ public class Team implements ConfigParser {
             for (int i = 0; i < childNodes.getLength(); i++) {
                 if (!(childNodes.item(i) instanceof Element))
                     continue;
-                Element item = (Element)childNodes.item(i);
+                Element item = (Element) childNodes.item(i);
                 if (item.getNodeName().equals("name")) {
                     team_name = item.getFirstChild().getNodeValue().replaceAll("@", "" + ChatColor.COLOR_CHAR);
                 } else if (item.getNodeName().equals("x")) {
@@ -123,7 +124,7 @@ public class Team implements ConfigParser {
                     world_name = item.getFirstChild().getNodeValue();
                 }
             }
-            spawn = new Location(Paintball.INSTANCE.paintball_world, x, y, z, (float)yaw, (float)pitch); //Use lobby as spawn world until a player needs to be spawned
+            spawn = new Location(Paintball.INSTANCE.paintball_world, x, y, z, (float) yaw, (float) pitch); //Use lobby as spawn world until a player needs to be spawned
         }
     }
 

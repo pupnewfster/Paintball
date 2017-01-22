@@ -13,10 +13,10 @@ public class ArrayListConfig<T extends ConfigParser> extends ArrayList<T> implem
             for (int i = 0; i < childNodes.getLength(); i++) {
                 if (!(childNodes.item(i) instanceof Element))
                     continue;
-                Element item = (Element)childNodes.item(i);
+                Element item = (Element) childNodes.item(i);
                 if (item.getNodeName().equals("item")) {
                     NodeList list = item.getChildNodes();
-                    T object = (T)GenericConfigParse.parseObject(list);
+                    T object = (T) GenericConfigParse.parseObject(list);
                     add(object);
                 }
             }
@@ -24,7 +24,7 @@ public class ArrayListConfig<T extends ConfigParser> extends ArrayList<T> implem
     }
 
     @Override
-    public void save(ArrayList <String> lines) {
+    public void save(ArrayList<String> lines) {
         for (T item : this) {
             lines.add("<item>");
             GenericConfigParse.saveObject(item, lines);

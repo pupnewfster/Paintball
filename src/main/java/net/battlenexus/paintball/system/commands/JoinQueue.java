@@ -50,7 +50,7 @@ public class JoinQueue implements PBCommand {
 
     @Override
     public String[] getNames() {
-        return new String[] {
+        return new String[]{
                 "join",
                 "j"
         };

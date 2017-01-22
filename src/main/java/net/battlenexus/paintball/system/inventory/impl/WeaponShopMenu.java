@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WeaponShopMenu extends PaintballMenu {
-    private static final Class<?>[] WEAPONS = new Class[] { //MUST BE A MULTIPLE OF 9!
+    private static final Class<?>[] WEAPONS = new Class[]{ //MUST BE A MULTIPLE OF 9!
             Pistol.class, MachineGun.class, Sniper.class, Shotgun.class, null, null, null, null, null
     };
-    private static final int[] PRICES = new int[] {
+    private static final int[] PRICES = new int[]{
             0, 10, 10, 10, 0, 0, 0, 0, 0
     };
 

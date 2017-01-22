@@ -152,7 +152,7 @@ public class PBPlayer {
             if (shooter.getCurrentTeam().contains(this)) {
                 shooter.sendMessage("Watch out! " + getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
             } else {
-                if(shooter.getCurrentWeapon().isOneHitKill() || wouldDie(shooter.getCurrentWeapon().damage())) {
+                if (shooter.getCurrentWeapon().isOneHitKill() || wouldDie(shooter.getCurrentWeapon().damage())) {
                     refillHealth();
                     kill(shooter);
                 } else {
@@ -174,7 +174,7 @@ public class PBPlayer {
             killer.addKill();
         getCurrentTeam().spawnPlayer(this);
         getCurrentGame().onPlayerKill(killer, this);
-        for(Player p : Bukkit.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             p.playSound(p.getLocation(), Sound.AMBIENCE_THUNDER, 40, 0);
         }
     }
@@ -369,9 +369,9 @@ public class PBPlayer {
     }
 
     public void increasMaxHealth(double halfHearts) {
-        maxHealth  += halfHearts;
+        maxHealth += halfHearts;
         player.setMaxHealth(player.getMaxHealth() + halfHearts);
-        if(player.getHealth() + halfHearts <= player.getMaxHealth()) {
+        if (player.getHealth() + halfHearts <= player.getMaxHealth()) {
             player.setHealth(player.getHealth() + halfHearts);
         }
     }

@@ -13,7 +13,7 @@ public class GenericConfigParse {
             for (int ii = 0; ii < list.getLength(); ii++) {
                 if (!(list.item(ii) instanceof Element))
                     continue;
-                Element item2 = (Element)list.item(ii);
+                Element item2 = (Element) list.item(ii);
                 if (item2.getNodeName().equals("class")) {
                     class_ = item2.getFirstChild().getNodeValue();
                 } else if (item2.getNodeName().equals("parse")) {

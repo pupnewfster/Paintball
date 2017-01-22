@@ -14,7 +14,7 @@ public class StringHashMapConfig extends HashMap<String, String> implements Conf
             for (int i = 0; i < childNodes.getLength(); i++) {
                 if (!(childNodes.item(i) instanceof Element))
                     continue;
-                Element item = (Element)childNodes.item(i);
+                Element item = (Element) childNodes.item(i);
                 if (item.getNodeName().equals("item")) {
                     NodeList list = item.getChildNodes();
                     if (list != null && list.getLength() > 0) {
@@ -23,7 +23,7 @@ public class StringHashMapConfig extends HashMap<String, String> implements Conf
                         for (int ii = 0; ii < list.getLength(); ii++) {
                             if (!(list.item(ii) instanceof Element))
                                 continue;
-                            Element item2 = (Element)list.item(ii);
+                            Element item2 = (Element) list.item(ii);
                             if (item2.getNodeName().equals("key")) {
                                 key = item2.getFirstChild().getNodeValue();
                             } else if (item2.getNodeName().equals("value")) {

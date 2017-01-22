@@ -1,9 +1,9 @@
 package net.battlenexus.paintball.game.items.impl;
 
-import net.battlenexus.paintball.game.items.AbstractItem;
 import net.battlenexus.paintball.entities.PBPlayer;
-import org.bukkit.inventory.ItemStack;
+import net.battlenexus.paintball.game.items.AbstractItem;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -45,7 +45,7 @@ public class Speed extends AbstractItem {
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {
         ItemMeta im = is.getItemMeta();
-        if(!is.getItemMeta().hasLore()) {
+        if (!is.getItemMeta().hasLore()) {
             return;
         }
         ItemStack other = is.clone();

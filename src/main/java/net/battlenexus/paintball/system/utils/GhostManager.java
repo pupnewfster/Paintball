@@ -84,6 +84,7 @@ public class GhostManager {
 
     /**
      * Add the given player to this ghost manager. This ensures that it can see ghosts, and later become one.
+     *
      * @param player - the player to add to the ghost manager.
      */
     public void addPlayer(Player player) {
@@ -96,6 +97,7 @@ public class GhostManager {
 
     /**
      * Determine if the given player is tracked by this ghost manager and is a ghost.
+     *
      * @param player - the player to test.
      * @return TRUE if it is, FALSE otherwise.
      */
@@ -105,6 +107,7 @@ public class GhostManager {
 
     /**
      * Determine if the current player is tracked by this ghost manager, or is a ghost.
+     *
      * @param player - the player to check.
      * @return TRUE if it is, FALSE otherwise.
      */
@@ -115,7 +118,8 @@ public class GhostManager {
 
     /**
      * Set wheter or not a given player is a ghost.
-     * @param player - the player to set as a ghost.
+     *
+     * @param player  - the player to set as a ghost.
      * @param isGhost - TRUE to make the given player into a ghost, FALSE otherwise.
      */
     public void setGhost(Player player, boolean isGhost) {
@@ -134,6 +138,7 @@ public class GhostManager {
 
     /**
      * Remove the given player from the manager, turning it back into the living and making it unable to see ghosts.
+     *
      * @param player - the player to remove from the ghost manager.
      */
     public void removePlayer(Player player) {
@@ -145,6 +150,7 @@ public class GhostManager {
 
     /**
      * Retrieve every ghost currently tracked by this manager.
+     *
      * @return Every tracked ghost.
      */
     public OfflinePlayer[] getGhosts() {
@@ -162,6 +168,7 @@ public class GhostManager {
 
     /**
      * Retrieve every ghost and every player that can see ghosts.
+     *
      * @return Every ghost or every observer.
      */
     public OfflinePlayer[] getMembers() {

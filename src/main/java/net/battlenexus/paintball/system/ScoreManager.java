@@ -21,7 +21,7 @@ public class ScoreManager {
      * Initialises the scoreboard
      *
      * @param name String Objective Name
-     * @param key String Objective Key
+     * @param key  String Objective Key
      */
     public void setupScoreboard(String name, String key) {
         scoreboard = scoreboardManager.getNewScoreboard();
@@ -38,7 +38,7 @@ public class ScoreManager {
      * Creates a new team with the given players
      *
      * @param teamName String The team name
-     * @param players OfflinePlayer[] Players you want to add to the team
+     * @param players  OfflinePlayer[] Players you want to add to the team
      */
     public void addTeam(String teamName, OfflinePlayer[] players) {
         //Create the new team
@@ -59,7 +59,7 @@ public class ScoreManager {
      */
     public void showScoreboard() {
         Set<OfflinePlayer> players = scoreboard.getPlayers();
-        for(OfflinePlayer player : players) {
+        for (OfflinePlayer player : players) {
             Player p = player.getPlayer();
             if (p != null) {
                 p.setScoreboard(scoreboard);
@@ -80,7 +80,7 @@ public class ScoreManager {
      */
     public void hideScoreboard() {
         Set<OfflinePlayer> players = scoreboard.getPlayers();
-        for(OfflinePlayer player : players) {
+        for (OfflinePlayer player : players) {
             Player p = player.getPlayer();
             if (p != null) {
                 p.setScoreboard(scoreboardManager.getNewScoreboard());
@@ -92,7 +92,7 @@ public class ScoreManager {
      * Adds players to a team
      *
      * @param teamName String The name of the team
-     * @param players OfflinePlayer[] Players you want to add to the team
+     * @param players  OfflinePlayer[] Players you want to add to the team
      */
     public void addPlayersToTeam(String teamName, OfflinePlayer[] players) {
         //Get the team
@@ -109,7 +109,7 @@ public class ScoreManager {
      * Removes players from a team
      *
      * @param teamName String The name of the team
-     * @param players OfflinePlayer[] Players you want to remove from the team
+     * @param players  OfflinePlayer[] Players you want to remove from the team
      */
     public void removePlayersFromTeam(String teamName, OfflinePlayer[] players) {
         //Get the team

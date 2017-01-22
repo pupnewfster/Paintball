@@ -51,7 +51,8 @@ public abstract class PaintballMenu implements InventoryHolder {
 
             @Override
             public void run() {
-                entity.closeInventory(); wakeUp();
+                entity.closeInventory();
+                wakeUp();
             }
         });
     }
@@ -91,7 +92,8 @@ public abstract class PaintballMenu implements InventoryHolder {
 
             @Override
             public void run() {
-                view.close(); wakeUp();
+                view.close();
+                wakeUp();
             }
         });
     }

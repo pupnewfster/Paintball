@@ -71,7 +71,7 @@ public abstract class SignStat implements Tick {
                     Scanner scanner = new Scanner(new FileInputStream(f));
                     try {
                         int i = 0;
-                        while (scanner.hasNextLine()){
+                        while (scanner.hasNextLine()) {
                             switch (i) {
                                 case 0:
                                     x = Double.parseDouble(scanner.nextLine());
@@ -110,7 +110,7 @@ public abstract class SignStat implements Tick {
                         Block b = l.getBlock();
                         if (b.getType() != Material.SIGN && b.getType() != Material.WALL_SIGN && b.getType() != Material.SIGN_POST)
                             continue;
-                        Sign s = (Sign)b.getState();
+                        Sign s = (Sign) b.getState();
                         SignStat sign = (SignStat) class_.getConstructor(Sign.class).newInstance(s);
                         stats.add(sign);
                     } catch (InvocationTargetException e) {
@@ -121,7 +121,7 @@ public abstract class SignStat implements Tick {
                         e.printStackTrace();
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
-                    } finally{
+                    } finally {
                         scanner.close();
                     }
                 }

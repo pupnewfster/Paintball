@@ -1,20 +1,21 @@
 package net.battlenexus.paintball.system.commands;
 
-import net.battlenexus.paintball.system.commands.sign.PlaceSignCommand;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.system.commands.sign.PlaceSignCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class PBCommandHandler implements CommandExecutor {
-    private static final PBCommand[] COMMANDS = new PBCommand[] {
+    private static final PBCommand[] COMMANDS = new PBCommand[]{
             new CreatePBMap(),
             new JoinQueue(),
             new LeaveQueue(),
             new PlaceSignCommand(),
             new Spectator()
     };
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         for (PBCommand cmd : COMMANDS) {
@@ -34,7 +35,7 @@ public class PBCommandHandler implements CommandExecutor {
                     }
 
                     if (commandSender instanceof Player) {
-                        PBPlayer pb = PBPlayer.toPBPlayer((Player)commandSender);
+                        PBPlayer pb = PBPlayer.toPBPlayer((Player) commandSender);
                         cmd.executePlayer(pb, newargs);
                     } else {
                         cmd.execute(commandSender, newargs);

@@ -30,7 +30,7 @@ public class Spectator implements PBCommand {
 
     @Override
     public String[] getNames() {
-        return new String[] {
+        return new String[]{
                 "spectate",
                 "spec",
                 "s"

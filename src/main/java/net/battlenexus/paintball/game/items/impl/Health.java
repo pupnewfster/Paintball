@@ -5,8 +5,6 @@ import net.battlenexus.paintball.game.items.AbstractItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
@@ -45,7 +43,7 @@ public class Health extends AbstractItem {
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {
         ItemMeta im = is.getItemMeta();
-        if(!is.getItemMeta().hasLore()) {
+        if (!is.getItemMeta().hasLore()) {
             return;
         }
         ItemStack other = is.clone();

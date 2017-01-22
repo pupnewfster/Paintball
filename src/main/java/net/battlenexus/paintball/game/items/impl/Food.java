@@ -4,9 +4,6 @@ import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.items.AbstractItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.List;
 
 public class Food extends AbstractItem {
     @Override
@@ -42,7 +39,7 @@ public class Food extends AbstractItem {
     //Options for amplifier should be more than 0
     @Override
     public void addEffect(PBPlayer p, ItemStack is) {
-        if(!is.getItemMeta().hasLore()) {
+        if (!is.getItemMeta().hasLore()) {
             return;
         }
         ItemStack other = is.clone();

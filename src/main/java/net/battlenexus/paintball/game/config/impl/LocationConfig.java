@@ -23,7 +23,7 @@ public class LocationConfig implements ConfigParser {
             for (int i = 0; i < childNodes.getLength(); i++) {
                 if (!(childNodes.item(i) instanceof Element))
                     continue;
-                Element item = (Element)childNodes.item(i);
+                Element item = (Element) childNodes.item(i);
                 if (item.getNodeName().equals("x")) {
                     x = Double.parseDouble(item.getFirstChild().getNodeValue());
                 } else if (item.getNodeName().equals("y")) {
@@ -42,7 +42,7 @@ public class LocationConfig implements ConfigParser {
                     }
                 }
             }
-            location = new Location(world, x, y, z, (float)yaw, (float)pitch);
+            location = new Location(world, x, y, z, (float) yaw, (float) pitch);
         }
     }
 

@@ -12,6 +12,7 @@ public class OnPlayerKillEvent extends Event {
     private PBPlayer victim;
     private PBPlayer thrower;
     private PaintballGame game;
+
     public OnPlayerKillEvent(PBPlayer hit, PBPlayer thrower, PaintballGame game) {
         this.game = game;
         this.victim = hit;

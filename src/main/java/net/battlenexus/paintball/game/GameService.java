@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameService {
-    private static final Class<?>[] GAME_TYPES = new Class[] {
+    private static final Class<?>[] GAME_TYPES = new Class[]{
             SimpleGame.class,
             OneHitMinute.class
     };

@@ -150,7 +150,7 @@ public class CreatePBMap implements PBCommand, Listener {
 
     @Override
     public String[] getNames() {
-        return new String[] {
+        return new String[]{
                 "createpbmap",
                 "cpbmap"
         };
