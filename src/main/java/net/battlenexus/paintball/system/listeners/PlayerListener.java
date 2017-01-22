@@ -7,6 +7,7 @@ import net.battlenexus.paintball.system.inventory.PaintballMenu;
 import net.battlenexus.paintball.system.inventory.impl.WeaponShopMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -39,11 +40,11 @@ public class PlayerListener implements Listener {
         event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         pbPlayer.clearInventory();
         event.getPlayer().getInventory().setMaxStackSize(1); //TODO is this really needed anymore?
-        event.getPlayer().setMaxHealth(20.0);
+        event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
         event.getPlayer().setFoodLevel(20);
         event.getPlayer().setHealth(20.0);
         pbPlayer.showLobbyItems();
-        Paintball.getGhostManager().addPlayer(event.getPlayer());
+        Paintball.makePlayerGhost(event.getPlayer());
     }
 
     @EventHandler
@@ -57,7 +58,7 @@ public class PlayerListener implements Listener {
         Paintball.INSTANCE.getGameService().leaveQueue(who);
         //TODO leave game if in a game
         who.dispose();
-        Paintball.getGhostManager().removePlayer(event.getPlayer());
+        Paintball.makePlayerVisible(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -96,9 +97,8 @@ public class PlayerListener implements Listener {
                 }
             }
         }
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (event.getClickedBlock().getType().equals(Material.ANVIL))) {
+        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (event.getClickedBlock().getType().equals(Material.ANVIL)))
             event.setCancelled(true);
-        }
     }
 
     @EventHandler

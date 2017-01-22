@@ -7,6 +7,7 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 
 public class ArrayListConfig<T extends ConfigParser> extends ArrayList<T> implements ConfigParser {
+    @SuppressWarnings("unchecked")
     @Override
     public void parse(NodeList childNodes) {
         if (childNodes != null && childNodes.getLength() > 0) {
@@ -32,6 +33,7 @@ public class ArrayListConfig<T extends ConfigParser> extends ArrayList<T> implem
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ArrayListConfig<T> clone() {
         ArrayListConfig<T> new_list = (ArrayListConfig<T>) super.clone();

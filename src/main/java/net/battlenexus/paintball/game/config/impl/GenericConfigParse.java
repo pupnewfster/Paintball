@@ -7,6 +7,7 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 
 public class GenericConfigParse {
+    @SuppressWarnings("unchecked")
     public static ConfigParser parseObject(NodeList list) {
         if (list != null && list.getLength() > 0) {
             String class_ = null;

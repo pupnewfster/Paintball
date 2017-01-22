@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ConfigParseHashMapConfig<K extends ConfigParser> extends HashMap<String, K> implements ConfigParser {
+    @SuppressWarnings("unchecked")
     @Override
     public void parse(NodeList childNodes) {
         if (childNodes != null && childNodes.getLength() > 0) {

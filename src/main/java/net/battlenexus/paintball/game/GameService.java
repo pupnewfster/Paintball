@@ -44,6 +44,7 @@ public class GameService {
     }
 
 
+    @SuppressWarnings("unchecked")
     public void play() {
         if (mapConfigs.size() == 0) {
             Paintball.INSTANCE.error("No maps to play on!");

@@ -1,7 +1,9 @@
 package net.battlenexus.paintball.game.items;
 
 import net.battlenexus.paintball.entities.PBPlayer;
-import net.battlenexus.paintball.game.items.impl.*;
+import net.battlenexus.paintball.game.items.impl.Food;
+import net.battlenexus.paintball.game.items.impl.Health;
+import net.battlenexus.paintball.game.items.impl.Speed;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

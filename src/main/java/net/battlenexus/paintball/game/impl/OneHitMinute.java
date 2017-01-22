@@ -35,7 +35,7 @@ public class OneHitMinute extends PaintballGame {
             setup = true;
         }
         OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
-        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getName());
+        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getUniqueId());
         score.addPlayersToTeam(player.getCurrentTeam().getName(), thisPlayer);
         player.getCurrentWeapon().setOneHitKill(true);
         score.showScoreboardFor(player.getBukkitPlayer());

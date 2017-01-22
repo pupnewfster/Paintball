@@ -40,7 +40,7 @@ public class SimpleGame extends PaintballGame implements Listener {
             didsetup = true;
         }
         OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
-        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getName());
+        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getUniqueId());
         score.addPlayersToTeam(player.getCurrentTeam().getName(), thisPlayer);
         score.showScoreboardFor(player.getBukkitPlayer());
     }
@@ -52,7 +52,7 @@ public class SimpleGame extends PaintballGame implements Listener {
             didsetup = true;
         }
         OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
-        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getName());
+        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getUniqueId());
         score.removePlayersFromTeam(player.getCurrentTeam().getName(), thisPlayer);
         score.hideScoreboardFor(player.getBukkitPlayer());
     }

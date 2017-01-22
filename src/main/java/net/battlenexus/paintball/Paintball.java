@@ -7,11 +7,7 @@ import net.battlenexus.paintball.system.commands.PBCommandHandler;
 import net.battlenexus.paintball.system.commands.sign.SignStat;
 import net.battlenexus.paintball.system.listeners.PlayerListener;
 import net.battlenexus.paintball.system.listeners.TickBukkitTask;
-import net.battlenexus.paintball.system.utils.GhostManager;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -23,7 +19,6 @@ public class Paintball extends JavaPlugin {
     public Location lobby_spawn;
     private TickBukkitTask tasks;
     private GameService game;
-    private GhostManager ghostManager;
     ScoreManager scoreboard;
 
     public GameService getGameService() {
@@ -63,24 +58,14 @@ public class Paintball extends JavaPlugin {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        ghostManager = new GhostManager(this);
-
     }
 
     @Override
     public void onDisable() {
         SignStat.saveSigns();
         SignStat.diposeSigns();
-        if (game != null) {
+        if (game != null)
             game.stop();
-        }
-
-        ghostManager.close();
-    }
-
-    public static GhostManager getGhostManager() {
-        return INSTANCE.ghostManager;
     }
 
     public static void makePlayerGhost(PBPlayer player) {
@@ -88,7 +73,7 @@ public class Paintball extends JavaPlugin {
     }
 
     public static void makePlayerGhost(Player player) {
-        INSTANCE.ghostManager.setGhost(player, true);
+        player.setGameMode(GameMode.SPECTATOR);
     }
 
     public static void makePlayerVisible(PBPlayer player) {
@@ -96,7 +81,7 @@ public class Paintball extends JavaPlugin {
     }
 
     public static void makePlayerVisible(Player player) {
-        INSTANCE.ghostManager.setGhost(player, false);
+        player.setGameMode(GameMode.SURVIVAL);
     }
 
     private void registerListeners() {

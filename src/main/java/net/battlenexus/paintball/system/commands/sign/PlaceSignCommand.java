@@ -23,6 +23,7 @@ public class PlaceSignCommand implements PBCommand, Listener {
         Paintball.INSTANCE.getServer().getPluginManager().registerEvents(this, Paintball.INSTANCE);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void executePlayer(PBPlayer player, String[] args) {
         if (!player.getBukkitPlayer().isOp()) {

@@ -4,6 +4,7 @@ import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.PaintballGame;
 import net.battlenexus.paintball.game.weapon.Weapon;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -73,8 +74,6 @@ public class PBPlayer {
             i.clear(item_index);
             i.setItem(0, item);
             i.setItem(item_index, tomove);
-
-            player.updateInventory();
         }
 
     }
@@ -176,23 +175,19 @@ public class PBPlayer {
 
     public void showLobbyItems() {
         createLobbyItems();
-        final Inventory inventory = getBukkitPlayer().getInventory();
-
+        Inventory inventory = getBukkitPlayer().getInventory();
         for (int i = 0; i < lobby_items.length; i++) {
             int index = 8 - i;
             inventory.remove(inventory.getItem(index));
             inventory.setItem(index, lobby_items[i]);
         }
-
-        getBukkitPlayer().updateInventory();
     }
 
     public void hideLobbyItems() {
         createLobbyItems();
-        final Inventory inventory = getBukkitPlayer().getInventory();
+        Inventory inventory = getBukkitPlayer().getInventory();
         for (int i = 0; i < lobby_items.length; i++)
             inventory.remove(inventory.getItem(8 - i));
-        getBukkitPlayer().updateInventory();
     }
 
     public void save() {
@@ -303,7 +298,7 @@ public class PBPlayer {
         }
         showLobbyItems();
         kill_cache.clear(); //Empty kills if they leave game or game ends
-        player.setMaxHealth(20.0);
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
         player.setHealth(20.0);
         player.setFoodLevel(20);
         player.setCanPickupItems(true);
@@ -318,16 +313,16 @@ public class PBPlayer {
     }
 
     public boolean wouldDie(int damage) {
-        return getBukkitPlayer().getMaxHealth() - damage <= 0;
+        return getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - damage <= 0;
     }
 
     public void damagePlayer(int damage) {
-        getBukkitPlayer().setMaxHealth(getBukkitPlayer().getMaxHealth() - damage);
-        getBukkitPlayer().setHealth(getBukkitPlayer().getMaxHealth());
+        getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - damage);
+        getBukkitPlayer().setHealth(getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
     }
 
     public void refillHealth() {
-        getBukkitPlayer().setMaxHealth(maxHealth);
+        getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
         getBukkitPlayer().setHealth(maxHealth);
     }
 
@@ -357,8 +352,8 @@ public class PBPlayer {
 
     public void increasMaxHealth(double halfHearts) {
         maxHealth += halfHearts;
-        player.setMaxHealth(player.getMaxHealth() + halfHearts);
-        if (player.getHealth() + halfHearts <= player.getMaxHealth())
+        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() + halfHearts);
+        if (player.getHealth() + halfHearts <= player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())
             player.setHealth(player.getHealth() + halfHearts);
     }
 

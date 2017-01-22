@@ -3,7 +3,10 @@ package net.battlenexus.paintball.system.inventory.impl;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.Weapon;
-import net.battlenexus.paintball.game.weapon.impl.*;
+import net.battlenexus.paintball.game.weapon.impl.MachineGun;
+import net.battlenexus.paintball.game.weapon.impl.Pistol;
+import net.battlenexus.paintball.game.weapon.impl.Shotgun;
+import net.battlenexus.paintball.game.weapon.impl.Sniper;
 import net.battlenexus.paintball.system.inventory.PaintballMenu;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -37,6 +40,7 @@ public class WeaponShopMenu extends PaintballMenu {
         return WEAPONS.length;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void addItems(Inventory inventory) {
         for (int i = 0; i < WEAPONS.length; i++) {
@@ -57,6 +61,7 @@ public class WeaponShopMenu extends PaintballMenu {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onItemClicked(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {

@@ -47,21 +47,19 @@ public abstract class AbstractWeapon implements Weapon {
             return;
 
         Inventory inventory = owner.getBukkitPlayer().getInventory();
-        ItemStack[] items = owner.getBukkitPlayer().getInventory().getContents();
-        for (ItemStack i : items) {
+        for (ItemStack i : inventory) {
             int c = Weapon.WeaponUtils.getBulletCount(i);
             if (c == 0)
                 continue;
             inventory.remove(i);
         }
-        owner.getBukkitPlayer().updateInventory();
         updateGUI();
     }
 
     public int getMaxBullets() {
         if (owner == null)
             return 0;
-        ItemStack[] items = owner.getBukkitPlayer().getInventory().getContents();
+        Inventory items = owner.getBukkitPlayer().getInventory();
         int i = 0;
         for (ItemStack item : items)
             i += Weapon.WeaponUtils.getBulletCount(item);
@@ -116,7 +114,7 @@ public abstract class AbstractWeapon implements Weapon {
         int i = inventory.first(getReloadItem());
         ItemStack item = inventory.getItem(i);
         int bulletCount = Weapon.WeaponUtils.getBulletCount(item);
-        inventory.remove(i);
+        inventory.setItem(i, null);
 
         i = inventory.first(getReloadItem());
         if (i == -1) {
@@ -125,7 +123,7 @@ public abstract class AbstractWeapon implements Weapon {
         }
         item = inventory.getItem(i);
         int bulletCount2 = Weapon.WeaponUtils.getBulletCount(item);
-        inventory.remove(i);
+        inventory.setItem(i, null);
 
         int newAmount = bulletCount + bulletCount2;
         item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), newAmount);
@@ -181,7 +179,7 @@ public abstract class AbstractWeapon implements Weapon {
                         }
                         ItemStack item_to_move = i.getItem(first_index);
                         if (!item_to_move.hasItemMeta() || !item_to_move.getItemMeta().hasDisplayName() || !item_to_move.getItemMeta().hasLore()) {
-                            i.remove(first_index);
+                            i.setItem(first_index, null);
                             continue;
                         }
                         i.clear(first_index);
@@ -189,7 +187,6 @@ public abstract class AbstractWeapon implements Weapon {
                         i.setItem(clear, item_to_move);
                         break;
                     }
-                    owner.getBukkitPlayer().updateInventory();
                 }
             }
             updateGUI();

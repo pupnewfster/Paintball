@@ -188,6 +188,7 @@ public abstract class PaintballGame implements Tick {
         return players.toArray(new PBPlayer[players.size()]);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasEnded() {
         return ended;
     }

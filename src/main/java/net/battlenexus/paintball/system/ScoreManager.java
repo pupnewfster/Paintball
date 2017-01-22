@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class ScoreManager {
     private final ScoreboardManager scoreboardManager;
@@ -48,8 +49,8 @@ public class ScoreManager {
         team.setPrefix(hasColor ? ("" + ChatColor.COLOR_CHAR + teamChars[1]) : "" + ChatColor.RESET);
         //Add players to that team
         for (OfflinePlayer player : players)
-            team.addPlayer(player);
-        Score score = objective.getScore(players[0]);
+            team.addEntry(player.getUniqueId().toString());
+        Score score = objective.getScore(players[0].getUniqueId().toString());
         score.setScore(0);
     }
 
@@ -57,12 +58,11 @@ public class ScoreManager {
      * Shows this scoreboard to everyone on the server
      */
     public void showScoreboard() {
-        Set<OfflinePlayer> players = scoreboard.getPlayers();
-        for (OfflinePlayer player : players) {
-            Player p = player.getPlayer();
-            if (p != null) {
+        Set<String> players = scoreboard.getEntries();
+        for (String uuid : players) {
+            Player p = Bukkit.getPlayer(UUID.fromString(uuid));
+            if (p != null)
                 p.setScoreboard(scoreboard);
-            }
         }
     }
 
@@ -78,9 +78,9 @@ public class ScoreManager {
      * Removes this scoreboard to everyone on the server
      */
     public void hideScoreboard() {
-        Set<OfflinePlayer> players = scoreboard.getPlayers();
-        for (OfflinePlayer player : players) {
-            Player p = player.getPlayer();
+        Set<String> players = scoreboard.getEntries();
+        for (String uuid : players) {
+            Player p = Bukkit.getPlayer(UUID.fromString(uuid));
             if (p != null)
                 p.setScoreboard(scoreboardManager.getNewScoreboard());
         }
@@ -98,7 +98,7 @@ public class ScoreManager {
         if (team == null)
             team = scoreboard.registerNewTeam(teamName);
         for (OfflinePlayer player : players)
-            team.addPlayer(player);
+            team.addEntry(player.getUniqueId().toString());
     }
 
     /**
@@ -113,7 +113,7 @@ public class ScoreManager {
         if (team == null)
             team = scoreboard.registerNewTeam(teamName);
         for (OfflinePlayer player : players)
-            team.removePlayer(player);
+            team.removeEntry(player.getUniqueId().toString());
     }
 
     /**
@@ -123,7 +123,7 @@ public class ScoreManager {
      * @param amount int The points you want to add
      */
     public void addPoints(OfflinePlayer player, int amount) {
-        Score score = objective.getScore(player);
+        Score score = objective.getScore(player.getUniqueId().toString());
         score.setScore(score.getScore() + amount);
     }
 
@@ -134,7 +134,7 @@ public class ScoreManager {
      * @param amount int The points you want to subtract
      */
     public void takePoints(OfflinePlayer player, int amount) {
-        Score score = objective.getScore(player);
+        Score score = objective.getScore(player.getUniqueId().toString());
         score.setScore(score.getScore() - amount);
     }
 }
