@@ -277,7 +277,7 @@ public class PBPlayer {
         bukkitP.getInventory().setBoots(boots);
         bukkitP.setCanPickupItems(false);
         freeze();
-        getBukkitPlayer().setGameMode(GameMode.ADVENTURE);
+        Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> getBukkitPlayer().setGameMode(GameMode.ADVENTURE));
     }
 
     public void leaveGame(PaintballGame game) {

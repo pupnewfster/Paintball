@@ -36,7 +36,9 @@ public class LocationConfig implements ConfigParser {
                     pitch = Double.parseDouble(item.getFirstChild().getNodeValue());
                 else if (item.getNodeName().equals("world")) {
                     world_name = item.getFirstChild().getNodeValue();
-                    world = Bukkit.getServer().createWorld(new WorldCreator(world_name));
+                    world = Bukkit.getWorld(world_name);
+                    if (world == null)
+                        world = Bukkit.createWorld(new WorldCreator(world_name));
                     if (world == null)
                         world = Paintball.INSTANCE.paintball_world;
                 }

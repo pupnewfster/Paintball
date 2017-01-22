@@ -6,9 +6,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
-import java.util.Set;
-import java.util.UUID;
-
 public class ScoreManager {
     private final ScoreboardManager scoreboardManager;
     private Scoreboard scoreboard;
@@ -25,8 +22,10 @@ public class ScoreManager {
      * @param key  String Objective Key
      */
     public void setupScoreboard(String name, String key) {
-        scoreboard = scoreboardManager.getNewScoreboard();
-        objective = scoreboard.registerNewObjective(key, "dummy");
+        scoreboard = scoreboardManager.getMainScoreboard();
+        objective = scoreboard.getObjective(key);
+        if (objective == null)
+            objective = scoreboard.registerNewObjective(key, "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(name);
     }
@@ -36,94 +35,75 @@ public class ScoreManager {
     }
 
     /**
-     * Creates a new team with the given players
+     * Creates a new team
      *
      * @param teamName String The team name
-     * @param players  OfflinePlayer[] Players you want to add to the team
      */
-    public void addTeam(String teamName, OfflinePlayer[] players) {
+    public void addTeam(String teamName) {
+        if (teamName == null || teamName.equals(""))
+            return;
         //Create the new team
-        Team team = scoreboard.registerNewTeam(teamName);
+        Team team = scoreboard.getTeam(teamName);
+        if (team == null)
+            scoreboard.registerNewTeam(teamName);
+        if (team == null) //How can this be
+            return;
         char[] teamChars = teamName.toCharArray();
         boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
-        team.setPrefix(hasColor ? ("" + ChatColor.COLOR_CHAR + teamChars[1]) : "" + ChatColor.RESET);
-        //Add players to that team
-        for (OfflinePlayer player : players)
-            team.addEntry(player.getUniqueId().toString());
-        Score score = objective.getScore(players[0].getUniqueId().toString());
+        team.setPrefix(hasColor ? (ChatColor.COLOR_CHAR + "" + teamChars[1]) : "" + ChatColor.RESET);
+        team.addEntry(teamName);
+        Score score = objective.getScore(teamName);
         score.setScore(0);
     }
 
     /**
-     * Shows this scoreboard to everyone on the server
+     * Remove a team
+     *
+     * @param teamName String The team name
      */
-    public void showScoreboard() {
-        Set<String> players = scoreboard.getEntries();
-        for (String uuid : players) {
-            Player p = Bukkit.getPlayer(UUID.fromString(uuid));
-            if (p != null)
-                p.setScoreboard(scoreboard);
-        }
-    }
-
-    public void showScoreboardFor(Player p) {
-        p.setScoreboard(scoreboard);
-    }
-
-    public void hideScoreboardFor(Player p) {
-        p.setScoreboard(scoreboardManager.getNewScoreboard());
-    }
-
-    /**
-     * Removes this scoreboard to everyone on the server
-     */
-    public void hideScoreboard() {
-        Set<String> players = scoreboard.getEntries();
-        for (String uuid : players) {
-            Player p = Bukkit.getPlayer(UUID.fromString(uuid));
-            if (p != null)
-                p.setScoreboard(scoreboardManager.getNewScoreboard());
-        }
+    public void removeTeam(String teamName) {
+        //Remove the new team
+        Team team = scoreboard.getTeam(teamName);
+        if (team != null)
+            team.unregister();
     }
 
     /**
      * Adds players to a team
      *
      * @param teamName String The name of the team
-     * @param players  OfflinePlayer[] Players you want to add to the team
+     * @param player   Player The player you want to add to the team
      */
-    public void addPlayersToTeam(String teamName, OfflinePlayer[] players) {
+    public void addPlayerToTeam(String teamName, Player player) {
         //Get the team
         Team team = scoreboard.getTeam(teamName);
         if (team == null)
             team = scoreboard.registerNewTeam(teamName);
-        for (OfflinePlayer player : players)
-            team.addEntry(player.getUniqueId().toString());
+        team.addEntry(player.getUniqueId().toString());
     }
 
     /**
      * Removes players from a team
      *
      * @param teamName String The name of the team
-     * @param players  OfflinePlayer[] Players you want to remove from the team
+     * @param player   Player The player you want to remove from the team
      */
-    public void removePlayersFromTeam(String teamName, OfflinePlayer[] players) {
+    public void removePlayerFromTeam(String teamName, Player player) {
         //Get the team
         Team team = scoreboard.getTeam(teamName);
         if (team == null)
             team = scoreboard.registerNewTeam(teamName);
-        for (OfflinePlayer player : players)
-            team.removeEntry(player.getUniqueId().toString());
+        team.removeEntry(player.getUniqueId().toString());
     }
 
     /**
      * Adds points to a player's score
      *
-     * @param player OfflinePlayer The Player you want to modify
+     * @param value  OfflinePlayer The Player you want to modify
      * @param amount int The points you want to add
      */
-    public void addPoints(OfflinePlayer player, int amount) {
-        Score score = objective.getScore(player.getUniqueId().toString());
+    public void addPoints(String value, int amount) {
+        Score score = objective.getScore(value);
         score.setScore(score.getScore() + amount);
     }
 

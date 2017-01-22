@@ -66,7 +66,8 @@ public class PlayerListener implements Listener {
         Player p = event.getPlayer();
 
         if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (p.getInventory().getItemInHand().getItemMeta() != null && p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals("Weapon Shop")) {
+            if (p.getInventory().getItemInHand().hasItemMeta() && p.getInventory().getItemInHand().getItemMeta() != null &&
+                    p.getInventory().getItemInHand().getItemMeta().getDisplayName().equals("Weapon Shop")) {
                 WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "Weapon Shop");
                 menu.displayInventory(p);
                 event.setCancelled(true);
@@ -77,24 +78,23 @@ public class PlayerListener implements Listener {
         PBPlayer who;
         if ((who = PBPlayer.getPlayer(p)) == null)
             return;
-        if (!event.getClickedBlock().getType().equals(Material.CHEST) && !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST)) {
-            if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                //GUN
-                if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getMaterial())) {
-                    who.getCurrentWeapon().shoot();
-                    event.setCancelled(true);
-                }
-                //RELOAD
-                else if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
-                    who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
-                    event.setCancelled(true);
-                }
-                AbstractItem item = AbstractItem.getItem(p.getInventory().getItemInHand().getType());
-                //POWERUP
-                if (item != null && who.isInGame()) {
-                    item.addEffect(who, p.getInventory().getItemInHand());
-                    event.setCancelled(true);
-                }
+        if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getClickedBlock().getType().equals(Material.CHEST) &&
+                !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST))) {
+            //GUN
+            if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getMaterial())) {
+                who.getCurrentWeapon().shoot();
+                event.setCancelled(true);
+            }
+            //RELOAD
+            else if (who.getCurrentWeapon() != null && p.getInventory().getItemInHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
+                who.getCurrentWeapon().reload(p.getInventory().getItemInHand());
+                event.setCancelled(true);
+            }
+            AbstractItem item = AbstractItem.getItem(p.getInventory().getItemInHand().getType());
+            //POWERUP
+            if (item != null && who.isInGame()) {
+                item.addEffect(who, p.getInventory().getItemInHand());
+                event.setCancelled(true);
             }
         }
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && (event.getClickedBlock().getType().equals(Material.ANVIL)))

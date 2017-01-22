@@ -68,7 +68,7 @@ public class Team implements ConfigParser {
             }
             spawn.setWorld(w);
         }
-        player.getBukkitPlayer().teleport(spawn);
+        Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> player.getBukkitPlayer().teleport(spawn));
     }
 
     public List<PBPlayer> getAllPlayers() {

@@ -10,6 +10,7 @@ import net.battlenexus.paintball.system.listeners.TickBukkitTask;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.FileNotFoundException;
 
@@ -18,6 +19,7 @@ public class Paintball extends JavaPlugin {
     public World paintball_world;
     public Location lobby_spawn;
     private TickBukkitTask tasks;
+    private BukkitRunnable gameTask;
     private GameService game;
     ScoreManager scoreboard;
 
@@ -47,11 +49,16 @@ public class Paintball extends JavaPlugin {
         tasks = new TickBukkitTask();
         tasks.runTaskTimer(this, 1, 1);
 
-        new Thread(() -> {
-            game = new GameService();
-            game.loadMaps();
-            game.play();
-        }).start();
+
+        gameTask = new BukkitRunnable() {
+            @Override
+            public void run() {
+                game = new GameService();
+                game.loadMaps();
+                game.play();
+            }
+        };
+        gameTask.runTaskAsynchronously(this);
 
         try {
             SignStat.loadStats();

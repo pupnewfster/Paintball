@@ -10,10 +10,8 @@ import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.Weapon;
 import net.battlenexus.paintball.system.ScoreManager;
 import net.battlenexus.paintball.system.listeners.Tick;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
@@ -74,11 +72,6 @@ public abstract class PaintballGame implements Tick {
 
     public boolean inCountdown() {
         return countdown;
-    }
-
-    public void showScore() {
-        if (score != null)
-            score.showScoreboard();
     }
 
     protected abstract void onGameStart();
@@ -206,13 +199,13 @@ public abstract class PaintballGame implements Tick {
     protected void endGame() {
         ending = true;
         PBPlayer[] players = getAllPlayers();
-        if (score != null)
-            score.hideScoreboard();
+        if (score != null) {
+            score.removeTeam(getConfig().getBlueTeam().getName());
+            score.removeTeam(getConfig().getRedTeam().getName());
+        }
         for (PBPlayer player : players) {
             try {
                 player.leaveGame(this);
-                if (score != null)
-                    score.hideScoreboardFor(player.getBukkitPlayer());
             } catch (Throwable t) {
                 t.printStackTrace();
                 Paintball.INSTANCE.error("Error removing player \"" + player.getBukkitPlayer().getName() + "\" from paintball game!");
@@ -273,11 +266,7 @@ public abstract class PaintballGame implements Tick {
     }
 
     protected void setupScoreboard() {
-        OfflinePlayer[] blue = new OfflinePlayer[1];
-        OfflinePlayer[] red = new OfflinePlayer[1];
-        blue[0] = Bukkit.getOfflinePlayer(getConfig().getBlueTeam().getName());
-        red[0] = Bukkit.getOfflinePlayer(getConfig().getRedTeam().getName());
-        score.addTeam(getConfig().getBlueTeam().getName(), blue);
-        score.addTeam(getConfig().getRedTeam().getName(), red);
+        score.addTeam(getConfig().getBlueTeam().getName());
+        score.addTeam(getConfig().getRedTeam().getName());
     }
 }

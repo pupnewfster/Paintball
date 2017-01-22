@@ -3,9 +3,7 @@ package net.battlenexus.paintball.game.impl;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.PaintballGame;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.Listener;
 
 public class SimpleGame extends PaintballGame implements Listener {
@@ -29,7 +27,6 @@ public class SimpleGame extends PaintballGame implements Listener {
     @Override
     protected void onGameStart() {
         sendGameMessage("First team to 20 kills win!");
-        showScore();
     }
 
     @Override
@@ -39,10 +36,7 @@ public class SimpleGame extends PaintballGame implements Listener {
             super.setupScoreboard();
             didsetup = true;
         }
-        OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
-        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getUniqueId());
-        score.addPlayersToTeam(player.getCurrentTeam().getName(), thisPlayer);
-        score.showScoreboardFor(player.getBukkitPlayer());
+        score.addPlayerToTeam(player.getCurrentTeam().getName(), player.getBukkitPlayer());
     }
 
     public void onPlayerLeave(PBPlayer player) {
@@ -51,10 +45,7 @@ public class SimpleGame extends PaintballGame implements Listener {
             super.setupScoreboard();
             didsetup = true;
         }
-        OfflinePlayer[] thisPlayer = new OfflinePlayer[1];
-        thisPlayer[0] = Bukkit.getOfflinePlayer(player.getBukkitPlayer().getUniqueId());
-        score.removePlayersFromTeam(player.getCurrentTeam().getName(), thisPlayer);
-        score.hideScoreboardFor(player.getBukkitPlayer());
+        score.removePlayerFromTeam(player.getCurrentTeam().getName(), player.getBukkitPlayer());
     }
 
     @Override
@@ -64,10 +55,10 @@ public class SimpleGame extends PaintballGame implements Listener {
             Team t = killer.getCurrentTeam();
             if (t == super.getConfig().getBlueTeam()) {
                 bscore++;
-                score.addPoints(Bukkit.getOfflinePlayer(super.getConfig().getBlueTeam().getName()), 1);
+                score.addPoints(super.getConfig().getBlueTeam().getName(), 1);
             } else {
                 rscore++;
-                score.addPoints(Bukkit.getOfflinePlayer(super.getConfig().getRedTeam().getName()), 1);
+                score.addPoints(super.getConfig().getRedTeam().getName(), 1);
             }
         } else if (killer == null) {
             if (victim.getCurrentTeam() != null) {
