@@ -316,7 +316,10 @@ public abstract class AbstractWeapon implements Weapon {
         Player bukkitPlayer = owner.getBukkitPlayer();
         bukkitPlayer.playEffect(bukkitPlayer.getLocation(), Effect.CLICK1, 10);
 
-        final Snowball snowball = bukkitPlayer.getWorld().spawn(bukkitPlayer.getEyeLocation(), Snowball.class);
+        Location spawnLoc = bukkitPlayer.getEyeLocation().clone();
+
+        final Snowball snowball = bukkitPlayer.getWorld().spawn(spawnLoc.add(spawnLoc.getDirection()), Snowball.class);
+
         onFire(snowball, bukkitPlayer, spread);
     }
 }
