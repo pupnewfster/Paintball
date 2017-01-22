@@ -22,17 +22,17 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class PaintballGame implements Tick {
-    protected MapConfig mapConfig;
+    private MapConfig mapConfig;
     protected ScoreManager score = new ScoreManager();
-    protected boolean ended = false;
+    boolean ended = false;
     protected boolean started = false;
     private boolean countdown = false;
 
-    public PaintballGame() {
+    protected PaintballGame() {
         score.setupScoreboard(getGamemodeName(), getGamemodeName());
     }
 
-    public abstract String getGamemodeName();
+    protected abstract String getGamemodeName();
 
     public void beginGame() {
         Paintball.INSTANCE.getTicker().addTick(this);
@@ -84,7 +84,7 @@ public abstract class PaintballGame implements Tick {
         return mapConfig;
     }
 
-    public void sendGameMessage(String s) {
+    protected void sendGameMessage(String s) {
         PBPlayer[] players = getAllPlayers();
         for (PBPlayer p : players)
             p.sendMessage(s);
@@ -93,10 +93,10 @@ public abstract class PaintballGame implements Tick {
     public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
         announceKill(killer, victim);
         if (victim.getCurrentWeapon() != null)
-            victim.getCurrentWeapon().addBullets(victim.getCurrentWeapon().clipeSize());
+            victim.getCurrentWeapon().addBullets(victim.getCurrentWeapon().clipSize());
     }
 
-    public void refillChests(boolean announce) {
+    private void refillChests(boolean announce) {
         final Random random = new Random();
         boolean refilled = false;
         for (LocationConfig lc : getConfig().getChests()) {
@@ -173,7 +173,7 @@ public abstract class PaintballGame implements Tick {
             return null;
     }
 
-    public PBPlayer[] getAllPlayers() {
+    private PBPlayer[] getAllPlayers() {
         List<PBPlayer> players = new ArrayList<>();
         players.addAll(mapConfig.getBlueTeam().getAllPlayers());
         players.addAll(mapConfig.getRedTeam().getAllPlayers());
@@ -221,7 +221,7 @@ public abstract class PaintballGame implements Tick {
         return ending;
     }
 
-    protected void announceKill(PBPlayer killer, PBPlayer victim) {
+    private void announceKill(PBPlayer killer, PBPlayer victim) {
         String message = "shot";
         if (killer == null) {
             sendGameMessage(victim.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " killed himself!");

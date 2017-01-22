@@ -28,7 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 
 public class PlayerListener implements Listener {
-    protected HashMap<String, String> deathMessages = new HashMap<>();
+    private final HashMap<String, String> deathMessages = new HashMap<>();
 
     public PlayerListener(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
@@ -51,9 +51,8 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player p = event.getPlayer();
         PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null) {
+        if ((who = PBPlayer.getPlayer(p)) == null)
             return;
-        }
         //Removes from queue if in queue when leaving
         Paintball.INSTANCE.getGameService().leaveQueue(who);
         //TODO leave game if in a game
@@ -119,12 +118,10 @@ public class PlayerListener implements Listener {
             Player victim = (Player) event.getEntity();
             PBPlayer pbvictim;
             if (!(event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) && !(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
-                if ((pbvictim = PBPlayer.getPlayer(victim)) == null) {
+                if ((pbvictim = PBPlayer.getPlayer(victim)) == null)
                     return;
-                }
-                if (pbvictim.isInGame() || pbvictim.isSpectating()) {
+                if (pbvictim.isInGame() || pbvictim.isSpectating())
                     event.setCancelled(true);
-                }
             }
         }
     }
@@ -138,9 +135,8 @@ public class PlayerListener implements Listener {
         PBPlayer victim;
         PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball) event.getDamager()).getShooter());
 
-        if ((victim = PBPlayer.getPlayer((Player) event.getEntity())) == null) {
+        if ((victim = PBPlayer.getPlayer((Player) event.getEntity())) == null)
             return;
-        }
 
         victim.hit(shooter);
     }
@@ -151,17 +147,15 @@ public class PlayerListener implements Listener {
         if (deathMessages.containsKey(playerName)) {
             event.setDeathMessage(deathMessages.get(playerName));
             deathMessages.remove(playerName);
-
         }
     }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         PBPlayer player;
-        if ((player = PBPlayer.getPlayer(event.getPlayer())) != null) {
+        if ((player = PBPlayer.getPlayer(event.getPlayer())) != null)
             if (player.isFrozen() && (event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ()))
                 player.handleFrozen();
-        }
     }
 
     @EventHandler
@@ -169,13 +163,11 @@ public class PlayerListener implements Listener {
         //Part of custom "adventure mode" to stop breaking of blocks
         Player p = event.getPlayer();
         PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null) {
+        if ((who = PBPlayer.getPlayer(p)) == null)
             return;
-        }
-        //Stop them if they are ingame
-        if (who.isInGame() || who.isSpectating()) {
+        //Stop them if they are in game
+        if (who.isInGame() || who.isSpectating())
             event.setCancelled(true);
-        }
     }
 
     @EventHandler
@@ -183,35 +175,30 @@ public class PlayerListener implements Listener {
         //Part of custom "adventure mode" to stop placing of blocks
         Player p = event.getPlayer();
         PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null) {
+        if ((who = PBPlayer.getPlayer(p)) == null)
             return;
-        }
-        //Stop them if they are ingame
-        if (who.isInGame() || who.isSpectating()) {
+        //Stop them if they are in game
+        if (who.isInGame() || who.isSpectating())
             event.setCancelled(true);
-        }
     }
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
         Player p = event.getPlayer();
         PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null) {
+        if ((who = PBPlayer.getPlayer(p)) == null)
             return;
-        }
         //Stops them from dropping items if they are inGame
-        if (who.isInGame() || who.isSpectating()) {
+        if (who.isInGame() || who.isSpectating())
             event.setCancelled(true);
-        }
     }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player p = event.getPlayer();
         PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null) {
+        if ((who = PBPlayer.getPlayer(p)) == null)
             return;
-        }
         if (who.isInGame()) {
             String team = "(" + ChatColor.translateAlternateColorCodes(ChatColor.COLOR_CHAR, who.getCurrentTeam().getName()) + ChatColor.RESET + ") ";
             event.setFormat(team + event.getFormat());

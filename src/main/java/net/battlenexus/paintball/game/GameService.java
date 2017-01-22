@@ -19,10 +19,10 @@ public class GameService {
             OneHitMinute.class
     };
 
-    private ArrayList<MapConfig> mapConfigs = new ArrayList<>();
+    private final ArrayList<MapConfig> mapConfigs = new ArrayList<>();
     private PaintballGame game;
-    private ArrayList<PBPlayer> joinnext = new ArrayList<>();
-    private MapConfig nextconfig;
+    private final ArrayList<PBPlayer> joinNext = new ArrayList<>();
+    private MapConfig nextConfig;
     private boolean running = true;
     private boolean waiting = false;
     private Thread current_thread;
@@ -61,7 +61,7 @@ public class GameService {
             try {
                 int map_id = random.nextInt(mapConfigs.size());
                 MapConfig map_config = new MapConfig(mapConfigs.get(map_id)); //Make a clone of the mapConfig
-                this.nextconfig = map_config;
+                this.nextConfig = map_config;
                 int game_id = random.nextInt(GAME_TYPES.length);
                 game = createGame((Class<? extends PaintballGame>) GAME_TYPES[game_id]); //Weak typing because fuck it
                 game.setConfig(map_config);
@@ -84,10 +84,10 @@ public class GameService {
                     if (!running)
                         break;
                 }
-                PBPlayer[] bukkit_players = joinnext.toArray(new PBPlayer[joinnext.size()]);
+                PBPlayer[] bukkit_players = joinNext.toArray(new PBPlayer[joinNext.size()]);
                 for (PBPlayer p : bukkit_players)
                     if (Paintball.INSTANCE.isPlayingPaintball(p) && !p.isInGame()) {
-                        joinnext.remove(p);
+                        joinNext.remove(p);
                         p.joinGame(game);
                     }
                 waiting = true;
@@ -112,7 +112,7 @@ public class GameService {
         running = false;
         current_thread.interrupt();
         current_thread = null;
-        joinnext.clear();
+        joinNext.clear();
     }
 
     public PaintballGame getCurrentGame() {
@@ -124,23 +124,23 @@ public class GameService {
     }
 
     public boolean canJoin() {
-        return joinnext.size() < nextconfig.getPlayerMax();
+        return joinNext.size() < nextConfig.getPlayerMax();
     }
 
     public int getMaxPlayers() {
-        if (nextconfig == null)
+        if (nextConfig == null)
             return 0;
-        return nextconfig.getPlayerMax();
+        return nextConfig.getPlayerMax();
     }
 
     public String getMapName() {
-        if (nextconfig == null)
+        if (nextConfig == null)
             return "";
-        return nextconfig.getMapName();
+        return nextConfig.getMapName();
     }
 
     public int getQueueCount() {
-        return joinnext.size();
+        return joinNext.size();
     }
 
     public boolean joinNextGame(Player p) {
@@ -149,16 +149,16 @@ public class GameService {
     }
 
     public boolean joinNextGame(PBPlayer pb) {
-        if (joinnext.contains(pb))
+        if (joinNext.contains(pb))
             return false;
-        joinnext.add(pb);
+        joinNext.add(pb);
         return true;
     }
 
     public boolean leaveQueue(PBPlayer pb) {
-        if (!joinnext.contains(pb))
+        if (!joinNext.contains(pb))
             return false;
-        joinnext.remove(pb);
+        joinNext.remove(pb);
         return true;
     }
 

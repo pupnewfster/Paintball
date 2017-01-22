@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Team implements ConfigParser {
-    private ArrayList<PBPlayer> players = new ArrayList<>();
+    private final ArrayList<PBPlayer> players = new ArrayList<>();
     private String team_name;
     private Location spawn;
     private String world_name;

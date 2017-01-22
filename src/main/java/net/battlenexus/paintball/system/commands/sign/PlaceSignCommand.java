@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 public class PlaceSignCommand implements PBCommand, Listener {
-    private HashMap<Player, Class<?>> queue = new HashMap<>();
+    private final HashMap<Player, Class<?>> queue = new HashMap<>();
 
     public PlaceSignCommand() {
         Paintball.INSTANCE.getServer().getPluginManager().registerEvents(this, Paintball.INSTANCE);

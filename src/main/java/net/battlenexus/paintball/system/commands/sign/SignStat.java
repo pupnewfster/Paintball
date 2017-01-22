@@ -17,7 +17,7 @@ import java.util.Scanner;
 
 public abstract class SignStat implements Tick {
     private Sign sign;
-    private static ArrayList<SignStat> stats = new ArrayList<>();
+    private static final ArrayList<SignStat> stats = new ArrayList<>();
 
     public static void addStat(SignStat s) {
         stats.add(s);
@@ -33,10 +33,9 @@ public abstract class SignStat implements Tick {
         }
     }
 
-    public static void diposeSigns() {
-        for (SignStat s : stats) {
+    public static void disposeSigns() {
+        for (SignStat s : stats)
             Paintball.INSTANCE.getTicker().removeTick(s);
-        }
     }
 
     public static void saveStat(SignStat s) throws IOException {

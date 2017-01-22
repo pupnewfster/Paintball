@@ -16,14 +16,14 @@ public class QueueSign extends SignStat implements Listener {
         Paintball.INSTANCE.getServer().getPluginManager().registerEvents(this, Paintball.INSTANCE);
     }
 
-    int oldvalue = -1;
+    private int oldValue = -1;
 
     @Override
     public void tick() {
-        if (Paintball.INSTANCE.getGameService().getQueueCount() != oldvalue) {
+        if (Paintball.INSTANCE.getGameService().getQueueCount() != oldValue) {
             int temp = Paintball.INSTANCE.getGameService().getQueueCount();
             updateSign("Next Game:", getText(temp), Paintball.INSTANCE.getGameService().getMapName());
-            oldvalue = temp;
+            oldValue = temp;
         }
     }
 

@@ -19,6 +19,4 @@ redo/New reloading method
 Classes
 
 
-Go through and switch as many deprecated methods to their newer counter parts
-Get players based on UUID not on name
 Make offhand slot not break things

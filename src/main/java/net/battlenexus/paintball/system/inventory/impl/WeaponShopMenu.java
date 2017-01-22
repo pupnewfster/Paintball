@@ -48,6 +48,8 @@ public class WeaponShopMenu extends PaintballMenu {
                 continue;
             int price = PRICES[i];
             ItemStack item = toItemStack((Class<? extends Weapon>) WEAPONS[i]); //GOD DAMN WEAK TYPING
+            if (item == null)
+                continue;
             ItemMeta meta = item.getItemMeta();
             List<String> lore;
             if (meta.hasLore())

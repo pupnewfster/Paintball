@@ -17,11 +17,11 @@ import java.io.FileNotFoundException;
 public class Paintball extends JavaPlugin {
     public static Paintball INSTANCE;
     public World paintball_world;
-    public Location lobby_spawn;
+    private Location lobby_spawn;
     private TickBukkitTask tasks;
     private BukkitRunnable gameTask;
     private GameService game;
-    ScoreManager scoreboard;
+    private ScoreManager scoreboard;
 
     public GameService getGameService() {
         return game;
@@ -70,7 +70,7 @@ public class Paintball extends JavaPlugin {
     @Override
     public void onDisable() {
         SignStat.saveSigns();
-        SignStat.diposeSigns();
+        SignStat.disposeSigns();
         if (game != null)
             game.stop();
     }
@@ -103,13 +103,13 @@ public class Paintball extends JavaPlugin {
         getLogger().info("[BN Paintball] ERROR: " + message);
     }
 
-    public void sendWorldMessage(String message) {
+    private void sendWorldMessage(String message) {
         for (Player p : getServer().getOnlinePlayers())
             if (p.getLocation().getWorld().getName().equals(paintball_world.getName()))
                 p.sendMessage(message);
     }
 
-    public boolean isPlayingPaintball(Player player) {
+    private boolean isPlayingPaintball(Player player) {
         return player.getLocation().getWorld().getName().equals(paintball_world.getName());
     }
 
@@ -125,7 +125,7 @@ public class Paintball extends JavaPlugin {
         return ChatColor.WHITE + "[" + ChatColor.RED + "Paintball" + ChatColor.WHITE + "] " + ChatColor.GRAY + message;
     }
 
-    public void loadPluginConfig() {
+    private void loadPluginConfig() {
         String world_name = getConfig().getString("game.world.name", "world");
         WorldCreator creator = new WorldCreator(world_name);
         paintball_world = getServer().createWorld(creator);

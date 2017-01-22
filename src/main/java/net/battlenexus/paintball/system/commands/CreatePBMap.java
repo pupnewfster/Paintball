@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class CreatePBMap implements PBCommand, Listener {
-    private HashMap<Player, CreationHelper> creators = new HashMap<>();
+    private final HashMap<Player, CreationHelper> creators = new HashMap<>();
 
     public CreatePBMap() {
         Paintball.INSTANCE.getServer().getPluginManager().registerEvents(this, Paintball.INSTANCE);
@@ -34,13 +34,13 @@ public class CreatePBMap implements PBCommand, Listener {
 
         creators.put(player.getBukkitPlayer(), new CreationHelper());
         player.getBukkitPlayer().sendMessage(Paintball.formatMessage("Welcome to the paintball Map Creator!"));
-        player.getBukkitPlayer().sendMessage(Paintball.formatMessage("Why dont we start off by telling me the name of this map."));
+        player.getBukkitPlayer().sendMessage(Paintball.formatMessage("Why don't we start off by telling me the name of this map."));
         player.getBukkitPlayer().sendMessage(Paintball.formatMessage("So, whats the name?"));
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        sender.sendMessage("This command can only be used ingame!");
+        sender.sendMessage("This command can only be used in game!");
     }
 
     @EventHandler
@@ -55,7 +55,7 @@ public class CreatePBMap implements PBCommand, Listener {
                     ch.mapConfig.addChest(l);
                     event.getPlayer().sendMessage(Paintball.formatMessage(ChatColor.GREEN + "Chest added!"));
                 } else {
-                    event.getPlayer().sendMessage(Paintball.formatMessage(ChatColor.RED + "Thats not a chest!"));
+                    event.getPlayer().sendMessage(Paintball.formatMessage(ChatColor.RED + "That's not a chest!"));
                     event.getPlayer().sendMessage(Paintball.formatMessage(ChatColor.RED + "If your done with this step, say \"pineapple\""));
                 }
             }
@@ -67,11 +67,11 @@ public class CreatePBMap implements PBCommand, Listener {
         if (creators.containsKey(event.getPlayer())) {
             CreationHelper ch = creators.get(event.getPlayer());
             if (ch.step == 0) {
-                String mapname = event.getMessage();
+                String mapName = event.getMessage();
                 event.setCancelled(true);
                 ch.step++;
-                ch.mapConfig.setMapName(mapname);
-                event.getPlayer().sendMessage(Paintball.formatMessage("So this map is called \"" + mapname + "\", awesome!"));
+                ch.mapConfig.setMapName(mapName);
+                event.getPlayer().sendMessage(Paintball.formatMessage("So this map is called \"" + mapName + "\", awesome!"));
                 event.getPlayer().sendMessage(Paintball.formatMessage("How many players is this map for? (1000 for no limit)"));
             } else if (ch.step == 1) {
                 String text = event.getMessage();
@@ -157,7 +157,7 @@ public class CreatePBMap implements PBCommand, Listener {
     }
 
     public class CreationHelper {
-        public MapConfig mapConfig = new MapConfig();
+        public final MapConfig mapConfig = new MapConfig();
         public int step = 0;
     }
 }

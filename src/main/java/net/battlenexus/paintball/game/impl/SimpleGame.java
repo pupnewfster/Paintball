@@ -8,7 +8,7 @@ import org.bukkit.event.Listener;
 
 public class SimpleGame extends PaintballGame implements Listener {
     private int rscore, bscore;
-    private boolean didsetup;
+    private boolean didSetup;
 
     @Override
     public void tick() {
@@ -32,18 +32,18 @@ public class SimpleGame extends PaintballGame implements Listener {
     @Override
     public void onPlayerJoin(PBPlayer player) {
         super.onPlayerJoin(player);
-        if (!didsetup) {
+        if (!didSetup) {
             super.setupScoreboard();
-            didsetup = true;
+            didSetup = true;
         }
         score.addPlayerToTeam(player.getCurrentTeam().getName(), player.getBukkitPlayer());
     }
 
     public void onPlayerLeave(PBPlayer player) {
         super.onPlayerLeave(player);
-        if (!didsetup) {
+        if (!didSetup) {
             super.setupScoreboard();
-            didsetup = true;
+            didSetup = true;
         }
         score.removePlayerFromTeam(player.getCurrentTeam().getName(), player.getBukkitPlayer());
     }

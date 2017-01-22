@@ -17,7 +17,7 @@ public interface Weapon {
 
     String name();
 
-    int clipeSize();
+    int clipSize();
 
     int startBullets();
 
@@ -56,7 +56,7 @@ public interface Weapon {
             ItemMeta im = itemStack.getItemMeta();
             im.setDisplayName(weapon.name());
             List<String> lore = new ArrayList<>();
-            lore.add("Clip Size: " + weapon.clipeSize());
+            lore.add("Clip Size: " + weapon.clipSize());
             lore.add("Strength: " + weapon.damage());
             lore.add("Fire Rate: " + weapon.getShotRate());
             im.setLore(lore);

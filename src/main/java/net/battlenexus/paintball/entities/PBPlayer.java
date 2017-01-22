@@ -69,11 +69,11 @@ public class PBPlayer {
                 player.getInventory().addItem(item);
                 item_index = i.first(item);
             }
-            ItemStack tomove = i.getItem(0);
+            ItemStack toMove = i.getItem(0);
             i.clear(0);
             i.clear(item_index);
             i.setItem(0, item);
-            i.setItem(item_index, tomove);
+            i.setItem(item_index, toMove);
         }
 
     }
@@ -84,7 +84,8 @@ public class PBPlayer {
      * @param player Player the player you would like to find
      * @return PBPlayer
      */
-    public static PBPlayer newPlayer(Player player) {
+    @SuppressWarnings("ConstantConditions")
+    private static PBPlayer newPlayer(Player player) {
         PBPlayer pbPlayer = new PBPlayer(player);
         if (pbPlayer.hasSaveData())
             pbPlayer.load();
@@ -93,7 +94,7 @@ public class PBPlayer {
         return pbPlayer;
     }
 
-    public void setCurrentGame(PaintballGame game) {
+    private void setCurrentGame(PaintballGame game) {
         if (current_game != null)
             current_game.leaveGame(this);
         current_game = game;
@@ -162,7 +163,7 @@ public class PBPlayer {
         return current_game != null && getCurrentTeam() != null && !current_game.hasEnded();
     }
 
-    public void kill(final PBPlayer killer) {
+    private void kill(final PBPlayer killer) {
         if (!isInGame())
             return;
         addDeath();
@@ -190,18 +191,17 @@ public class PBPlayer {
             inventory.remove(inventory.getItem(8 - i));
     }
 
-    public void save() {
+    private void save() {
         //TODO Save data
     }
 
-    public boolean hasSaveData() {
+    private boolean hasSaveData() {
         //TODO Check if save data is available
-
         return false;
     }
 
-    public void load() {
-        //TODO Load save data, if hasSaveData returns false, then dont do anything.
+    private void load() {
+        //TODO Load save data, if hasSaveData returns false, then don't do anything.
     }
 
 
@@ -312,16 +312,16 @@ public class PBPlayer {
         player.getInventory().setBoots(new ItemStack(Material.AIR));
     }
 
-    public boolean wouldDie(int damage) {
+    private boolean wouldDie(int damage) {
         return getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - damage <= 0;
     }
 
-    public void damagePlayer(int damage) {
+    private void damagePlayer(int damage) {
         getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() - damage);
         getBukkitPlayer().setHealth(getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
     }
 
-    public void refillHealth() {
+    private void refillHealth() {
         getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
         getBukkitPlayer().setHealth(maxHealth);
     }
@@ -334,7 +334,7 @@ public class PBPlayer {
         this.kills = kills;
     }
 
-    public void addKill() {
+    private void addKill() {
         this.kills++;
     }
 
@@ -346,11 +346,11 @@ public class PBPlayer {
         this.deaths = deaths;
     }
 
-    public void addDeath() {
+    private void addDeath() {
         this.deaths++;
     }
 
-    public void increasMaxHealth(double halfHearts) {
+    public void increaseMaxHealth(double halfHearts) {
         maxHealth += halfHearts;
         player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(getBukkitPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() + halfHearts);
         if (player.getHealth() + halfHearts <= player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())

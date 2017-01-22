@@ -25,7 +25,7 @@ public class Shotgun extends AbstractWeapon {
     }
 
     @Override
-    public int clipeSize() {
+    public int clipSize() {
         return 30;
     }
 

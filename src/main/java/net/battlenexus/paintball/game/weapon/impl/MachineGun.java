@@ -25,7 +25,7 @@ public class MachineGun extends AbstractWeapon {
     }
 
     @Override
-    public int clipeSize() {
+    public int clipSize() {
         return 50;
     }
 

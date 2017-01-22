@@ -20,17 +20,17 @@ public abstract class AbstractItem {
 
     public abstract Material getMaterial();
 
-    public abstract String getName();
+    protected abstract String getName();
 
     public abstract void addEffect(PBPlayer p, ItemStack is);
 
-    public abstract boolean canGoInChest();
+    protected abstract boolean canGoInChest();
 
-    public abstract String durationMessage(); //Only used if there is not a timer
+    protected abstract String durationMessage(); //Only used if there is not a timer
 
-    public abstract boolean hasTimer();
+    protected abstract boolean hasTimer();
 
-    public abstract boolean hasAmplifier();
+    protected abstract boolean hasAmplifier();
 
     protected AbstractItem() {
     }
@@ -66,7 +66,7 @@ public abstract class AbstractItem {
         return null;
     }
 
-    public static ArrayList<AbstractItem> getItems() {
+    private static ArrayList<AbstractItem> getItems() {
         ArrayList<AbstractItem> items = new ArrayList<>();
         for (Class<?> class_ : ITEMS) {
             try {

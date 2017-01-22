@@ -49,6 +49,6 @@ public class Health extends AbstractItem {
         other.setAmount(is.getAmount() - 1);
         p.getBukkitPlayer().getInventory().setItem(p.getBukkitPlayer().getInventory().first(is), other);
         List<String> lore = im.getLore();
-        p.increasMaxHealth(Integer.parseInt(lore.get(1).split(" ")[1]));
+        p.increaseMaxHealth(Integer.parseInt(lore.get(1).split(" ")[1]));
     }
 }

@@ -21,20 +21,20 @@ public class PBCommandHandler implements CommandExecutor {
         for (PBCommand cmd : COMMANDS) {
             for (String ss : cmd.getNames()) {
                 if (ss.equalsIgnoreCase(command.getName())) {
-                    String[] newargs;
+                    String[] newArgs;
                     if (strings.length > 0) {
-                        newargs = new String[strings.length - 1];
-                        if (newargs.length >= 2)
-                            System.arraycopy(strings, 0, newargs, 0, newargs.length);
-                        else if (newargs.length == 1)
-                            newargs[0] = strings[0];
+                        newArgs = new String[strings.length - 1];
+                        if (newArgs.length >= 2)
+                            System.arraycopy(strings, 0, newArgs, 0, newArgs.length);
+                        else if (newArgs.length == 1)
+                            newArgs[0] = strings[0];
                     } else
-                        newargs = new String[0];
+                        newArgs = new String[0];
 
                     if (commandSender instanceof Player)
-                        cmd.executePlayer(PBPlayer.toPBPlayer((Player) commandSender), newargs);
+                        cmd.executePlayer(PBPlayer.toPBPlayer((Player) commandSender), newArgs);
                     else
-                        cmd.execute(commandSender, newargs);
+                        cmd.execute(commandSender, newArgs);
                     return true;
                 }
             }
