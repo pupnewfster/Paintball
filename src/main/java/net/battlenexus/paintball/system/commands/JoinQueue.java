@@ -30,11 +30,8 @@ public class JoinQueue implements PBCommand {
                 player.sendMessage("You are already in the queue!");
             else
                 player.sendMessage("You have been added to the queue for the next game!");
-        } else {
+        } else
             player.joinGame(service.getCurrentGame());
-            if (!service.getCurrentGame().inCountdown())
-                player.unfreeze();
-        }
     }
 
     @Override

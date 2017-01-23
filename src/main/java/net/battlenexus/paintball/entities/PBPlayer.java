@@ -20,8 +20,6 @@ public class PBPlayer {
     private static ItemStack[] lobby_items;
     private static HashMap<String, PBPlayer> players = new HashMap<>();
     private Player player;
-    private boolean frozen;
-    private Location frozen_location;
     private int kills;
     private int deaths;
     private boolean isSpectating;
@@ -106,26 +104,6 @@ public class PBPlayer {
 
     public Team getCurrentTeam() {
         return current_game != null ? current_game.getTeamForPlayer(this) : null;
-    }
-
-    public void handleFrozen() {
-        if (!frozen || frozen_location == null)
-            return;
-        player.teleport(frozen_location);
-    }
-
-    public boolean isFrozen() {
-        return frozen;
-    }
-
-    public void freeze() {
-        frozen_location = player.getLocation();
-        frozen = true;
-    }
-
-    public void unfreeze() {
-        frozen = false;
-        frozen_location = null;
     }
 
     /**
@@ -276,7 +254,6 @@ public class PBPlayer {
         bukkitP.getInventory().setLeggings(legs);
         bukkitP.getInventory().setBoots(boots);
         bukkitP.setCanPickupItems(false);
-        freeze();
         Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> getBukkitPlayer().setGameMode(GameMode.ADVENTURE));
     }
 
@@ -372,6 +349,5 @@ public class PBPlayer {
         player = null;
         weapon = null;
         current_game = null;
-        frozen_location = null;
     }
 }

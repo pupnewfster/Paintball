@@ -25,7 +25,6 @@ commands:
      usage: /<command>
    spectate:
      aliases:
-       - s
        - spec
      description: Spectate a game.
      usage: /<command>

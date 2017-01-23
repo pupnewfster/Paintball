@@ -18,10 +18,8 @@ redo/New reloading method
 "ticks alive for" as a weapon spec which determines how long a snowball is alive for (kinda like range)
 Classes
 
-
-Make offhand slot not break things
-Make it so you cannot remove your armor
-Remove the Game will start in 20 message, thus getting around fixing the freeze code by removing it and removing excess waiting time
+Make offhand not bug out when holding an item in main hand also, mainly is reloading that spazzes out I believe
 Reset the score for teams at least on onehit minute
 Make only pistol in one hit minute
 Ability to change gun mid round without leaving and then it will just give
+Make the prices actually require money and add a way to get money

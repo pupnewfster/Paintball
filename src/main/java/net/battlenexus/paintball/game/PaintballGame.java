@@ -26,7 +26,6 @@ public abstract class PaintballGame implements Tick {
     protected ScoreManager score = new ScoreManager();
     boolean ended = false;
     protected boolean started = false;
-    private boolean countdown = false;
 
     protected PaintballGame() {
         score.setupScoreboard(getGamemodeName(), getGamemodeName());
@@ -37,7 +36,7 @@ public abstract class PaintballGame implements Tick {
     public void beginGame() {
         Paintball.INSTANCE.getTicker().addTick(this);
         onGameStart();
-        countdown = true;
+        /*countdown = true;
         for (int i = 20; i > 0; i--) {
             if (i > 15)
                 sendGameMessage("Game will start in: " + ChatColor.WHITE + i);
@@ -51,9 +50,8 @@ public abstract class PaintballGame implements Tick {
                 e.printStackTrace();
             }
         }
-        countdown = false;
+        countdown = false;*/
         for (PBPlayer player : getAllPlayers()) {
-            player.unfreeze();
             player.hideLobbyItems();
             if (player.getCurrentWeapon() != null) {
                 player.getCurrentWeapon().emptyGun();
@@ -68,10 +66,6 @@ public abstract class PaintballGame implements Tick {
 
     public boolean hasStarted() {
         return started;
-    }
-
-    public boolean inCountdown() {
-        return countdown;
     }
 
     protected abstract void onGameStart();
@@ -146,15 +140,11 @@ public abstract class PaintballGame implements Tick {
             else
                 mapConfig.getRedTeam().joinTeam(p);
         }
-        if (countdown)
-            p.freeze();
-        else if (started) {
-            if (p.getCurrentWeapon() != null && p.getCurrentWeapon() instanceof AbstractWeapon) {
+        if (started && p.getCurrentWeapon() != null && p.getCurrentWeapon() instanceof AbstractWeapon) {
                 p.getCurrentWeapon().emptyGun();
                 p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
                 p.getCurrentWeapon().addBullets(p.getCurrentWeapon().startBullets());
             }
-        }
     }
 
     public void leaveGame(PBPlayer p) {

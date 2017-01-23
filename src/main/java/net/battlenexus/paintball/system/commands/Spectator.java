@@ -32,8 +32,7 @@ public class Spectator implements PBCommand {
     public String[] getNames() {
         return new String[]{
                 "spectate",
-                "spec",
-                "s"
+                "spec"
         };
     }
 }

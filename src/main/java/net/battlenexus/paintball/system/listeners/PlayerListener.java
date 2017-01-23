@@ -22,10 +22,14 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class PlayerListener implements Listener {
     private final HashMap<String, String> deathMessages = new HashMap<>();
@@ -44,7 +48,6 @@ public class PlayerListener implements Listener {
         event.getPlayer().setFoodLevel(20);
         event.getPlayer().setHealth(20.0);
         pbPlayer.showLobbyItems();
-        Paintball.makePlayerGhost(event.getPlayer());
     }
 
     @EventHandler
@@ -64,9 +67,15 @@ public class PlayerListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player p = event.getPlayer();
 
+        EquipmentSlot hand = event.getHand();
+        ItemStack item;
+        if (hand.equals(EquipmentSlot.HAND))
+            item = p.getInventory().getItemInMainHand();
+        else //TODO: if there for some reason become more than two hands check if it is offhand and then check for third hand
+            item = p.getInventory().getItemInOffHand();
+
         if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (p.getInventory().getItemInMainHand().hasItemMeta() && p.getInventory().getItemInMainHand().getItemMeta() != null &&
-                    p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals("Weapon Shop")) {
+            if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().getDisplayName().equals("Weapon Shop")) {
                 WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "Weapon Shop");
                 menu.displayInventory(p);
                 event.setCancelled(true);
@@ -80,19 +89,19 @@ public class PlayerListener implements Listener {
         if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getClickedBlock().getType().equals(Material.CHEST) &&
                 !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST))) {
             //GUN
-            if (who.getCurrentWeapon() != null && p.getInventory().getItemInMainHand().getType().equals(who.getCurrentWeapon().getMaterial())) {
+            if (who.getCurrentWeapon() != null && item.getType().equals(who.getCurrentWeapon().getMaterial())) {
                 who.getCurrentWeapon().shoot();
                 event.setCancelled(true);
             }
             //RELOAD
-            else if (who.getCurrentWeapon() != null && p.getInventory().getItemInMainHand().getType().equals(who.getCurrentWeapon().getReloadItem())) {
-                who.getCurrentWeapon().reload(p.getInventory().getItemInMainHand());
+            else if (who.getCurrentWeapon() != null && item.getType().equals(who.getCurrentWeapon().getReloadItem())) {
+                who.getCurrentWeapon().reload(item);
                 event.setCancelled(true);
             }
-            AbstractItem item = AbstractItem.getItem(p.getInventory().getItemInMainHand().getType());
+            AbstractItem abstractItem = AbstractItem.getItem(item.getType());
             //POWERUP
-            if (item != null && who.isInGame()) {
-                item.addEffect(who, p.getInventory().getItemInMainHand());
+            if (abstractItem != null && who.isInGame()) {
+                abstractItem.addEffect(who, item);
                 event.setCancelled(true);
             }
         }
@@ -100,15 +109,20 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
     }
 
+    List<Material> armorItems = Arrays.asList(Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE, Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS,
+            Material.GOLD_HELMET, Material.GOLD_CHESTPLATE, Material.GOLD_LEGGINGS, Material.GOLD_BOOTS,
+            Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS,
+            Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS,
+            Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE, Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS);
+
     @EventHandler
-    public void inventoryClicked(InventoryClickEvent event) {
+    public void onInventoryClicked(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
-            Player p = (Player) event.getWhoClicked();
             Inventory i = event.getInventory();
-            if (i.getHolder() != null && i.getHolder() instanceof PaintballMenu) {
-                PaintballMenu menu = (PaintballMenu) event.getInventory().getHolder();
-                menu.onItemClicked(event);
-            }
+            if (i.getHolder() != null && i.getHolder() instanceof PaintballMenu)
+                ((PaintballMenu) event.getInventory().getHolder()).onItemClicked(event);
+            else if (event.getCurrentItem() != null && armorItems.contains(event.getCurrentItem().getType()))
+                event.setCancelled(true);
         }
     }
 
@@ -148,14 +162,6 @@ public class PlayerListener implements Listener {
             event.setDeathMessage(deathMessages.get(playerName));
             deathMessages.remove(playerName);
         }
-    }
-
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent event) {
-        PBPlayer player;
-        if ((player = PBPlayer.getPlayer(event.getPlayer())) != null)
-            if (player.isFrozen() && (event.getFrom().getBlockX() != event.getTo().getBlockX() || event.getFrom().getBlockZ() != event.getTo().getBlockZ()))
-                player.handleFrozen();
     }
 
     @EventHandler
