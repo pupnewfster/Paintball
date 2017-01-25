@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,9 +16,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -46,6 +45,7 @@ public class PlayerListener implements Listener {
         event.getPlayer().getInventory().setMaxStackSize(1); //TODO is this really needed anymore?
         event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
         event.getPlayer().setFoodLevel(20);
+        event.getPlayer().setSaturation(20);
         event.getPlayer().setHealth(20.0);
         pbPlayer.showLobbyItems();
     }
@@ -129,30 +129,31 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            Player victim = (Player) event.getEntity();
-            PBPlayer pbvictim;
-            if (!(event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) && !(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)) {
-                if ((pbvictim = PBPlayer.getPlayer(victim)) == null)
-                    return;
-                if (pbvictim.isInGame() || pbvictim.isSpectating())
-                    event.setCancelled(true);
-            }
+            PBPlayer pbvictim = PBPlayer.getPlayer((Player) event.getEntity());
+            if (pbvictim == null)
+                return;
+            if (pbvictim.isInGame() || pbvictim.isSpectating())
+                event.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void onPlayerHit(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Snowball) || !(event.getEntity() instanceof Player) || !(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
-            event.setCancelled(true);
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if (!(event.getEntity() instanceof Snowball))
             return;
+        PBPlayer shooter = PBPlayer.toPBPlayer((Player) event.getEntity().getShooter());
+        if (shooter == null)
+            return; //not sure how this is possible, but does it need to be handled with removing snowball from having glow
+        if (event.getHitEntity() != null) {
+            if (event.getHitEntity() instanceof Player) {
+                PBPlayer victim = PBPlayer.getPlayer((Player) event.getHitEntity());
+                if (victim == null)
+                    return;
+                victim.hit(shooter);
+            } //TODO should we handle when it hits a different entity
         }
-        PBPlayer victim;
-        PBPlayer shooter = PBPlayer.toPBPlayer((Player) ((Snowball) event.getDamager()).getShooter());
-
-        if ((victim = PBPlayer.getPlayer((Player) event.getEntity())) == null)
-            return;
-
-        victim.hit(shooter);
+        if (shooter.getCurrentTeam() != null) //TODO what do we do if their team is null
+            Paintball.INSTANCE.getGameService().getCurrentGame().getScoreManager().removeUUIDFromTeam(shooter.getCurrentTeam().getName(), event.getEntity().getUniqueId());
     }
 
     @EventHandler

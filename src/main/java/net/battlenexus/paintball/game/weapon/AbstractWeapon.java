@@ -2,6 +2,7 @@ package net.battlenexus.paintball.game.weapon;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.PaintballGame;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -34,10 +35,8 @@ public abstract class AbstractWeapon implements Weapon {
     private void updateGUI() {
         if (owner == null)
             return;
-        float max = (float) getMaxBullets();
-        float percent = (max == 0.0f ? 0.0f : (float) bullets / max);
-        getOwner().getBukkitPlayer().setExp(percent); //TODO Display EXP properly
         getOwner().getBukkitPlayer().setLevel(bullets);
+        getOwner().getBukkitPlayer().setExp(clipSize() == 0 ? 0 : (float) (1.0 * bullets / clipSize()));
     }
 
     @Override
@@ -209,9 +208,8 @@ public abstract class AbstractWeapon implements Weapon {
         owner.getBukkitPlayer().setExp(0);
         final Player thePlayer = owner.getBukkitPlayer();
         final float percentage = 1 / speed;
-        Runnable fixTask = () -> thePlayer.setExp(thePlayer.getExp() + percentage);
         for (int i = 1; i <= speed; i++)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, fixTask, (long) 20 * i);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> thePlayer.setExp(thePlayer.getExp() + percentage), (long) 20 * i);
     }
 
     @Override
@@ -319,6 +317,9 @@ public abstract class AbstractWeapon implements Weapon {
         Location spawnLoc = bukkitPlayer.getEyeLocation().clone();
 
         final Snowball snowball = bukkitPlayer.getWorld().spawn(spawnLoc.add(spawnLoc.getDirection()), Snowball.class);
+        Team t = Paintball.INSTANCE.getGameService().getCurrentGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
+        Paintball.INSTANCE.getGameService().getCurrentGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
+        snowball.setGlowing(true);
 
         onFire(snowball, bukkitPlayer, spread);
     }

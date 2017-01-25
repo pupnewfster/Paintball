@@ -96,7 +96,6 @@ public class Team implements ConfigParser {
         players.remove(player);
     }
 
-
     @Override
     public void parse(NodeList childNodes) {
         if (childNodes != null && childNodes.getLength() > 0) {

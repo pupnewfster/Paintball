@@ -36,21 +36,6 @@ public abstract class PaintballGame implements Tick {
     public void beginGame() {
         Paintball.INSTANCE.getTicker().addTick(this);
         onGameStart();
-        /*countdown = true;
-        for (int i = 20; i > 0; i--) {
-            if (i > 15)
-                sendGameMessage("Game will start in: " + ChatColor.WHITE + i);
-            else if (i > 5)
-                sendGameMessage("Game will start in: " + ChatColor.YELLOW + i);
-            else
-                sendGameMessage("Game will start in: " + ChatColor.DARK_RED + i);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        countdown = false;*/
         for (PBPlayer player : getAllPlayers()) {
             player.hideLobbyItems();
             if (player.getCurrentWeapon() != null) {
@@ -141,10 +126,10 @@ public abstract class PaintballGame implements Tick {
                 mapConfig.getRedTeam().joinTeam(p);
         }
         if (started && p.getCurrentWeapon() != null && p.getCurrentWeapon() instanceof AbstractWeapon) {
-                p.getCurrentWeapon().emptyGun();
-                p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
-                p.getCurrentWeapon().addBullets(p.getCurrentWeapon().startBullets());
-            }
+            p.getCurrentWeapon().emptyGun();
+            p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
+            p.getCurrentWeapon().addBullets(p.getCurrentWeapon().startBullets());
+        }
     }
 
     public void leaveGame(PBPlayer p) {
@@ -181,7 +166,7 @@ public abstract class PaintballGame implements Tick {
     }
 
     public void onPlayerLeave(PBPlayer player) {
-        sendGameMessage(ChatColor.DARK_RED + "-" + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has left the game.");
+        sendGameMessage(ChatColor.DARK_RED + "- " + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has left the game.");
     }
 
     private boolean ending = false;
@@ -258,5 +243,9 @@ public abstract class PaintballGame implements Tick {
     protected void setupScoreboard() {
         score.addTeam(getConfig().getBlueTeam().getName());
         score.addTeam(getConfig().getRedTeam().getName());
+    }
+
+    public ScoreManager getScoreManager() {
+        return score;
     }
 }

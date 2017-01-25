@@ -20,6 +20,10 @@ Classes
 
 Make offhand not bug out when holding an item in main hand also, mainly is reloading that spazzes out I believe
 Reset the score for teams at least on onehit minute
-Make only pistol in one hit minute
+Make only pistol in one hit minute or some new gun
 Ability to change gun mid round without leaving and then it will just give
 Make the prices actually require money and add a way to get money
+Add sound for taking damage
+Make number of kills scale with number of players
+instead of using lore to make them not stack set an NBT value that is not visible
+Make a sort of AI for bots for when no one is online

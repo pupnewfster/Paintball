@@ -2,7 +2,6 @@ package net.battlenexus.paintball;
 
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.GameService;
-import net.battlenexus.paintball.system.ScoreManager;
 import net.battlenexus.paintball.system.commands.PBCommandHandler;
 import net.battlenexus.paintball.system.commands.sign.SignStat;
 import net.battlenexus.paintball.system.listeners.PlayerListener;
@@ -21,7 +20,6 @@ public class Paintball extends JavaPlugin {
     private TickBukkitTask tasks;
     private BukkitRunnable gameTask;
     private GameService game;
-    private ScoreManager scoreboard;
 
     public GameService getGameService() {
         return game;
@@ -32,8 +30,6 @@ public class Paintball extends JavaPlugin {
         INSTANCE = this;
 
         loadPluginConfig();
-
-        scoreboard = new ScoreManager();
 
         PBCommandHandler handler = new PBCommandHandler();
         getCommand("createpbmap").setExecutor(handler);

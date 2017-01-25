@@ -6,14 +6,11 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.*;
 
+import java.util.UUID;
+
 public class ScoreManager {
-    private final ScoreboardManager scoreboardManager;
     private Scoreboard scoreboard;
     private Objective objective;
-
-    public ScoreManager() {
-        this.scoreboardManager = Bukkit.getScoreboardManager();
-    }
 
     /**
      * Initialises the scoreboard
@@ -22,16 +19,12 @@ public class ScoreManager {
      * @param key  String Objective Key
      */
     public void setupScoreboard(String name, String key) {
-        scoreboard = scoreboardManager.getMainScoreboard();
+        scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         objective = scoreboard.getObjective(key);
         if (objective == null)
             objective = scoreboard.registerNewObjective(key, "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         objective.setDisplayName(name);
-    }
-
-    public void setDisplaySlot(DisplaySlot slot) {
-        objective.setDisplaySlot(slot);
     }
 
     /**
@@ -45,12 +38,9 @@ public class ScoreManager {
         //Create the new team
         Team team = scoreboard.getTeam(teamName);
         if (team == null)
-            scoreboard.registerNewTeam(teamName);
-        if (team == null) //How can this be
-            return;
-        char[] teamChars = teamName.toCharArray();
-        boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
-        team.setPrefix(hasColor ? (ChatColor.COLOR_CHAR + "" + teamChars[1]) : "" + ChatColor.RESET);
+            team = scoreboard.registerNewTeam(teamName);
+        boolean hasColor = teamName.startsWith(ChatColor.COLOR_CHAR + "") && teamName.length() > 2;
+        team.setPrefix(hasColor ? (ChatColor.COLOR_CHAR + "" + teamName.charAt(1)) : "" + ChatColor.RESET);
         team.addEntry(teamName);
         Score score = objective.getScore(teamName);
         score.setScore(0);
@@ -69,31 +59,51 @@ public class ScoreManager {
     }
 
     /**
-     * Adds players to a team
+     * Adds a player to a team
      *
      * @param teamName String The name of the team
      * @param player   Player The player you want to add to the team
      */
     public void addPlayerToTeam(String teamName, Player player) {
+        addUUIDToTeam(teamName, player.getUniqueId());
+    }
+
+    /**
+     * Adds a uuid to a team
+     *
+     * @param teamName String The name of the team
+     * @param uuid     UUID The uuid you want to add to the team
+     */
+    public void addUUIDToTeam(String teamName, UUID uuid) {
         //Get the team
         Team team = scoreboard.getTeam(teamName);
         if (team == null)
             team = scoreboard.registerNewTeam(teamName);
-        team.addEntry(player.getUniqueId().toString());
+        team.addEntry(uuid.toString());
     }
 
     /**
-     * Removes players from a team
+     * Removes a player from a team
      *
      * @param teamName String The name of the team
      * @param player   Player The player you want to remove from the team
      */
     public void removePlayerFromTeam(String teamName, Player player) {
+        removeUUIDFromTeam(teamName, player.getUniqueId());
+    }
+
+    /**
+     * Removes a uuid from a team
+     *
+     * @param teamName String The name of the team
+     * @param uuid     UUID The uuid you want to remove from the team
+     */
+    public void removeUUIDFromTeam(String teamName, UUID uuid) {
         //Get the team
         Team team = scoreboard.getTeam(teamName);
         if (team == null)
             team = scoreboard.registerNewTeam(teamName);
-        team.removeEntry(player.getUniqueId().toString());
+        team.removeEntry(uuid.toString());
     }
 
     /**

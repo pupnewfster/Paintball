@@ -45,5 +45,6 @@ public class Food extends AbstractItem {
         other.setAmount(is.getAmount() - 1);
         p.getBukkitPlayer().getInventory().setItem(p.getBukkitPlayer().getInventory().first(is), other);
         p.getBukkitPlayer().setFoodLevel(20);
+        p.getBukkitPlayer().setSaturation(20);
     }
 }
