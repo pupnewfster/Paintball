@@ -113,16 +113,7 @@ public interface Weapon {
                 return;
             ItemMeta m = item.getItemMeta();
             m.setDisplayName(ChatColor.GREEN + "Ammo Clip (" + amount + ")");
-            List<String> lore;
-            if (!m.hasLore()) {
-                lore = new ArrayList<>();
-                lore.add("Bullet Count: " + amount);
-                lore.add("ID: " + random.nextLong()); //TODO Find a better way to make these not stack
-            } else {
-                lore = m.getLore();
-                lore.set(0, "Bullet Count: " + amount);
-            }
-            m.setLore(lore);
+            m.setLore(Collections.singletonList("Bullet Count: " + amount));
             item.setItemMeta(m);
         }
     }
