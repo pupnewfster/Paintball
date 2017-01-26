@@ -1,12 +1,15 @@
 package net.battlenexus.paintball.game.weapon;
 
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.minecraft.server.v1_11_R1.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -71,14 +74,19 @@ public interface Weapon {
 
             ItemMeta im = itemStack.getItemMeta();
             im.setDisplayName(ChatColor.GREEN + "Ammo Clip (" + amount + ")");
-            List<String> lore = new ArrayList<>();
-            lore.add("Bullet Count: " + amount);
-            long id = random.nextLong();
-            lore.add("ID: " + id); //TODO Find a better way to make these not stack
-            im.setLore(lore);
+            im.setLore(Collections.singletonList("Bullet Count: " + amount));
             itemStack.setItemMeta(im);
 
-            return itemStack;
+            net.minecraft.server.v1_11_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
+            NBTTagCompound tag = null;
+            if (nmsStack.hasTag())
+                tag = nmsStack.getTag();
+            else
+                nmsStack.setTag(tag = new NBTTagCompound());
+            tag.setInt("HideFlags", 63);
+            tag.setLong("ID", random.nextLong());
+            nmsStack.setTag(tag);
+            return CraftItemStack.asCraftMirror(nmsStack);
         }
 
         public static int getBulletCount(ItemStack item) {
