@@ -190,7 +190,7 @@ public abstract class AbstractWeapon implements Weapon {
             }
             updateGUI();
             owner.getBukkitPlayer().sendMessage(Paintball.formatMessage("Reloading..."));
-            owner.getBukkitPlayer().playSound(owner.getBukkitPlayer().getLocation(), Sound.BLOCK_ANVIL_USE, 60, 1);
+            owner.getBukkitPlayer().playSound(owner.getBukkitPlayer().getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1);
             displayReloadAnimation(reloadTime);
 
             Runnable stopReload = () -> {
@@ -278,14 +278,16 @@ public abstract class AbstractWeapon implements Weapon {
     private void onFire(final Snowball snowball, Player bukkitPlayer, double spread) {
         if (bukkitPlayer == null)
             return;
+        Team t = Paintball.INSTANCE.getGameService().getCurrentGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
+        Paintball.INSTANCE.getGameService().getCurrentGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
+        snowball.setGlowing(true);
         snowball.setShooter(bukkitPlayer);
-        snowball.setTicksLived(2400);
         Vector vector;
         if (spread == 0)
-            vector = bukkitPlayer.getLocation().getDirection().multiply(strength());
+            vector = bukkitPlayer.getEyeLocation().getDirection().multiply(strength());
         else {
             final Random random = new Random();
-            Location pLoc = bukkitPlayer.getLocation();
+            Location pLoc = bukkitPlayer.getEyeLocation();
             double dir = -pLoc.getYaw() - 90;
             double pitch = -pLoc.getPitch();
             double xWep = ((random.nextInt((int) (spread * 100)) - random.nextInt((int) (spread * 100))) + 0.5) / 100.0;
@@ -298,13 +300,8 @@ public abstract class AbstractWeapon implements Weapon {
         }
         snowball.setVelocity(vector);
 
-        Runnable task = () -> {
-            Location loc = snowball.getLocation();
-            for (int a = 1; a <= 2; a++)
-                snowball.getWorld().playEffect(loc, Effect.SMOKE, 10);
-        };
         for (int i = 1; i <= 10; i++)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, task, 2L * i);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> snowball.getWorld().playEffect(snowball.getLocation(), Effect.SMOKE, 10), 2L * i);
     }
 
     private void onShoot(double spread) {
@@ -312,15 +309,7 @@ public abstract class AbstractWeapon implements Weapon {
             return;
         called = true;
         Player bukkitPlayer = owner.getBukkitPlayer();
-        bukkitPlayer.playEffect(bukkitPlayer.getLocation(), Effect.CLICK1, 10);
-
-        Location spawnLoc = bukkitPlayer.getEyeLocation().clone();
-
-        final Snowball snowball = bukkitPlayer.getWorld().spawn(spawnLoc.add(spawnLoc.getDirection()), Snowball.class);
-        Team t = Paintball.INSTANCE.getGameService().getCurrentGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
-        Paintball.INSTANCE.getGameService().getCurrentGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
-        snowball.setGlowing(true);
-
-        onFire(snowball, bukkitPlayer, spread);
+        bukkitPlayer.playSound(bukkitPlayer.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5f, 1);
+        onFire(bukkitPlayer.getWorld().spawn(bukkitPlayer.getEyeLocation().clone(), Snowball.class), bukkitPlayer, spread);
     }
 }

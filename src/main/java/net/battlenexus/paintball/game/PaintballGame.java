@@ -162,7 +162,7 @@ public abstract class PaintballGame implements Tick {
     }
 
     public void onPlayerJoin(PBPlayer player) {
-        sendGameMessage(ChatColor.GREEN + "+" + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has joined the game.");
+        sendGameMessage(ChatColor.GREEN + "+ " + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has joined the game.");
     }
 
     public void onPlayerLeave(PBPlayer player) {

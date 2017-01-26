@@ -83,8 +83,8 @@ public class PlayerListener implements Listener {
             }
         }
 
-        PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null)
+        PBPlayer who = PBPlayer.getPlayer(p);
+        if (who == null)
             return;
         if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getClickedBlock().getType().equals(Material.CHEST) &&
                 !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST))) {

@@ -42,6 +42,7 @@ public class ScoreManager {
         boolean hasColor = teamName.startsWith(ChatColor.COLOR_CHAR + "") && teamName.length() > 2;
         team.setPrefix(hasColor ? (ChatColor.COLOR_CHAR + "" + teamName.charAt(1)) : "" + ChatColor.RESET);
         team.addEntry(teamName);
+        team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
         Score score = objective.getScore(teamName);
         score.setScore(0);
     }
