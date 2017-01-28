@@ -43,6 +43,11 @@
             <artifactId>necessities</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>me.eddiep</groupId>
+            <artifactId>ubot</artifactId>
+            <version>1.1.1</version>
+        </dependency>
     </dependencies>
     
     <distributionManagement>

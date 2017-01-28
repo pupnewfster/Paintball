@@ -278,8 +278,8 @@ public abstract class AbstractWeapon implements Weapon {
     private void onFire(final Snowball snowball, Player bukkitPlayer, double spread) {
         if (bukkitPlayer == null)
             return;
-        Team t = Paintball.INSTANCE.getGameService().getCurrentGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
-        Paintball.INSTANCE.getGameService().getCurrentGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
+        Team t = Paintball.INSTANCE.getGameService().getGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
+        Paintball.INSTANCE.getGameService().getGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
         snowball.setGlowing(true);
         snowball.setShooter(bukkitPlayer);
         Vector vector;

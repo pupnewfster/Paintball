@@ -151,7 +151,7 @@ public class PlayerListener implements Listener {
             } //TODO should we handle when it hits a different entity
         }
         if (shooter.getCurrentTeam() != null) //TODO what do we do if their team is null
-            Paintball.INSTANCE.getGameService().getCurrentGame().getScoreManager().removeUUIDFromTeam(shooter.getCurrentTeam().getName(), event.getEntity().getUniqueId());
+            Paintball.INSTANCE.getGameService().getGame().getScoreManager().removeUUIDFromTeam(shooter.getCurrentTeam().getName(), event.getEntity().getUniqueId());
     }
 
     @EventHandler

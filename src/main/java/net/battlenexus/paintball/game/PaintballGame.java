@@ -171,7 +171,7 @@ public abstract class PaintballGame implements Tick {
 
     private boolean ending = false;
 
-    protected void endGame() {
+    public void endGame() {
         ending = true;
         PBPlayer[] players = getAllPlayers();
         if (score != null) {

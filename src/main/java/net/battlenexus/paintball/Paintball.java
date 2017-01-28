@@ -1,16 +1,21 @@
 package net.battlenexus.paintball;
 
+import me.eddiep.ubot.UBot;
+import me.eddiep.ubot.utils.CancelToken;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.system.commands.PBCommandHandler;
 import net.battlenexus.paintball.system.commands.sign.SignStat;
 import net.battlenexus.paintball.system.listeners.PlayerListener;
 import net.battlenexus.paintball.system.listeners.TickBukkitTask;
+import net.battlenexus.paintball.system.ubot.ULogger;
+import net.battlenexus.paintball.system.ubot.UPatcher;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Paintball extends JavaPlugin {
@@ -19,6 +24,7 @@ public class Paintball extends JavaPlugin {
     private Location lobby_spawn;
     private TickBukkitTask tasks;
     private BukkitRunnable gameTask;
+    private CancelToken ubotCancelToken;
     private GameService game;
 
     public GameService getGameService() {
@@ -41,6 +47,14 @@ public class Paintball extends JavaPlugin {
 
         //Register Listeners
         registerListeners();
+
+        getLogger().info("Starting UBot");
+        try {
+            UBot ubot = new UBot(new File("/home/minecraft/ubot/Paintball"), new UPatcher(), new ULogger());
+            ubotCancelToken = ubot.startAsync();
+        } catch (Exception e) {
+            getLogger().warning("Failed to start UBot");
+        }
 
         tasks = new TickBukkitTask();
         tasks.runTaskTimer(this, 1, 1);
@@ -135,5 +149,9 @@ public class Paintball extends JavaPlugin {
         float world_pitch = (float) getConfig().getDouble("game.world.lobby_pitch", paintball_world.getSpawnLocation().getPitch());
 
         lobby_spawn = new Location(paintball_world, world_x, world_y, world_z, world_yaw, world_pitch);
+    }
+
+    public void stopUbot() {
+
     }
 }

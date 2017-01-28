@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 public class Spectator implements PBCommand {
     @Override
     public void executePlayer(PBPlayer player, String[] args) {
-        if (Paintball.INSTANCE.getGameService().getCurrentGame() == null) {
+        if (Paintball.INSTANCE.getGameService().getGame() == null) {
             player.sendMessage("There are no current games to spectate!");
             return;
         }
@@ -18,7 +18,7 @@ public class Spectator implements PBCommand {
             player.stopSpectating();
             player.sendMessage("You have stopped spectating!");
         } else {
-            player.spectateGame(Paintball.INSTANCE.getGameService().getCurrentGame());
+            player.spectateGame(Paintball.INSTANCE.getGameService().getGame());
             player.sendMessage("You have started spectating!");
         }
     }

@@ -8,6 +8,7 @@ import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,8 +25,17 @@ public class GameService {
     private final ArrayList<PBPlayer> joinNext = new ArrayList<>();
     private MapConfig nextConfig;
     private boolean running = true;
+    private boolean softStop = false;
     private boolean waiting = false;
     private Thread current_thread;
+
+    public static PaintballGame getCurrentGame() {
+        return Paintball.INSTANCE.getGameService().game;
+    }
+
+    public static GameService getCurrentService() {
+        return Paintball.INSTANCE.getGameService();
+    }
 
     public void loadMaps() {
         File dir = Paintball.INSTANCE.getDataFolder();
@@ -58,6 +68,11 @@ public class GameService {
         current_thread = Thread.currentThread();
         final Random random = new Random();
         while (running) {
+            if (softStop) {
+                stop();
+                break;
+            }
+
             try {
                 int map_id = random.nextInt(mapConfigs.size());
                 MapConfig map_config = new MapConfig(mapConfigs.get(map_id)); //Make a clone of the mapConfig
@@ -106,6 +121,13 @@ public class GameService {
         }
     }
 
+    public void softStop() {
+        if (!running)
+            return;
+        softStop = true;
+        Paintball.INSTANCE.getLogger().info("Soft stop requested!");
+    }
+
     public void stop() {
         if (!running)
             return;
@@ -115,7 +137,8 @@ public class GameService {
         joinNext.clear();
     }
 
-    public PaintballGame getCurrentGame() {
+    @Deprecated
+    public PaintballGame getGame() {
         return game;
     }
 
