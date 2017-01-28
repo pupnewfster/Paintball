@@ -34,6 +34,8 @@ public class Paintball extends JavaPlugin {
     public void onEnable() {
         INSTANCE = this;
 
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
         loadPluginConfig();
 
         PBCommandHandler handler = new PBCommandHandler();
