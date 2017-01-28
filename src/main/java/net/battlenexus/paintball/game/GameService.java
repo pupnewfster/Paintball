@@ -123,6 +123,7 @@ public class GameService {
     public void softStop() {
         if (!running)
             return;
+        getCurrentGame().restartNextGame("lobby");
         softStop = true;
         Paintball.INSTANCE.getLogger().info("Soft stop requested!");
     }

@@ -15,8 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 public class Paintball extends JavaPlugin {
     public static Paintball INSTANCE;
@@ -153,5 +152,15 @@ public class Paintball extends JavaPlugin {
 
     public void stopUbot() {
 
+    }
+
+    public void changeServer(Player p, String serverName) throws IOException {
+        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bs);
+        dos.writeUTF("Connect");
+        dos.writeUTF(serverName);
+        p.sendPluginMessage(this, "BungeeCord", bs.toByteArray());
+        bs.close();
+        dos.close();
     }
 }

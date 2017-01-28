@@ -10,13 +10,16 @@ import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.Weapon;
 import net.battlenexus.paintball.system.ScoreManager;
 import net.battlenexus.paintball.system.listeners.Tick;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +29,8 @@ public abstract class PaintballGame implements Tick {
     protected ScoreManager score = new ScoreManager();
     boolean ended = false;
     protected boolean started = false;
+    private static boolean restart;
+    private static String restartServer;
 
     protected PaintballGame() {
         score.setupScoreboard(getGamemodeName(), getGamemodeName());
@@ -34,6 +39,31 @@ public abstract class PaintballGame implements Tick {
     protected abstract String getGamemodeName();
 
     public void beginGame() {
+        if (restart) {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                try {
+                    Paintball.INSTANCE.changeServer(p, restartServer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> {
+                /*//Unloading world
+                if (lastMap != null) {
+                    Paintball.log("Unloading " + lastMap.getWorld().getName() + "..");
+                    boolean success = Bukkit.unloadWorld(lastMap.getWorld(), false);
+                    if (!success)
+                        Paintball.log("Failed to unload last map! A manual unload may be required..");
+                    else
+                        restoreBackup(lastMap.getWorld());
+                }*/
+                //Restart
+                //Should this use Bukkit.spigot().restart(); instead of will that cause issues
+                Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart"), 20);
+            }, 20 * 2);
+            return;
+        }
+
         Paintball.INSTANCE.getTicker().addTick(this);
         onGameStart();
         for (PBPlayer player : getAllPlayers()) {
@@ -247,5 +277,10 @@ public abstract class PaintballGame implements Tick {
 
     public ScoreManager getScoreManager() {
         return score;
+    }
+
+    public static void restartNextGame(String serverToJoin) {
+        restart = true;
+        restartServer = serverToJoin;
     }
 }
