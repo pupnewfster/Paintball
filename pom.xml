@@ -25,30 +25,42 @@
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
+            <artifactId>bukkit</artifactId>
             <version>1.11.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
+            <artifactId>craftbukkit</artifactId>
             <version>1.11.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.11.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>me.eddiep.minecraft</groupId>
             <artifactId>necessities</artifactId>
             <version>1.0</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
+    
+    <distributionManagement>
+        <repository>
+            <id>ssh-repository</id>
+            <url>scpexe://root@galaxygaming.gg/maven</url>
+        </repository>
+    </distributionManagement>
+    
     <build>
+        <extensions>
+            <!-- Enabling the use of SSH -->
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>1.0-beta-6</version>
+            </extension>
+        </extensions>
         <resources>
             <resource>
                 <directory>${project.basedir}</directory>
