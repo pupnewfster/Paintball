@@ -15,8 +15,10 @@ public class ULogger implements Logger {
     }
 
     @Override
-    public void init() { }
+    public void init() {
+    }
 
     @Override
-    public void deinit() { }
+    public void deinit() {
+    }
 }

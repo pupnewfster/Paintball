@@ -8,7 +8,6 @@ import net.battlenexus.paintball.game.impl.SimpleGame;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

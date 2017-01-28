@@ -85,8 +85,10 @@ public class UPatcher implements UpdateNotifier {
     }
 
     @Override
-    public void init() { }
+    public void init() {
+    }
 
     @Override
-    public void deinit() { }
+    public void deinit() {
+    }
 }
