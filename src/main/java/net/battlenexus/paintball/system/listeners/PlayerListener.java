@@ -20,15 +20,14 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public class PlayerListener implements Listener {
     private final HashMap<String, String> deathMessages = new HashMap<>();
@@ -109,21 +108,20 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
     }
 
-    List<Material> armorItems = Arrays.asList(Material.LEATHER_HELMET, Material.LEATHER_CHESTPLATE, Material.LEATHER_LEGGINGS, Material.LEATHER_BOOTS,
-            Material.GOLD_HELMET, Material.GOLD_CHESTPLATE, Material.GOLD_LEGGINGS, Material.GOLD_BOOTS,
-            Material.IRON_HELMET, Material.IRON_CHESTPLATE, Material.IRON_LEGGINGS, Material.IRON_BOOTS,
-            Material.DIAMOND_HELMET, Material.DIAMOND_CHESTPLATE, Material.DIAMOND_LEGGINGS, Material.DIAMOND_BOOTS,
-            Material.CHAINMAIL_HELMET, Material.CHAINMAIL_CHESTPLATE, Material.CHAINMAIL_LEGGINGS, Material.CHAINMAIL_BOOTS);
-
     @EventHandler
     public void onInventoryClicked(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
             Inventory i = event.getInventory();
             if (i.getHolder() != null && i.getHolder() instanceof PaintballMenu)
                 ((PaintballMenu) event.getInventory().getHolder()).onItemClicked(event);
-            else if (event.getCurrentItem() != null && armorItems.contains(event.getCurrentItem().getType()))
-                event.setCancelled(true);
+            else if (event.getSlotType().equals(InventoryType.SlotType.ARMOR) || event.getRawSlot() == 45) //TODO: If we have chests or things with 45 slots do not just cancel
+                event.setCancelled(true); //TODO fix disabling offhand slot
         }
+    }
+
+    @EventHandler
+    public void onHandSwitch(PlayerSwapHandItemsEvent event) {
+        event.setCancelled(true);
     }
 
     @EventHandler
