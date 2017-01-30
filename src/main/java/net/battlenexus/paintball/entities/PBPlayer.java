@@ -183,9 +183,7 @@ public class PBPlayer {
 
 
     public void spectateGame(PaintballGame game) {
-        Paintball.makePlayerGhost(player);
-        player.setAllowFlight(true);
-        player.setFlying(true);
+        player.setGameMode(GameMode.SPECTATOR);
 
         Vector firstTeam = game.getConfig().getBlueTeam().getSpawn().toVector();
         Vector secondTeam = game.getConfig().getRedTeam().getSpawn().toVector();
@@ -205,9 +203,7 @@ public class PBPlayer {
             return;
         isSpectating = false;
         player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
-        player.setFlying(false);
-        player.setAllowFlight(false);
-        Paintball.makePlayerVisible(player);
+        player.setGameMode(GameMode.SURVIVAL);
     }
 
 

@@ -78,7 +78,7 @@ public interface Weapon {
             itemStack.setItemMeta(im);
 
             net.minecraft.server.v1_11_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(itemStack);
-            NBTTagCompound tag = null;
+            NBTTagCompound tag;
             if (nmsStack.hasTag())
                 tag = nmsStack.getTag();
             else

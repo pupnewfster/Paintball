@@ -123,7 +123,7 @@ public class GameService {
     public void softStop() {
         if (!running)
             return;
-        getCurrentGame().restartNextGame("lobby");
+        PaintballGame.restartNextGame();
         softStop = true;
         Paintball.INSTANCE.getLogger().info("Soft stop requested!");
     }
@@ -185,7 +185,7 @@ public class GameService {
         return true;
     }
 
-    public PaintballGame createGame(Class<? extends PaintballGame> class_) throws IllegalAccessException, InstantiationException {
+    private PaintballGame createGame(Class<? extends PaintballGame> class_) throws IllegalAccessException, InstantiationException {
         return class_.newInstance();
     }
 }

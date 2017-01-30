@@ -86,22 +86,6 @@ public class Paintball extends JavaPlugin {
             game.stop();
     }
 
-    public static void makePlayerGhost(PBPlayer player) {
-        makePlayerGhost(player.getBukkitPlayer());
-    }
-
-    public static void makePlayerGhost(Player player) {
-        player.setGameMode(GameMode.SPECTATOR);
-    }
-
-    public static void makePlayerVisible(PBPlayer player) {
-        makePlayerVisible(player.getBukkitPlayer());
-    }
-
-    public static void makePlayerVisible(Player player) {
-        player.setGameMode(GameMode.SURVIVAL);
-    }
-
     private void registerListeners() {
         new PlayerListener(this);
     }
@@ -156,11 +140,11 @@ public class Paintball extends JavaPlugin {
 
     }
 
-    public void changeServer(Player p, String serverName) throws IOException {
+    public void changeServer(Player p) throws IOException {
         ByteArrayOutputStream bs = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bs);
         dos.writeUTF("Connect");
-        dos.writeUTF(serverName);
+        dos.writeUTF("lobby");
         p.sendPluginMessage(this, "BungeeCord", bs.toByteArray());
         bs.close();
         dos.close();

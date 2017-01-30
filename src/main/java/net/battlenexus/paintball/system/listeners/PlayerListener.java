@@ -2,10 +2,12 @@ package net.battlenexus.paintball.system.listeners;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.game.items.AbstractItem;
 import net.battlenexus.paintball.system.inventory.PaintballMenu;
 import net.battlenexus.paintball.system.inventory.impl.WeaponShopMenu;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -59,7 +61,7 @@ public class PlayerListener implements Listener {
         Paintball.INSTANCE.getGameService().leaveQueue(who);
         //TODO leave game if in a game
         who.dispose();
-        Paintball.makePlayerVisible(event.getPlayer());
+        event.getPlayer().setGameMode(GameMode.SURVIVAL);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -151,7 +153,7 @@ public class PlayerListener implements Listener {
             } //TODO should we handle when it hits a different entity
         }
         if (shooter.getCurrentTeam() != null) //TODO what do we do if their team is null
-            Paintball.INSTANCE.getGameService().getGame().getScoreManager().removeUUIDFromTeam(shooter.getCurrentTeam().getName(), event.getEntity().getUniqueId());
+            GameService.getCurrentGame().getScoreManager().removeUUIDFromTeam(shooter.getCurrentTeam().getName(), event.getEntity().getUniqueId());
     }
 
     @EventHandler

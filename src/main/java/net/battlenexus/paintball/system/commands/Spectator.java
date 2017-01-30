@@ -1,13 +1,13 @@
 package net.battlenexus.paintball.system.commands;
 
-import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.game.GameService;
 import org.bukkit.command.CommandSender;
 
 public class Spectator implements PBCommand {
     @Override
     public void executePlayer(PBPlayer player, String[] args) {
-        if (Paintball.INSTANCE.getGameService().getGame() == null) {
+        if (GameService.getCurrentGame() == null) {
             player.sendMessage("There are no current games to spectate!");
             return;
         }
@@ -18,7 +18,7 @@ public class Spectator implements PBCommand {
             player.stopSpectating();
             player.sendMessage("You have stopped spectating!");
         } else {
-            player.spectateGame(Paintball.INSTANCE.getGameService().getGame());
+            player.spectateGame(GameService.getCurrentGame());
             player.sendMessage("You have started spectating!");
         }
     }

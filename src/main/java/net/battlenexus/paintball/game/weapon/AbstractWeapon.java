@@ -3,6 +3,7 @@ package net.battlenexus.paintball.game.weapon;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
+import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.game.PaintballGame;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -278,9 +279,11 @@ public abstract class AbstractWeapon implements Weapon {
     private void onFire(final Snowball snowball, Player bukkitPlayer, double spread) {
         if (bukkitPlayer == null)
             return;
-        Team t = Paintball.INSTANCE.getGameService().getGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
-        Paintball.INSTANCE.getGameService().getGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
-        snowball.setGlowing(true);
+        if (GameService.getCurrentGame() != null) {
+            Team t = GameService.getCurrentGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
+            GameService.getCurrentGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
+            snowball.setGlowing(true);
+        }
         snowball.setShooter(bukkitPlayer);
         Vector vector;
         if (spread == 0)

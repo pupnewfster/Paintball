@@ -30,7 +30,6 @@ public abstract class PaintballGame implements Tick {
     boolean ended = false;
     protected boolean started = false;
     private static boolean restart;
-    private static String restartServer;
 
     protected PaintballGame() {
         score.setupScoreboard(getGamemodeName(), getGamemodeName());
@@ -40,27 +39,7 @@ public abstract class PaintballGame implements Tick {
 
     public void beginGame() {
         if (restart) {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                try {
-                    Paintball.INSTANCE.changeServer(p, restartServer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> {
-                /*//Unloading world
-                if (lastMap != null) {
-                    Paintball.log("Unloading " + lastMap.getWorld().getName() + "..");
-                    boolean success = Bukkit.unloadWorld(lastMap.getWorld(), false);
-                    if (!success)
-                        Paintball.log("Failed to unload last map! A manual unload may be required..");
-                    else
-                        restoreBackup(lastMap.getWorld());
-                }*/
-                //Restart
-                //Should this use Bukkit.spigot().restart(); instead of will that cause issues
-                Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart"), 20);
-            }, 20 * 2);
+            tryRestart();
             return;
         }
 
@@ -77,6 +56,30 @@ public abstract class PaintballGame implements Tick {
         refillChests(false);
         started = true;
         sendGameMessage(ChatColor.GREEN + "GO!");
+    }
+
+    private void tryRestart() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            try {
+                Paintball.INSTANCE.changeServer(p);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> {
+                /*//Unloading world
+                if (lastMap != null) {
+                    Paintball.log("Unloading " + lastMap.getWorld().getName() + "..");
+                    boolean success = Bukkit.unloadWorld(lastMap.getWorld(), false);
+                    if (!success)
+                        Paintball.log("Failed to unload last map! A manual unload may be required..");
+                    else
+                        restoreBackup(lastMap.getWorld());
+                }*/
+            //Restart
+            //Should this use Bukkit.spigot().restart(); instead of will that cause issues
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart"), 20);
+        }, 20 * 2);
     }
 
     public boolean hasStarted() {
@@ -164,9 +167,8 @@ public abstract class PaintballGame implements Tick {
 
     public void leaveGame(PBPlayer p) {
         Team team = getTeamForPlayer(p);
-        if (team != null) {
+        if (team != null)
             team.leaveTeam(p);
-        }
     }
 
     public Team getTeamForPlayer(PBPlayer p) {
@@ -182,7 +184,6 @@ public abstract class PaintballGame implements Tick {
         List<PBPlayer> players = new ArrayList<>();
         players.addAll(mapConfig.getBlueTeam().getAllPlayers());
         players.addAll(mapConfig.getRedTeam().getAllPlayers());
-
         return players.toArray(new PBPlayer[players.size()]);
     }
 
@@ -220,6 +221,9 @@ public abstract class PaintballGame implements Tick {
         ended = true;
         Paintball.INSTANCE.getTicker().removeTick(this);
         _wakeup();
+        if (restart) //Check on the ending if it is supposed to restart
+            tryRestart();
+        //else TODO check if no players and then suspend the game
     }
 
     public boolean isEnding() {
@@ -279,8 +283,7 @@ public abstract class PaintballGame implements Tick {
         return score;
     }
 
-    public static void restartNextGame(String serverToJoin) {
+    static void restartNextGame() {
         restart = true;
-        restartServer = serverToJoin;
     }
 }
