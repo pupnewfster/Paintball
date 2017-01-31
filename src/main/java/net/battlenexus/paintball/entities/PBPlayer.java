@@ -228,34 +228,65 @@ public class PBPlayer {
         LeatherArmorMeta chestIm = (LeatherArmorMeta) chest.getItemMeta();
         LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
         LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
-        char[] teamChars = getCurrentTeam().getName().toCharArray();
-        boolean hasColor = teamChars[0] == ChatColor.COLOR_CHAR;
-        if (hasColor && teamChars[1] == '9') {
-            chestIm.setColor(Color.BLUE);
-            legsIm.setColor(Color.BLUE);
-            bootsIm.setColor(Color.BLUE);
-        } else { //Current Team is red
-            chestIm.setColor(Color.RED);
-            legsIm.setColor(Color.RED);
-            bootsIm.setColor(Color.RED);
-        }
+        chestIm.setUnbreakable(true);
+        legsIm.setUnbreakable(true);
+        bootsIm.setUnbreakable(true);
+        Color c = getCurrentTeam().getName().startsWith("" + ChatColor.COLOR_CHAR) ? getColor(getCurrentTeam().getName().charAt(1)) : null;
+        if (c == null)
+            c = Color.BLUE;
+        chestIm.setColor(c);
+        legsIm.setColor(c);
+        bootsIm.setColor(c);
         chest.setItemMeta(chestIm);
         legs.setItemMeta(legsIm);
         boots.setItemMeta(bootsIm);
-        ItemMeta meta = chest.getItemMeta();
-        meta.setUnbreakable(true);
-        chest.setItemMeta(meta);
-        meta = legs.getItemMeta();
-        meta.setUnbreakable(true);
-        legs.setItemMeta(meta);
-        meta = boots.getItemMeta();
-        meta.setUnbreakable(true);
-        boots.setItemMeta(meta);
         bukkitP.getInventory().setChestplate(chest);
         bukkitP.getInventory().setLeggings(legs);
         bukkitP.getInventory().setBoots(boots);
         bukkitP.setCanPickupItems(false);
         Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> getBukkitPlayer().setGameMode(GameMode.ADVENTURE));
+    }
+
+    private Color getColor(char c) {
+        ChatColor cColor = ChatColor.getByChar(c);
+        if (cColor == null)
+            return null; //Not a valid color
+        switch (cColor) {
+            case BLACK:
+                return Color.BLACK;
+            case DARK_BLUE:
+                return Color.NAVY;
+            case DARK_GREEN:
+                return Color.GREEN;
+            case DARK_AQUA:
+                return Color.TEAL;
+            case DARK_RED:
+                return Color.MAROON;
+            case DARK_PURPLE:
+                return Color.PURPLE;
+            case GOLD:
+                return Color.ORANGE;
+            case GRAY:
+                return Color.SILVER;
+            case DARK_GRAY:
+                return Color.GRAY;
+            case BLUE:
+                return Color.BLUE;
+            case GREEN:
+                return Color.LIME;
+            case AQUA:
+                return Color.AQUA;
+            case RED:
+                return Color.RED;
+            case LIGHT_PURPLE:
+                return Color.FUCHSIA;
+            case YELLOW:
+                return Color.YELLOW;
+            case WHITE:
+                return Color.WHITE;
+            default:
+                return null;
+        }
     }
 
     public void leaveGame(PaintballGame game) {
