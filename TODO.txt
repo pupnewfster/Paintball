@@ -26,3 +26,4 @@ Make the prices actually require money and add a way to get money
 Add sound for taking damage
 Make number of kills scale with number of players
 Make a sort of AI for bots for when no one is online
+Better spawning system
