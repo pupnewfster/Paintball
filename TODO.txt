@@ -18,7 +18,6 @@ redo/New reloading method
 "ticks alive for" as a weapon spec which determines how long a snowball is alive for (kinda like range)
 Classes
 
-Make offhand not bug out when holding an item in main hand also, mainly is reloading that spazzes out I believe
 Reset the score for teams at least on onehit minute
 Make only pistol in one hit minute or some new gun
 Ability to change gun mid round without leaving and then it will just give

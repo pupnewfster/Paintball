@@ -22,6 +22,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
@@ -43,7 +44,6 @@ public class PlayerListener implements Listener {
         PBPlayer pbPlayer = PBPlayer.toPBPlayer(event.getPlayer());
         event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         pbPlayer.clearInventory();
-        event.getPlayer().getInventory().setMaxStackSize(1); //TODO is this really needed anymore?
         event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
         event.getPlayer().setFoodLevel(20);
         event.getPlayer().setSaturation(20);
@@ -59,7 +59,6 @@ public class PlayerListener implements Listener {
             return;
         //Removes from queue if in queue when leaving
         Paintball.INSTANCE.getGameService().leaveQueue(who);
-        //TODO leave game if in a game
         who.dispose();
         event.getPlayer().setGameMode(GameMode.SURVIVAL);
     }
@@ -116,9 +115,15 @@ public class PlayerListener implements Listener {
             Inventory i = event.getInventory();
             if (i.getHolder() != null && i.getHolder() instanceof PaintballMenu)
                 ((PaintballMenu) event.getInventory().getHolder()).onItemClicked(event);
-            else if (event.getSlotType().equals(InventoryType.SlotType.ARMOR) || event.getRawSlot() == 45) //TODO: If we have chests or things with 45 slots do not just cancel
-                event.setCancelled(true); //TODO fix disabling offhand slot
+            else if (event.getSlotType().equals(InventoryType.SlotType.ARMOR) || (i.getType().equals(InventoryType.CRAFTING) && event.getRawSlot() == 45))
+                event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (event.getWhoClicked() instanceof Player && event.getInventory().getType().equals(InventoryType.CRAFTING) && event.getRawSlots().contains(45))
+            event.setCancelled(true);
     }
 
     @EventHandler
