@@ -27,3 +27,4 @@ Add sound for taking damage
 Make number of kills scale with number of players
 Make a sort of AI for bots for when no one is online
 Better spawning system
+Make it so the worlds auto load/unload rather than using necessities to just make sure world is loaded
