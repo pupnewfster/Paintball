@@ -1,5 +1,8 @@
 package net.battlenexus.paintball.system.inventory.impl;
 
+import com.crossge.necessities.Economy.BalChecks;
+import com.crossge.necessities.Necessities;
+import com.crossge.necessities.Variables;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.Weapon;
@@ -46,7 +49,6 @@ public class WeaponShopMenu extends PaintballMenu {
         for (int i = 0; i < WEAPONS.length; i++) {
             if (WEAPONS[i] == null)
                 continue;
-            int price = PRICES[i];
             ItemStack item = toItemStack((Class<? extends Weapon>) WEAPONS[i]); //GOD DAMN WEAK TYPING
             if (item == null)
                 continue;
@@ -56,7 +58,7 @@ public class WeaponShopMenu extends PaintballMenu {
                 lore = meta.getLore();
             else
                 lore = new ArrayList<>();
-            lore.add(ChatColor.GREEN + "Price: " + price);
+            lore.add(ChatColor.GREEN + "Price: " + PRICES[i]);
             meta.setLore(lore);
             item.setItemMeta(meta);
             inventory.setItem(i, item);
@@ -76,7 +78,15 @@ public class WeaponShopMenu extends PaintballMenu {
             event.setCancelled(true);
             final PBPlayer player = PBPlayer.toPBPlayer(p);
 
-            //TODO Check for money and stuff
+            int price = PRICES[slot];
+
+            BalChecks b = Necessities.getInstance().getBalChecks();
+            if (b.balance(p.getUniqueId()) < price) {
+                Variables var = Necessities.getInstance().getVar();
+                p.sendMessage(var.getEr() + "Error: " + var.getErMsg() + "You do not have " + price + " GGs."); //TODO when BalChecks is changed to Economy using mysql use the format
+                event.setCancelled(true);
+                return;
+            }
 
             //Prevent any form of error..
             runNextTick(() -> {
@@ -85,6 +95,7 @@ public class WeaponShopMenu extends PaintballMenu {
                     player.showLobbyItems();
                 player.setWeapon(AbstractWeapon.createWeapon((Class<? extends AbstractWeapon>) WEAPONS[slot], player)); //dude...that's weak..
                 p.closeInventory();
+                b.removeMoney(p.getUniqueId(), price);
                 wakeUp();
             });
         }

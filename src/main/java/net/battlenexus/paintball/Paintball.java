@@ -60,7 +60,6 @@ public class Paintball extends JavaPlugin {
         tasks = new TickBukkitTask();
         tasks.runTaskTimer(this, 1, 1);
 
-
         gameTask = new BukkitRunnable() {
             @Override
             public void run() {
