@@ -6,17 +6,17 @@ import org.bukkit.Material;
 public class Pistol extends AbstractWeapon {
     @Override
     public Material getBlueTeamMaterial() {
-        return Material.ARROW;
+        return Material.BOW;
     }
 
     @Override
     public Material getRedTeamMaterial() {
-        return Material.ARROW;
+        return Material.BOW;
     }
 
     @Override
     public Material getNormalMaterial() {
-        return Material.ARROW;
+        return Material.BOW;
     }
 
     @Override
