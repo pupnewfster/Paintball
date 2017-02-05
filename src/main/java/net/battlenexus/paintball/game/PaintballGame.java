@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -36,6 +37,8 @@ public abstract class PaintballGame implements Tick {
     }
 
     protected abstract String getGamemodeName();
+
+    protected abstract List<Class<? extends Weapon>> allowedGuns();//TODO make this work and potentially replace it with a WeaponType
 
     public void beginGame() {
         if (restart) {
@@ -163,6 +166,10 @@ public abstract class PaintballGame implements Tick {
             p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
             p.getCurrentWeapon().addBullets(p.getCurrentWeapon().startBullets());
         }
+    }
+
+    public List<Team> getTeams() {
+        return Arrays.asList(mapConfig.getBlueTeam(), mapConfig.getRedTeam());
     }
 
     public void leaveGame(PBPlayer p) {

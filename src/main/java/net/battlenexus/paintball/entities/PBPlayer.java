@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -24,8 +23,8 @@ public class PBPlayer {
     private boolean isSpectating;
     private Weapon weapon;
     private PaintballGame current_game;
-    private double defaultMaxHealth = 18;
-    private double maxHealth = 18;
+    private double defaultMaxHealth = 20;
+    private double maxHealth = 20;
 
     public HashMap<PBPlayer, Integer> kill_cache = new HashMap<>();
 
@@ -201,7 +200,7 @@ public class PBPlayer {
     public void stopSpectating() {
         if (!isSpectating)
             return;
-        isSpectating = false;
+        isSpectating = false; //TODO make them rejoin being in the game? Or are they out until the next round
         player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         player.setGameMode(GameMode.SURVIVAL);
     }
@@ -216,77 +215,18 @@ public class PBPlayer {
         if (isInGame())
             leaveGame(getCurrentGame());
         setCurrentGame(game);
-        hideLobbyItems();
+        hideLobbyItems();//TODO try disabling this see if it lets gun type change midgame if so will need to make it so that we can change clip size
         game.joinNextOpenTeam(this);
         game.onPlayerJoin(this);
         Player bukkitP = getBukkitPlayer();
         refillHealth();
         bukkitP.setFoodLevel(20);
-        ItemStack chest = new ItemStack(Material.LEATHER_CHESTPLATE, 1);
-        ItemStack legs = new ItemStack(Material.LEATHER_LEGGINGS, 1);
-        ItemStack boots = new ItemStack(Material.LEATHER_BOOTS, 1);
-        LeatherArmorMeta chestIm = (LeatherArmorMeta) chest.getItemMeta();
-        LeatherArmorMeta legsIm = (LeatherArmorMeta) chest.getItemMeta();
-        LeatherArmorMeta bootsIm = (LeatherArmorMeta) chest.getItemMeta();
-        chestIm.setUnbreakable(true);
-        legsIm.setUnbreakable(true);
-        bootsIm.setUnbreakable(true);
-        Color c = getCurrentTeam().getName().startsWith("" + ChatColor.COLOR_CHAR) ? getColor(getCurrentTeam().getName().charAt(1)) : null;
-        if (c == null)
-            c = Color.BLUE;
-        chestIm.setColor(c);
-        legsIm.setColor(c);
-        bootsIm.setColor(c);
-        chest.setItemMeta(chestIm);
-        legs.setItemMeta(legsIm);
-        boots.setItemMeta(bootsIm);
-        bukkitP.getInventory().setChestplate(chest);
-        bukkitP.getInventory().setLeggings(legs);
-        bukkitP.getInventory().setBoots(boots);
+        bukkitP.setSaturation(20);
+        bukkitP.getInventory().setChestplate(getCurrentTeam().getChestplate());
+        bukkitP.getInventory().setLeggings(getCurrentTeam().getLeggings());
+        bukkitP.getInventory().setBoots(getCurrentTeam().getBoots());
         bukkitP.setCanPickupItems(false);
         Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> getBukkitPlayer().setGameMode(GameMode.ADVENTURE));
-    }
-
-    private Color getColor(char c) {
-        ChatColor cColor = ChatColor.getByChar(c);
-        if (cColor == null)
-            return null; //Not a valid color
-        switch (cColor) {
-            case BLACK:
-                return Color.BLACK;
-            case DARK_BLUE:
-                return Color.NAVY;
-            case DARK_GREEN:
-                return Color.GREEN;
-            case DARK_AQUA:
-                return Color.TEAL;
-            case DARK_RED:
-                return Color.MAROON;
-            case DARK_PURPLE:
-                return Color.PURPLE;
-            case GOLD:
-                return Color.ORANGE;
-            case GRAY:
-                return Color.SILVER;
-            case DARK_GRAY:
-                return Color.GRAY;
-            case BLUE:
-                return Color.BLUE;
-            case GREEN:
-                return Color.LIME;
-            case AQUA:
-                return Color.AQUA;
-            case RED:
-                return Color.RED;
-            case LIGHT_PURPLE:
-                return Color.FUCHSIA;
-            case YELLOW:
-                return Color.YELLOW;
-            case WHITE:
-                return Color.WHITE;
-            default:
-                return null;
-        }
     }
 
     public void leaveGame(PaintballGame game) {
@@ -343,7 +283,7 @@ public class PBPlayer {
         this.kills = kills;
     }
 
-    private void addKill() {
+    public void addKill() {
         this.kills++;
     }
 

@@ -28,3 +28,8 @@ commands:
        - spec
      description: Spectate a game.
      usage: /<command>
+   createbots:
+     aliases:
+       - cbots
+     description: Creates and add bots if there are not many players online.
+     usage: /<command>

@@ -13,7 +13,8 @@ public class PBCommandHandler implements CommandExecutor {
             new JoinQueue(),
             new LeaveQueue(),
             new PlaceSignCommand(),
-            new Spectator()
+            new Spectator(),
+            new CreateBots()
     };
 
     @Override

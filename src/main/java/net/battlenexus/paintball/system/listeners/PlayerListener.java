@@ -2,16 +2,18 @@ package net.battlenexus.paintball.system.listeners;
 
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.entities.ai.SimpleSkeleton;
 import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.game.items.AbstractItem;
 import net.battlenexus.paintball.system.inventory.PaintballMenu;
 import net.battlenexus.paintball.system.inventory.impl.WeaponShopMenu;
+import net.minecraft.server.v1_11_R1.EntitySkeletonAbstract;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Snowball;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftSkeleton;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,6 +21,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -155,7 +158,17 @@ public class PlayerListener implements Listener {
                 if (victim == null)
                     return;
                 victim.hit(shooter);
-            } //TODO should we handle when it hits a different entity
+            } else {
+                Entity e = event.getHitEntity();
+                if (e.getType().equals(EntityType.SKELETON)) { //TODO
+                    Skeleton s = (Skeleton) e;
+                    EntitySkeletonAbstract esa = ((CraftSkeleton) s).getHandle();
+                    if (esa instanceof SimpleSkeleton) {
+                        SimpleSkeleton simple = (SimpleSkeleton) esa;
+                        simple.hit(shooter);
+                    }
+                }//TODO should we handle when it hits a different entity
+            }
         }
         if (shooter.getCurrentTeam() != null) //TODO what do we do if their team is null
             GameService.getCurrentGame().getScoreManager().removeUUIDFromTeam(shooter.getCurrentTeam().getName(), event.getEntity().getUniqueId());
@@ -168,6 +181,19 @@ public class PlayerListener implements Listener {
             event.setDeathMessage(deathMessages.get(playerName));
             deathMessages.remove(playerName);
         }
+    }
+
+    @EventHandler
+    public void onEntityBowFire(EntityShootBowEvent event) {
+        if (event.getEntity().getType().equals(EntityType.SKELETON)) {
+            Projectile p = (Projectile) event.getProjectile();
+
+            Snowball snow = event.getEntity().getWorld().spawn(event.getEntity().getEyeLocation().clone(), Snowball.class);
+            snow.setVelocity(p.getVelocity());
+            snow.setShooter(p.getShooter());
+            //TODO also make it glow and other things
+            //TODO shoot based on their type of bow with different strength/spread
+        }//TODO support other types maybe?
     }
 
     @EventHandler

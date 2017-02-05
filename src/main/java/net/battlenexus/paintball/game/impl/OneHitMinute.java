@@ -3,7 +3,12 @@ package net.battlenexus.paintball.game.impl;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.PaintballGame;
+import net.battlenexus.paintball.game.weapon.Weapon;
+import net.battlenexus.paintball.game.weapon.impl.Pistol;
 import org.bukkit.ChatColor;
+
+import java.util.Collections;
+import java.util.List;
 
 public class OneHitMinute extends PaintballGame {
     private int seconds = 60;
@@ -15,6 +20,11 @@ public class OneHitMinute extends PaintballGame {
     @Override
     public String getGamemodeName() {
         return "One Hit Minute";
+    }
+
+    @Override
+    protected List<Class<? extends Weapon>> allowedGuns() {
+        return Collections.singletonList(Pistol.class);
     }
 
     @Override

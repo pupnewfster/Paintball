@@ -3,8 +3,11 @@ package net.battlenexus.paintball.game.impl;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.PaintballGame;
+import net.battlenexus.paintball.game.weapon.Weapon;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
+
+import java.util.List;
 
 public class SimpleGame extends PaintballGame implements Listener {
     private int rscore, bscore;
@@ -22,6 +25,11 @@ public class SimpleGame extends PaintballGame implements Listener {
     @Override
     public String getGamemodeName() {
         return "Basic Paintball";
+    }
+
+    @Override
+    protected List<Class<? extends Weapon>> allowedGuns() {
+        return null;
     }
 
     @Override

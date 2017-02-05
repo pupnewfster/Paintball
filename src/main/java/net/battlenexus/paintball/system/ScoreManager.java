@@ -20,6 +20,12 @@ public class ScoreManager {
      */
     public void setupScoreboard(String name, String key) {
         scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
+        Objective health = scoreboard.getObjective("Health");
+        if (health == null)
+            health = scoreboard.registerNewObjective("Health", "health");
+        health.setDisplaySlot(DisplaySlot.BELOW_NAME);
+        health.setDisplayName("§c♥");
+
         objective = scoreboard.getObjective(key);
         if (objective == null)
             objective = scoreboard.registerNewObjective(key, "dummy");

@@ -3,6 +3,7 @@ package net.battlenexus.paintball;
 import me.eddiep.ubot.UBot;
 import me.eddiep.ubot.utils.CancelToken;
 import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.entities.ai.CustomEntities;
 import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.system.commands.PBCommandHandler;
 import net.battlenexus.paintball.system.commands.sign.SignStat;
@@ -10,7 +11,10 @@ import net.battlenexus.paintball.system.listeners.PlayerListener;
 import net.battlenexus.paintball.system.listeners.TickBukkitTask;
 import net.battlenexus.paintball.system.ubot.ULogger;
 import net.battlenexus.paintball.system.ubot.UPatcher;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -34,6 +38,8 @@ public class Paintball extends JavaPlugin {
     public void onEnable() {
         INSTANCE = this;
 
+        CustomEntities.registerEntities();
+
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
         loadPluginConfig();
@@ -45,6 +51,7 @@ public class Paintball extends JavaPlugin {
         getCommand("leave").setExecutor(handler);
         getCommand("signstat").setExecutor(handler);
         getCommand("spectate").setExecutor(handler);
+        getCommand("createbots").setExecutor(handler);
 
         //Register Listeners
         registerListeners();
@@ -79,6 +86,7 @@ public class Paintball extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        CustomEntities.unregisterEntities();
         SignStat.saveSigns();
         SignStat.disposeSigns();
         if (game != null)
