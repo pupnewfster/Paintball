@@ -23,8 +23,8 @@ public class PathfinderGoalTargetNearestEnemyAI extends PathfinderGoal {
             public boolean a(@Nullable EntityLiving entityliving) {
                 Team other = null;
                 if (entityliving instanceof SimpleSkeleton)
-                    other = ((SimpleSkeleton) entityliving).getTeam();
-                Team ours = PathfinderGoalTargetNearestEnemyAI.this.b.getTeam();
+                    other = ((SimpleSkeleton) entityliving).getCurrentTeam();
+                Team ours = PathfinderGoalTargetNearestEnemyAI.this.b.getCurrentTeam();
                 if (other != null && other.equals(ours))
                     return false;
 

@@ -1,10 +1,16 @@
 package net.battlenexus.paintball.entities.ai;
 
 import com.google.common.collect.Sets;
+import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.entities.ai.pathfinder.PathfinderGoalTargetEnemyPlayer;
 import net.battlenexus.paintball.entities.ai.pathfinder.PathfinderGoalTargetNearestEnemyAI;
+import net.battlenexus.paintball.game.GameService;
+import net.battlenexus.paintball.game.impl.OneHitMinute;
+import net.battlenexus.paintball.game.weapon.AbstractWeapon;
+import net.battlenexus.paintball.game.weapon.Weapon;
+import net.battlenexus.paintball.game.weapon.impl.Pistol;
 import net.minecraft.server.v1_11_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,9 +20,13 @@ import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO add taking damage, respawning and such
     private final Team team;
+    private AbstractWeapon gun;
     private int maxHealth = 20;
 
     public SimpleSkeleton(Team team, Location spawn) {
@@ -53,7 +63,9 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
         setSlot(EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(this.team.getChestplate()));
         setSlot(EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(this.team.getLeggings()));
         setSlot(EnumItemSlot.FEET, CraftItemStack.asNMSCopy(this.team.getBoots()));
-        setSlot(EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(new org.bukkit.inventory.ItemStack(org.bukkit.Material.BOW))); //TODO set type of gun
+
+        pickGun();
+        setSlot(EnumItemSlot.MAINHAND, CraftItemStack.asNMSCopy(Weapon.WeaponUtils.toItemStack(getCurrentWeapon())));
 
         //Spawns the entity
         ((CraftWorld) spawn.getWorld()).getHandle().addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
@@ -62,7 +74,7 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
     private void setName() {
         int hearts = (int) getHealth();
         boolean endHalf = hearts % 2 == 1;
-        hearts = hearts/2;
+        hearts = hearts / 2;
         String name = "§c";
         for (int i = 0; i < hearts; i++)
             name += "♥";
@@ -71,16 +83,35 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
         setCustomName(name);
     }
 
-    public Team getTeam() {
+    private void pickGun() {
+        List<Class<? extends AbstractWeapon>> weapons = GameService.getCurrentGame().allowedGuns();
+        if (weapons == null || weapons.isEmpty()) { //TODO make the list be all the available weapons
+            weapons = Collections.singletonList(Pistol.class);
+        }
+        try {
+            gun = weapons.get(new Random().nextInt(weapons.size())).newInstance();
+            gun.setOwner(this);
+            gun.setOneHitKill(GameService.getCurrentGame() instanceof OneHitMinute); //TODO add other onehit types if we make any
+        } catch (InstantiationException | IllegalAccessException e) {
+            gun = new Pistol();
+        }
+    }
+
+    public Weapon getCurrentWeapon() {
+        return gun;
+    }
+
+    public Team getCurrentTeam() {
         return this.team;
     }
 
-    public void hit(PBPlayer shooter) {
+    public void hit(BasePlayer shooter) {
         if (shooter.getCurrentTeam() != null) {
-            if (shooter.getCurrentTeam().contains(this))
-                shooter.sendMessage("Watch out! That bot is on your team!");
-            else {
-                if (shooter.getCurrentWeapon().isOneHitKill() || wouldDie(shooter.getCurrentWeapon().damage())) {
+            if (shooter.getCurrentTeam().contains(this)) {
+                if (shooter instanceof PBPlayer)
+                    ((PBPlayer) shooter).sendMessage("Watch out! That bot is on your team!");
+            } else {
+                if (shooter.getCurrentWeapon().isOneHitKill() || wouldDie(shooter.getCurrentWeapon().damage())) {//TODO set onehit kill for bots
                     refillHealth();
                     kill(shooter);
                 } else
@@ -89,13 +120,13 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
         }
     }
 
-    private void kill(final PBPlayer killer) {
+    private void kill(final BasePlayer killer) {
         //if (!isInGame()) return; //Is always ingame if exists
         //addDeath();//does it matter if we keep track of this
-        if (killer != null)
-            killer.addKill();
+        if (killer != null && killer instanceof PBPlayer)
+            ((PBPlayer) killer).addKill();
         getBukkitEntity().teleport(team.getAISpawn());
-        //GameService.getCurrentGame().onPlayerKill(killer, this);
+        GameService.getCurrentGame().onPlayerKill(killer, this);
         Bukkit.getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 40, 0));
     }
 
@@ -113,5 +144,9 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
 
     private boolean wouldDie(int damage) {
         return getMaxHealth() - damage <= 0;
+    }
+
+    public void remove() {
+        die();
     }
 }

@@ -1,6 +1,7 @@
 package net.battlenexus.paintball.entities;
 
 import net.battlenexus.paintball.Paintball;
+import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.game.PaintballGame;
 import net.battlenexus.paintball.game.weapon.Weapon;
 import org.bukkit.*;
@@ -14,7 +15,7 @@ import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 
-public class PBPlayer {
+public class PBPlayer implements BasePlayer {
     private static ItemStack[] lobby_items;
     private static HashMap<String, PBPlayer> players = new HashMap<>();
     private Player player;
@@ -22,7 +23,6 @@ public class PBPlayer {
     private int deaths;
     private boolean isSpectating;
     private Weapon weapon;
-    private PaintballGame current_game;
     private double defaultMaxHealth = 20;
     private double maxHealth = 20;
 
@@ -52,6 +52,10 @@ public class PBPlayer {
     }
 
     public void setWeapon(Weapon weapon) {
+        if (this.weapon != null && !this.weapon.equals(weapon))
+            this.weapon.removeBar();
+        else
+            weapon.refill();
         this.weapon = weapon;
         ItemStack item = Weapon.WeaponUtils.toItemStack(weapon);
         if (player.getInventory().contains(item))
@@ -90,18 +94,8 @@ public class PBPlayer {
         return pbPlayer;
     }
 
-    private void setCurrentGame(PaintballGame game) {
-        if (current_game != null)
-            current_game.leaveGame(this);
-        current_game = game;
-    }
-
-    public PaintballGame getCurrentGame() {
-        return current_game;
-    }
-
     public Team getCurrentTeam() {
-        return current_game != null ? current_game.getTeamForPlayer(this) : null;
+        return GameService.getCurrentGame() != null ? GameService.getCurrentGame().getTeamForPlayer(this) : null;
     }
 
     /**
@@ -121,11 +115,12 @@ public class PBPlayer {
             return newPlayer(player);
     }
 
-    public void hit(PBPlayer shooter) {
+    public void hit(BasePlayer shooter) {
         if (shooter.getCurrentTeam() != null) {
-            if (shooter.getCurrentTeam().contains(this))
-                shooter.sendMessage("Watch out! " + getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
-            else {
+            if (shooter.getCurrentTeam().contains(this)) {
+                if (shooter instanceof PBPlayer)
+                    ((PBPlayer) shooter).sendMessage("Watch out! " + getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " is on your team!");
+            } else {
                 if (shooter.getCurrentWeapon().isOneHitKill() || wouldDie(shooter.getCurrentWeapon().damage())) {
                     refillHealth();
                     kill(shooter);
@@ -136,17 +131,17 @@ public class PBPlayer {
     }
 
     public boolean isInGame() {
-        return current_game != null && getCurrentTeam() != null && !current_game.hasEnded();
+        return GameService.getCurrentGame() != null && getCurrentTeam() != null && !GameService.getCurrentGame().hasEnded();
     }
 
-    private void kill(final PBPlayer killer) {
+    private void kill(final BasePlayer killer) {
         if (!isInGame())
             return;
         addDeath();
-        if (killer != null)
-            killer.addKill();
+        if (killer != null && killer instanceof PBPlayer) //TODO add it as a point if it was an ai
+            ((PBPlayer) killer).addKill();
         getCurrentTeam().spawnPlayer(this);
-        getCurrentGame().onPlayerKill(killer, this);
+        GameService.getCurrentGame().onPlayerKill(killer, this);
         Bukkit.getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 40, 0));
     }
 
@@ -202,7 +197,7 @@ public class PBPlayer {
             return;
         isSpectating = false; //TODO make them rejoin being in the game? Or are they out until the next round
         player.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
-        player.setGameMode(GameMode.SURVIVAL);
+        player.setGameMode(GameMode.ADVENTURE);
     }
 
 
@@ -211,10 +206,10 @@ public class PBPlayer {
     }
 
 
-    public void joinGame(PaintballGame game) {
+    public void joinGame() {
+        PaintballGame game = GameService.getCurrentGame();
         if (isInGame())
-            leaveGame(getCurrentGame());
-        setCurrentGame(game);
+            leaveGame();
         hideLobbyItems();//TODO try disabling this see if it lets gun type change midgame if so will need to make it so that we can change clip size
         game.joinNextOpenTeam(this);
         game.onPlayerJoin(this);
@@ -229,19 +224,18 @@ public class PBPlayer {
         Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> getBukkitPlayer().setGameMode(GameMode.ADVENTURE));
     }
 
-    public void leaveGame(PaintballGame game) {
+    public void leaveGame() {
         if (!isInGame())
             return;
+        PaintballGame game = GameService.getCurrentGame();
         if (!game.hasEnded() && !game.isEnding())
             game.onPlayerLeave(this);
         getCurrentTeam().leaveTeam(null);
-        setCurrentGame(null);
         maxHealth = defaultMaxHealth;
         for (PotionEffect effect : player.getActivePotionEffects())
             player.removePotionEffect(effect.getType());
         clearInventory();
         if (getCurrentWeapon() != null) {
-            weapon.emptyGun();
             weapon.setOneHitKill(false);
             setWeapon(weapon); //Give the player back there gun..
         }
@@ -295,7 +289,7 @@ public class PBPlayer {
         this.deaths = deaths;
     }
 
-    private void addDeath() {
+    public void addDeath() {
         this.deaths++;
     }
 
@@ -316,10 +310,9 @@ public class PBPlayer {
         players.remove(player.getName());
 
         if (isInGame())
-            current_game.leaveGame(this);
+            GameService.getCurrentGame().leaveGame(this);
 
         player = null;
         weapon = null;
-        current_game = null;
     }
 }

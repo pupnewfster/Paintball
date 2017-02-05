@@ -1,9 +1,10 @@
 package net.battlenexus.paintball.game.impl;
 
+import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.PaintballGame;
-import net.battlenexus.paintball.game.weapon.Weapon;
+import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
 
@@ -28,7 +29,7 @@ public class SimpleGame extends PaintballGame implements Listener {
     }
 
     @Override
-    protected List<Class<? extends Weapon>> allowedGuns() {
+    public List<Class<? extends AbstractWeapon>> allowedGuns() {
         return null;
     }
 
@@ -57,7 +58,7 @@ public class SimpleGame extends PaintballGame implements Listener {
     }
 
     @Override
-    public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
+    public void onPlayerKill(BasePlayer killer, BasePlayer victim) {
         super.onPlayerKill(killer, victim);
         if (killer != null && killer.getCurrentTeam() != null) {
             Team t = killer.getCurrentTeam();

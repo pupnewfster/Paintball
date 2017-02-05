@@ -1,6 +1,7 @@
 package net.battlenexus.paintball.game;
 
 import net.battlenexus.paintball.Paintball;
+import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.MapConfig;
@@ -38,7 +39,7 @@ public abstract class PaintballGame implements Tick {
 
     protected abstract String getGamemodeName();
 
-    protected abstract List<Class<? extends Weapon>> allowedGuns();//TODO make this work and potentially replace it with a WeaponType
+    public abstract List<Class<? extends AbstractWeapon>> allowedGuns();//TODO make this work and potentially replace it with a WeaponType
 
     public void beginGame() {
         if (restart) {
@@ -51,7 +52,6 @@ public abstract class PaintballGame implements Tick {
         for (PBPlayer player : getAllPlayers()) {
             player.hideLobbyItems();
             if (player.getCurrentWeapon() != null) {
-                player.getCurrentWeapon().emptyGun();
                 player.setWeapon(player.getCurrentWeapon()); //ensure they have there own gun..
                 player.getCurrentWeapon().addBullets(player.getCurrentWeapon().startBullets());
             }
@@ -105,7 +105,7 @@ public abstract class PaintballGame implements Tick {
             p.sendMessage(s);
     }
 
-    public void onPlayerKill(PBPlayer killer, PBPlayer victim) {
+    public void onPlayerKill(BasePlayer killer, BasePlayer victim) {
         announceKill(killer, victim);
         if (victim.getCurrentWeapon() != null)
             victim.getCurrentWeapon().addBullets(victim.getCurrentWeapon().clipSize());
@@ -162,7 +162,6 @@ public abstract class PaintballGame implements Tick {
                 mapConfig.getRedTeam().joinTeam(p);
         }
         if (started && p.getCurrentWeapon() != null && p.getCurrentWeapon() instanceof AbstractWeapon) {
-            p.getCurrentWeapon().emptyGun();
             p.setWeapon(p.getCurrentWeapon()); //ensure they have there own gun..
             p.getCurrentWeapon().addBullets(p.getCurrentWeapon().startBullets());
         }
@@ -213,12 +212,14 @@ public abstract class PaintballGame implements Tick {
         ending = true;
         PBPlayer[] players = getAllPlayers();
         if (score != null) {
-            score.removeTeam(getConfig().getBlueTeam().getName());
-            score.removeTeam(getConfig().getRedTeam().getName());
+            for (Team t : getTeams()) {
+                t.removeAIPlayers();
+                score.removeTeam(t.getName());
+            }
         }
         for (PBPlayer player : players) {
             try {
-                player.leaveGame(this);
+                player.leaveGame();
             } catch (Throwable t) {
                 t.printStackTrace();
                 Paintball.INSTANCE.error("Error removing player \"" + player.getBukkitPlayer().getName() + "\" from paintball game!");
@@ -237,8 +238,12 @@ public abstract class PaintballGame implements Tick {
         return ending;
     }
 
-    private void announceKill(PBPlayer killer, PBPlayer victim) {
+    private void announceKill(BasePlayer baseKiller, BasePlayer baseVictim) {
+        if (!(baseKiller instanceof PBPlayer) || !(baseVictim instanceof PBPlayer))
+            return; //TODO actually do something in this case
         String message = "shot";
+        PBPlayer killer = (PBPlayer) baseKiller;
+        PBPlayer victim = (PBPlayer) baseVictim;
         if (killer == null) {
             sendGameMessage(victim.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " killed himself!");
             return;
@@ -282,8 +287,8 @@ public abstract class PaintballGame implements Tick {
     }
 
     protected void setupScoreboard() {
-        score.addTeam(getConfig().getBlueTeam().getName());
-        score.addTeam(getConfig().getRedTeam().getName());
+        for (Team t : getTeams())
+            score.addTeam(t.getName());
     }
 
     public ScoreManager getScoreManager() {

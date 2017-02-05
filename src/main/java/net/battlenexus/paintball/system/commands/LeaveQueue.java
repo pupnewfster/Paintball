@@ -14,7 +14,7 @@ public class LeaveQueue implements PBCommand {
             else
                 player.sendMessage("You have been removed from the queue!");
         } else
-            player.leaveGame(player.getCurrentGame());
+            player.leaveGame();
     }
 
     @Override

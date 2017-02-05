@@ -19,11 +19,12 @@ redo/New reloading method
 Classes
 
 Make only pistol in one hit minute or some new gun
-Ability to change gun mid round without leaving and then it will just give
-Make the prices actually require money and add a way to get money
+Ability to change gun mid round without leaving and then it will just give, but maybe not have it auto fill the clip
+Add a way to get money
 Add sound for taking damage
 Make number of kills scale with number of players
-Make a sort of AI for bots for when no one is online
+Improve the createbots command to have arguments and limits based on if people are online
+Make the AI's guns distance, strength, and spread actually be taken into account
 Better spawning system
 Make it so the worlds auto load/unload rather than using necessities to just make sure world is loaded
 Given we are using bungeecord, we should just use multiple servers instead of multiple games per server. So make it so autojoin and once changing weapons ingame works... remove /leave

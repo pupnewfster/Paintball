@@ -31,7 +31,7 @@ public class JoinQueue implements PBCommand {
             else
                 player.sendMessage("You have been added to the queue for the next game!");
         } else
-            player.joinGame(GameService.getCurrentGame());
+            player.joinGame();
     }
 
     @Override

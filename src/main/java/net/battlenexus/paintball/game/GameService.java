@@ -102,7 +102,7 @@ public class GameService {
                 for (PBPlayer p : bukkit_players)
                     if (Paintball.INSTANCE.isPlayingPaintball(p) && !p.isInGame()) {
                         joinNext.remove(p);
-                        p.joinGame(game);
+                        p.joinGame();
                     }
                 waiting = true;
                 game.beginGame();

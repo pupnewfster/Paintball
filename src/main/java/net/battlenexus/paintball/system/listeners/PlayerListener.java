@@ -1,6 +1,7 @@
 package net.battlenexus.paintball.system.listeners;
 
 import net.battlenexus.paintball.Paintball;
+import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.ai.SimpleSkeleton;
 import net.battlenexus.paintball.game.GameService;
@@ -18,12 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockDamageEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -32,6 +28,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.HashMap;
 
@@ -44,13 +41,15 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        PBPlayer pbPlayer = PBPlayer.toPBPlayer(event.getPlayer());
-        event.getPlayer().teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
+        Player p = event.getPlayer();
+        PBPlayer pbPlayer = PBPlayer.toPBPlayer(p);
+        p.teleport(Paintball.INSTANCE.paintball_world.getSpawnLocation());
         pbPlayer.clearInventory();
-        event.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
-        event.getPlayer().setFoodLevel(20);
-        event.getPlayer().setSaturation(20);
-        event.getPlayer().setHealth(20.0);
+        p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
+        p.setFoodLevel(20);
+        p.setSaturation(20);
+        p.setHealth(20.0);
+        p.setGameMode(GameMode.ADVENTURE);
         pbPlayer.showLobbyItems();
     }
 
@@ -63,7 +62,7 @@ public class PlayerListener implements Listener {
         //Removes from queue if in queue when leaving
         Paintball.INSTANCE.getGameService().leaveQueue(who);
         who.dispose();
-        event.getPlayer().setGameMode(GameMode.SURVIVAL);
+        event.getPlayer().setGameMode(GameMode.ADVENTURE);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -87,7 +86,7 @@ public class PlayerListener implements Listener {
         }
 
         PBPlayer who = PBPlayer.getPlayer(p);
-        if (who == null)
+        if (who == null || GameService.getCurrentGame() == null || !GameService.getCurrentGame().hasStarted())
             return;
         if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getClickedBlock().getType().equals(Material.CHEST) &&
                 !event.getClickedBlock().getType().equals(Material.TRAPPED_CHEST))) {
@@ -136,20 +135,22 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            PBPlayer pbvictim = PBPlayer.getPlayer((Player) event.getEntity());
-            if (pbvictim == null)
-                return;
-            if (pbvictim.isInGame() || pbvictim.isSpectating())
-                event.setCancelled(true);
-        }
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntitySpawn(CreatureSpawnEvent event) {
+        if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.CUSTOM))
+            event.setCancelled(true);
     }
 
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if (!(event.getEntity() instanceof Snowball))
             return;
-        PBPlayer shooter = PBPlayer.toPBPlayer((Player) event.getEntity().getShooter());
+        ProjectileSource ps = event.getEntity().getShooter();
+        //TODO check to make sure it is a player
+        BasePlayer shooter = ps instanceof Player ? PBPlayer.toPBPlayer((Player) ps) : (SimpleSkeleton) ((CraftSkeleton) ps).getHandle(); //TODO write a better check of if simple skeleton
         if (shooter == null)
             return; //not sure how this is possible, but does it need to be handled with removing snowball from having glow
         if (event.getHitEntity() != null) {
@@ -161,8 +162,7 @@ public class PlayerListener implements Listener {
             } else {
                 Entity e = event.getHitEntity();
                 if (e.getType().equals(EntityType.SKELETON)) { //TODO
-                    Skeleton s = (Skeleton) e;
-                    EntitySkeletonAbstract esa = ((CraftSkeleton) s).getHandle();
+                    EntitySkeletonAbstract esa = ((CraftSkeleton) e).getHandle();
                     if (esa instanceof SimpleSkeleton) {
                         SimpleSkeleton simple = (SimpleSkeleton) esa;
                         simple.hit(shooter);
@@ -191,33 +191,16 @@ public class PlayerListener implements Listener {
             Snowball snow = event.getEntity().getWorld().spawn(event.getEntity().getEyeLocation().clone(), Snowball.class);
             snow.setVelocity(p.getVelocity());
             snow.setShooter(p.getShooter());
-            //TODO also make it glow and other things
+            if (GameService.getCurrentGame() != null) {
+                EntitySkeletonAbstract esa = ((CraftSkeleton) event.getEntity()).getHandle();
+                if (esa instanceof SimpleSkeleton) {
+                    GameService.getCurrentGame().getScoreManager().addUUIDToTeam(((SimpleSkeleton) esa).getCurrentTeam().getName(), snow.getUniqueId());
+                    snow.setGlowing(true);
+                }
+            }
+            p.remove();
             //TODO shoot based on their type of bow with different strength/spread
         }//TODO support other types maybe?
-    }
-
-    @EventHandler
-    public void onBlockDamage(BlockDamageEvent event) {
-        //Part of custom "adventure mode" to stop breaking of blocks
-        Player p = event.getPlayer();
-        PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null)
-            return;
-        //Stop them if they are in game
-        if (who.isInGame() || who.isSpectating())
-            event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) {
-        //Part of custom "adventure mode" to stop placing of blocks
-        Player p = event.getPlayer();
-        PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null)
-            return;
-        //Stop them if they are in game
-        if (who.isInGame() || who.isSpectating())
-            event.setCancelled(true);
     }
 
     @EventHandler
@@ -231,16 +214,16 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         Player p = event.getPlayer();
-        PBPlayer who;
-        if ((who = PBPlayer.getPlayer(p)) == null)
+        PBPlayer who = PBPlayer.getPlayer(p);
+        if (who == null)
             return;
-        if (who.isInGame()) {
+        if (who.isInGame()) { //TODO add into Necessities a setChatPrefix, so that minigames can set a prefix
             String team = "(" + ChatColor.translateAlternateColorCodes(ChatColor.COLOR_CHAR, who.getCurrentTeam().getName()) + ChatColor.RESET + ") ";
             event.setFormat(team + event.getFormat());
-        } else if (who.isSpectating()) {
+        } else if (who.isSpectating()) { //TODO: Add a chat for spectators
             who.sendMessage("You are spectating, you cannot talk!"); //TODO Maybe only send messages to other spectators
             event.setCancelled(true);
         }

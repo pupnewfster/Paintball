@@ -1,6 +1,6 @@
 package net.battlenexus.paintball.game.weapon;
 
-import net.battlenexus.paintball.entities.PBPlayer;
+import net.battlenexus.paintball.entities.BasePlayer;
 import net.minecraft.server.v1_11_R1.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -38,7 +38,11 @@ public interface Weapon {
 
     Material getReloadItem();
 
-    PBPlayer getOwner();
+    BasePlayer getOwner();
+
+    void removeBar();
+
+    void refill();
 
     void shoot();
 

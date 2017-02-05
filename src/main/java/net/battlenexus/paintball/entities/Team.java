@@ -186,6 +186,13 @@ public class Team implements ConfigParser {
         aiPlayers.add(new SimpleSkeleton(this, getAISpawn()));
     }
 
+    public void removeAIPlayers() {
+        for (AIPlayer ai : aiPlayers) {
+            if (ai instanceof SimpleSkeleton)
+                ((SimpleSkeleton) ai).remove();
+        }
+    }
+
     public Location getAISpawn() {
         return getSpawn(); //TODO make it return a random ai spawn point
     }

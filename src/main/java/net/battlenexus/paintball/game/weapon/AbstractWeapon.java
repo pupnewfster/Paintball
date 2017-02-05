@@ -1,11 +1,15 @@
 package net.battlenexus.paintball.game.weapon;
 
 import net.battlenexus.paintball.Paintball;
+import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.game.PaintballGame;
 import org.bukkit.*;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.craftbukkit.v1_11_R1.boss.CraftBossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.inventory.Inventory;
@@ -15,14 +19,14 @@ import org.bukkit.util.Vector;
 import java.util.Random;
 
 public abstract class AbstractWeapon implements Weapon {
-    private PBPlayer owner;
+    private BasePlayer owner;
+    private CraftBossBar bar;
     private int bullets;
-    protected int currentClip;
 
     public static AbstractWeapon createWeapon(Class<? extends AbstractWeapon> class_, PBPlayer owner) {
         try {
             AbstractWeapon w = class_.newInstance();
-            w.owner = owner;
+            w.setOwner(owner);
             return w;
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
@@ -31,22 +35,39 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     protected AbstractWeapon() {
+        bar = new CraftBossBar(ChatColor.YELLOW + "Ammo: " + bullets, BarColor.YELLOW, BarStyle.SOLID);
+    }
+
+    public void refill() {
+        bullets = clipSize();
+        bar.setTitle(ChatColor.YELLOW + "Ammo: " + bullets);
+        bar.setProgress(1.0);
+    }
+
+    public void removeBar() {
+        bar.removeAll();
+    }
+
+    public void setOwner(BasePlayer owner) {
+        this.owner = owner;
+        if (owner instanceof PBPlayer)
+            bar.addPlayer(((PBPlayer) owner).getBukkitPlayer());
     }
 
     private void updateGUI() {
-        if (owner == null)
+        if (owner == null || !(owner instanceof PBPlayer))
             return;
-        getOwner().getBukkitPlayer().setLevel(bullets);
-        getOwner().getBukkitPlayer().setExp(clipSize() == 0 ? 0 : (float) (1.0 * bullets / clipSize()));
+        bar.setTitle(ChatColor.YELLOW + "Ammo: " + bullets);
+        bar.setProgress(clipSize() == 0 ? 0 : (1.0 * bullets / clipSize()));
     }
 
     @Override
     public void emptyGun() {
         bullets = 0;
-        if (owner == null)
+        if (owner == null || !(owner instanceof PBPlayer))
             return;
 
-        Inventory inventory = owner.getBukkitPlayer().getInventory();
+        Inventory inventory = ((PBPlayer) owner).getBukkitPlayer().getInventory();
         for (ItemStack i : inventory) {
             int c = Weapon.WeaponUtils.getBulletCount(i);
             if (c == 0)
@@ -57,9 +78,9 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     private int getMaxBullets() {
-        if (owner == null)
+        if (owner == null || !(owner instanceof PBPlayer))
             return 0;
-        Inventory items = owner.getBukkitPlayer().getInventory();
+        Inventory items = ((PBPlayer) owner).getBukkitPlayer().getInventory();
         int i = 0;
         for (ItemStack item : items)
             i += Weapon.WeaponUtils.getBulletCount(item);
@@ -68,10 +89,10 @@ public abstract class AbstractWeapon implements Weapon {
 
     @Override
     public Material getMaterial() {
-        if (owner == null || getOwner().getCurrentGame() == null || getOwner().getCurrentTeam() == null)
+        if (owner == null || GameService.getCurrentGame() == null || getOwner().getCurrentTeam() == null)
             return getNormalMaterial();
         else {
-            PaintballGame pg = getOwner().getCurrentGame();
+            PaintballGame pg = GameService.getCurrentGame();
             if (pg.getConfig().getBlueTeam().equals(getOwner().getCurrentTeam()))
                 return getBlueTeamMaterial();
             else
@@ -81,18 +102,19 @@ public abstract class AbstractWeapon implements Weapon {
 
     @Override
     public void addBullets(int amount) {
-        if (owner == null)
+        if (owner == null || !(owner instanceof PBPlayer))
             return;
-        if (owner.getBukkitPlayer().getInventory().firstEmpty() == -1) {
+        PBPlayer pOwner = ((PBPlayer) owner);
+        if (pOwner.getBukkitPlayer().getInventory().firstEmpty() == -1) {
             combineBullets();
             combineBullets();
             combineBullets();
-            if (owner.getBukkitPlayer().getInventory().firstEmpty() == -1)
+            if (pOwner.getBukkitPlayer().getInventory().firstEmpty() == -1)
                 return;
         }
         if (amount <= clipSize()) {
             ItemStack item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), amount);
-            owner.getBukkitPlayer().getInventory().addItem(item);
+            pOwner.getBukkitPlayer().getInventory().addItem(item);
         } else {
             while (amount > 0) {
                 int t;
@@ -102,7 +124,7 @@ public abstract class AbstractWeapon implements Weapon {
                     t = amount;
 
                 ItemStack item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), t);
-                owner.getBukkitPlayer().getInventory().addItem(item);
+                pOwner.getBukkitPlayer().getInventory().addItem(item);
                 amount -= t;
             }
         }
@@ -110,7 +132,9 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     private void combineBullets() {
-        final Inventory inventory = owner.getBukkitPlayer().getInventory();
+        if (!(owner instanceof PBPlayer))
+            return;
+        final Inventory inventory = ((PBPlayer) owner).getBukkitPlayer().getInventory();
         int i = inventory.first(getReloadItem());
         ItemStack item = inventory.getItem(i);
         int bulletCount = Weapon.WeaponUtils.getBulletCount(item);
@@ -140,8 +164,9 @@ public abstract class AbstractWeapon implements Weapon {
 
     @Override
     public void reload(ItemStack item) {
-        if (owner == null)
+        if (owner == null || !(owner instanceof PBPlayer))
             return;
+        PBPlayer pOwner = ((PBPlayer) owner);
         if (!reloading) {
             int c = Weapon.WeaponUtils.getBulletCount(item);
             if (c == 0)
@@ -149,7 +174,7 @@ public abstract class AbstractWeapon implements Weapon {
 
             int bNeeded = clipSize() - bullets;
             if (bNeeded == 0) {
-                owner.sendMessage(ChatColor.DARK_RED + "Reload failed! Your gun is full!");
+                pOwner.sendMessage(ChatColor.DARK_RED + "Reload failed! Your gun is full!");
                 return;
             }
             int take = 0;
@@ -168,13 +193,13 @@ public abstract class AbstractWeapon implements Weapon {
                 if (item.getAmount() > 1)
                     item.setAmount(item.getAmount() - 1);
                 else {
-                    owner.getBukkitPlayer().getInventory().clear(owner.getBukkitPlayer().getInventory().getHeldItemSlot());
-                    final Inventory i = owner.getBukkitPlayer().getInventory();
+                    pOwner.getBukkitPlayer().getInventory().clear(pOwner.getBukkitPlayer().getInventory().getHeldItemSlot());
+                    final Inventory i = pOwner.getBukkitPlayer().getInventory();
                     while (true) {
                         int first_index = i.first(getReloadItem());
                         if (first_index == -1) {
                             reloading = false;
-                            owner.sendMessage(ChatColor.DARK_RED + "You're all out!");
+                            pOwner.sendMessage(ChatColor.DARK_RED + "You're all out!");
                             break;
                         }
                         ItemStack item_to_move = i.getItem(first_index);
@@ -190,13 +215,13 @@ public abstract class AbstractWeapon implements Weapon {
                 }
             }
             updateGUI();
-            owner.getBukkitPlayer().sendMessage(Paintball.formatMessage("Reloading..."));
-            owner.getBukkitPlayer().playSound(owner.getBukkitPlayer().getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1);
+            pOwner.getBukkitPlayer().sendMessage(Paintball.formatMessage("Reloading..."));
+            pOwner.getBukkitPlayer().playSound(pOwner.getBukkitPlayer().getLocation(), Sound.BLOCK_ANVIL_USE, 0.5f, 1);
             displayReloadAnimation(reloadTime);
 
             Runnable stopReload = () -> {
                 reloading = false;
-                owner.getBukkitPlayer().sendMessage(Paintball.formatMessage(ChatColor.GREEN + "Reloaded!"));
+                pOwner.getBukkitPlayer().sendMessage(Paintball.formatMessage(ChatColor.GREEN + "Reloaded!"));
                 updateGUI();
             };
             Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, stopReload, (long) Math.round(reloadTime * 20));
@@ -204,13 +229,13 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     private void displayReloadAnimation(float speed) {
-        if (owner == null)
+        if (owner == null || !(owner instanceof PBPlayer))
             return;
-        owner.getBukkitPlayer().setExp(0);
-        final Player thePlayer = owner.getBukkitPlayer();
+        bar.setTitle(ChatColor.YELLOW + "Reloading");
+        bar.setProgress(0);
         final float percentage = 1 / speed;
         for (int i = 1; i <= speed; i++)
-            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> thePlayer.setExp(thePlayer.getExp() + percentage), (long) 20 * i);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(Paintball.INSTANCE, () -> bar.setProgress(Math.min(1.0, bar.getProgress() + percentage)), (long) 20 * i);
     }
 
     @Override
@@ -231,10 +256,10 @@ public abstract class AbstractWeapon implements Weapon {
     private long lastFire = -1;
 
     protected void shoot(double spreadFactor) {
-        if (owner == null)
+        if (owner == null || !(owner instanceof PBPlayer))
             return;
         if (reloading) {
-            owner.sendMessage(ChatColor.DARK_RED + "You cant shoot while reloading!");
+            ((PBPlayer) owner).sendMessage(ChatColor.DARK_RED + "You cant shoot while reloading!");
             return;
         }
         if (bullets < getShotRate())
@@ -258,7 +283,7 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     @Override
-    public PBPlayer getOwner() {
+    public BasePlayer getOwner() {
         return owner;
     }
 
@@ -279,11 +304,11 @@ public abstract class AbstractWeapon implements Weapon {
     private void onFire(final Snowball snowball, Player bukkitPlayer, double spread) {
         if (bukkitPlayer == null)
             return;
-        if (GameService.getCurrentGame() != null) {
-            Team t = GameService.getCurrentGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
-            GameService.getCurrentGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
-            snowball.setGlowing(true);
-        }
+        if (GameService.getCurrentGame() == null || !GameService.getCurrentGame().hasStarted())
+            return;
+        Team t = GameService.getCurrentGame().getTeamForPlayer(PBPlayer.getPlayer(bukkitPlayer));
+        GameService.getCurrentGame().getScoreManager().addUUIDToTeam(t.getName(), snowball.getUniqueId());
+        snowball.setGlowing(true);
         snowball.setShooter(bukkitPlayer);
         Vector vector;
         if (spread == 0)
@@ -308,10 +333,10 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     private void onShoot(double spread) {
-        if (owner == null)
+        if (owner == null || !(owner instanceof PBPlayer))
             return;
         called = true;
-        Player bukkitPlayer = owner.getBukkitPlayer();
+        Player bukkitPlayer = ((PBPlayer) owner).getBukkitPlayer();
         bukkitPlayer.playSound(bukkitPlayer.getLocation(), Sound.BLOCK_DISPENSER_DISPENSE, 0.5f, 1);
         onFire(bukkitPlayer.getWorld().spawn(bukkitPlayer.getEyeLocation().clone(), Snowball.class), bukkitPlayer, spread);
     }

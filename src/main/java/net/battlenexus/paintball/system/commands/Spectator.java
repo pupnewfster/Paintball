@@ -12,7 +12,7 @@ public class Spectator implements PBCommand {
             return;
         }
         if (player.isInGame())
-            player.leaveGame(player.getCurrentGame());
+            player.leaveGame();
 
         if (player.isSpectating()) {
             player.stopSpectating();

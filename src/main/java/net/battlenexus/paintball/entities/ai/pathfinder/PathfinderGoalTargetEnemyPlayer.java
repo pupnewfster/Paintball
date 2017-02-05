@@ -26,7 +26,7 @@ public class PathfinderGoalTargetEnemyPlayer extends PathfinderGoal {
                     return false;
                 else {
                     Team other = GameService.getCurrentGame().getTeamForPlayer(PBPlayer.getPlayer(((EntityPlayer) entity).getBukkitEntity().getPlayer()));
-                    Team ours = PathfinderGoalTargetEnemyPlayer.this.b.getTeam();
+                    Team ours = PathfinderGoalTargetEnemyPlayer.this.b.getCurrentTeam();
                     if (other != null && other.equals(ours))
                         return false;
                     double d0 = PathfinderGoalTargetEnemyPlayer.this.f();
