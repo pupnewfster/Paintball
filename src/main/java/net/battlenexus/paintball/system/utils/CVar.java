@@ -3,7 +3,7 @@ package net.battlenexus.paintball.system.utils;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.config.ConfigItem;
 import net.battlenexus.paintball.game.config.ReflectionConfig;
-import net.battlenexus.paintball.game.config.impl.StringHashMapConfig;
+import net.battlenexus.paintball.game.config.impl.StringHashMapOption;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.io.IOException;
 public class CVar extends ReflectionConfig {
     public static final CVar INSTANCE = new CVar();
     @ConfigItem
-    private StringHashMapConfig hashMapConfig = new StringHashMapConfig();
+    private StringHashMapOption hashMapConfig = new StringHashMapOption();
 
     public static void loadVars() {
         INSTANCE.loadvars();

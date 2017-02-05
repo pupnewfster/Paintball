@@ -1,13 +1,14 @@
 package net.battlenexus.paintball.game.config.impl;
 
-import net.battlenexus.paintball.game.config.ConfigParser;
+import net.battlenexus.paintball.game.config.ConfigOption;
+import net.battlenexus.paintball.game.config.ConfigWriter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ConfigParseHashMapConfig<K extends ConfigParser> extends HashMap<String, K> implements ConfigParser {
+public class ConfigParseHashMapOption<K extends ConfigOption> extends HashMap<String, K> implements ConfigOption {
     @SuppressWarnings("unchecked")
     @Override
     public void parse(NodeList childNodes) {
@@ -39,18 +40,23 @@ public class ConfigParseHashMapConfig<K extends ConfigParser> extends HashMap<St
                 }
             }
         }
+
     }
 
     @Override
-    public void save(ArrayList<String> lines) {
+    public void save(ConfigWriter configWriter) {
         for (String key : keySet()) {
             K value = get(key);
-            lines.add("<item>");
-            lines.add("<key>" + key + "</key>");
-            lines.add("<value>");
-            GenericConfigParse.saveObject(value, lines);
-            lines.add("</value>");
-            lines.add("</item>");
+
+            configWriter.beginObject("item");
+
+            configWriter.addConfig("key", key);
+
+            configWriter.beginObject("value");
+            GenericConfigParse.saveObject(value, configWriter);
+            configWriter.endObject();
+
+            configWriter.endObject();
         }
     }
 }

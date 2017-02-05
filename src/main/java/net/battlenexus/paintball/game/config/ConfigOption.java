@@ -4,8 +4,8 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 
-public interface ConfigParser {
+public interface ConfigOption {
     void parse(NodeList childNodes);
 
-    void save(ArrayList<String> lines);
+    void save(ConfigWriter writer);
 }
