@@ -22,13 +22,15 @@ import java.util.Formatter;
 public abstract class ReflectionConfig {
     public static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
+    private ConfigWriter configWriter = new ConfigWriter();
+
     public void parseFile(File file) throws IOException {
         if (!file.exists())
             throw new IOException("File not found!");
 
         Field[] fields = getClass().getDeclaredFields();
 
-        FileInputStream fin = new FileInputStream(file);
+         FileInputStream fin = new FileInputStream(file);
         try {
             DocumentBuilder db = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
             Document dom = db.parse(fin);
@@ -45,8 +47,8 @@ public abstract class ReflectionConfig {
                     for (Field f : fields) {
                         if (f.getName().equals(item_name)) {
                             if (isConfigItem(f)) {
-                                if (ConfigParser.class.isAssignableFrom(f.getType())) {
-                                    ConfigParser parser = (ConfigParser) f.getType().getConstructor().newInstance();
+                                if (ConfigOption.class.isAssignableFrom(f.getType())) {
+                                    ConfigOption parser = (ConfigOption) f.getType().getConstructor().newInstance();
                                     parser.parse(item.getChildNodes());
                                     f.setAccessible(true);
                                     f.set(this, parser);
@@ -97,10 +99,10 @@ public abstract class ReflectionConfig {
         }
     }
 
-    public String[] save() {
-        ArrayList<String> lines = new ArrayList<>();
+    public void save() {
         Field[] fields = getClass().getDeclaredFields();
-        lines.add("<mapConfig>");
+
+        configWriter.begin();
         for (Field f : fields) {
             if (isConfigItem(f)) {
                 Object obj;
@@ -110,31 +112,29 @@ public abstract class ReflectionConfig {
                     e.printStackTrace();
                     continue;
                 }
-                if (obj instanceof ConfigParser) {
-                    lines.add("<" + f.getName() + ">");
-                    ConfigParser parser = (ConfigParser) obj;
-                    parser.save(lines);
-                    lines.add("</" + f.getName() + ">");
+                if (obj instanceof ConfigOption) {
+
+                    configWriter.beginObject(f.getName());
+                    ConfigOption parser = (ConfigOption) obj;
+                    parser.save(configWriter);
+                    configWriter.endObject();
                 } else {
                     String item_name = f.getName();
                     if (!Modifier.isTransient(f.getModifiers()))
-                        lines.add("<" + item_name + ">" + obj.toString() + "</" + item_name + ">");
+                        configWriter.addConfig(item_name, obj.toString());
                 }
             }
         }
-        lines.add("</mapConfig>");
-        return lines.toArray(new String[lines.size()]);
+        configWriter.end();
     }
 
     public void saveToFile(String map_name) throws IOException {
-        String[] lines = save();
+        save();
         File dir = Paintball.INSTANCE.getDataFolder();
         if (!dir.exists() && !dir.mkdir())
             throw new IOException("Error creating maps directory!");
-        Formatter formatter = new Formatter(new FileWriter(new File(dir, map_name), true));
-        for (String line : lines)
-            formatter.out().append(line).append("\n");
-        formatter.close();
+
+        configWriter.saveToFile(new File(dir, map_name));
     }
 
     private static boolean isConfigItem(Field field) {

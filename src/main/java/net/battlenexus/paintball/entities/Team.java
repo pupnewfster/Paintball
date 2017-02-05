@@ -3,7 +3,10 @@ package net.battlenexus.paintball.entities;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.ai.AIPlayer;
 import net.battlenexus.paintball.entities.ai.SimpleSkeleton;
-import net.battlenexus.paintball.game.config.ConfigParser;
+import net.battlenexus.paintball.game.GameService;
+import net.battlenexus.paintball.game.config.ConfigOption;
+import net.battlenexus.paintball.game.config.ConfigWriter;
+import net.battlenexus.paintball.game.config.MapConfig;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.impl.BasicPaintball;
 import org.bukkit.*;
@@ -16,18 +19,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Team implements ConfigParser {
+public class Team implements ConfigOption {
     private final ArrayList<PBPlayer> players = new ArrayList<>();
     private final ArrayList<AIPlayer> aiPlayers = new ArrayList<>(); //TODO remove ai players when round is over
     private String team_name;
-    private Location spawn;
     private String world_name;
+    private int teamNumber;
 
     public Team(Team blue_team) {
         this.team_name = blue_team.team_name;
         this.world_name = blue_team.world_name;
-        this.spawn = new Location(blue_team.spawn.getWorld(), blue_team.spawn.getX(), blue_team.spawn.getY(), blue_team.spawn.getZ(), blue_team.spawn.getYaw(), blue_team.spawn.getPitch());
-    }
+     }
 
     public Team() {
     }
@@ -43,19 +45,15 @@ public class Team implements ConfigParser {
         this.team_name = team;
     }
 
+    @Deprecated
     public void setSpawn(Location location) {
-        this.spawn = location;
+        //TODO Delete this and use MapConfig.addSpawn instead
     }
 
-
+    @Deprecated
     public Location getSpawn() {
-        if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
-            World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
-            if (w == null)
-                return spawn;
-            spawn.setWorld(w);
-        }
-        return spawn;
+        MapConfig config = GameService.getCurrentGame().getConfig();
+        return config.getSpawnsFor(this).get(0).getPosition().getLocation();
     }
 
     public ItemStack getHelmet() {
@@ -143,14 +141,9 @@ public class Team implements ConfigParser {
     public void spawnPlayer(PBPlayer player) {
         if (!contains(player))
             return;
-        if (world_name != null && !spawn.getWorld().getName().equals(world_name)) {
-            World w = Bukkit.getServer().createWorld(new WorldCreator(world_name));
-            if (w == null) {
-                player.getBukkitPlayer().sendMessage(Paintball.formatMessage("Could not find world \"" + world_name + "\"!"));
-                return;
-            }
-            spawn.setWorld(w);
-        }
+        Location spawn = getSpawn();
+        //TODO Make it so it only chooses start spawns
+
         Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> player.getBukkitPlayer().teleport(spawn));
     }
 
@@ -206,38 +199,25 @@ public class Team implements ConfigParser {
     @Override
     public void parse(NodeList childNodes) {
         if (childNodes != null && childNodes.getLength() > 0) {
-            double x = 0, y = 0, z = 0, yaw = 0, pitch = 0;
             for (int i = 0; i < childNodes.getLength(); i++) {
                 if (!(childNodes.item(i) instanceof Element))
                     continue;
                 Element item = (Element) childNodes.item(i);
                 if (item.getNodeName().equals("name"))
                     team_name = item.getFirstChild().getNodeValue().replaceAll("@", "" + ChatColor.COLOR_CHAR);
-                else if (item.getNodeName().equals("x"))
-                    x = Double.parseDouble(item.getFirstChild().getNodeValue());
-                else if (item.getNodeName().equals("y"))
-                    y = Double.parseDouble(item.getFirstChild().getNodeValue());
-                else if (item.getNodeName().equals("z"))
-                    z = Double.parseDouble(item.getFirstChild().getNodeValue());
-                else if (item.getNodeName().equals("yaw"))
-                    yaw = Double.parseDouble(item.getFirstChild().getNodeValue());
-                else if (item.getNodeName().equals("pitch"))
-                    pitch = Double.parseDouble(item.getFirstChild().getNodeValue());
-                else if (item.getNodeName().equals("world"))
-                    world_name = item.getFirstChild().getNodeValue();
+                else if (item.getNodeName().equals("teamNumber"))
+                    teamNumber = Integer.parseInt(item.getFirstChild().getNodeValue());
             }
-            spawn = new Location(Paintball.INSTANCE.paintball_world, x, y, z, (float) yaw, (float) pitch); //Use lobby as spawn world until a player needs to be spawned
         }
     }
 
     @Override
-    public void save(ArrayList<String> lines) {
-        lines.add("<name>" + team_name.replaceAll("" + ChatColor.COLOR_CHAR, "@") + "</name>");
-        lines.add("<x>" + spawn.getX() + "</x>");
-        lines.add("<y>" + spawn.getY() + "</y>");
-        lines.add("<z>" + spawn.getZ() + "</z>");
-        lines.add("<pitch>" + spawn.getPitch() + "</pitch>");
-        lines.add("<yaw>" + spawn.getYaw() + "</yaw>");
-        lines.add("<world>" + spawn.getWorld().getName() + "</world>");
+    public void save(ConfigWriter configWriter) {
+        configWriter.addConfig("name", team_name.replaceAll("" + ChatColor.COLOR_CHAR, "@"));
+        configWriter.addConfig("teamNumber", teamNumber);
+    }
+
+    public int getTeamNumber() {
+        return teamNumber;
     }
 }

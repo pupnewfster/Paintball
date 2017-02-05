@@ -1,7 +1,8 @@
 package net.battlenexus.paintball.game.config.impl;
 
 import net.battlenexus.paintball.Paintball;
-import net.battlenexus.paintball.game.config.ConfigParser;
+import net.battlenexus.paintball.game.config.ConfigOption;
+import net.battlenexus.paintball.game.config.ConfigWriter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,8 +12,12 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 
-public class LocationConfig implements ConfigParser {
-    public Location location;
+public class LocationOption implements ConfigOption {
+    private Location location;
+
+    public LocationOption(Location location) {
+        this.location = location;
+    }
 
     @Override
     public void parse(NodeList childNodes) {
@@ -48,10 +53,18 @@ public class LocationConfig implements ConfigParser {
     }
 
     @Override
-    public void save(ArrayList<String> lines) {
-        lines.add("<x>" + location.getX() + "</x>");
-        lines.add("<y>" + location.getY() + "</y>");
-        lines.add("<z>" + location.getZ() + "</z>");
-        lines.add("<world>" + location.getWorld().getName() + "</world>");
+    public void save(ConfigWriter writer) {
+        writer.addConfig("x", location.getX());
+        writer.addConfig("y", location.getY());
+        writer.addConfig("z", location.getZ());
+        writer.addConfig("world", location.getWorld().getName());
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

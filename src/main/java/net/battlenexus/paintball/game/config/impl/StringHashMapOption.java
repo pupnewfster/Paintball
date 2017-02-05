@@ -1,13 +1,14 @@
 package net.battlenexus.paintball.game.config.impl;
 
-import net.battlenexus.paintball.game.config.ConfigParser;
+import net.battlenexus.paintball.game.config.ConfigOption;
+import net.battlenexus.paintball.game.config.ConfigWriter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class StringHashMapConfig extends HashMap<String, String> implements ConfigParser {
+public class StringHashMapOption extends HashMap<String, String> implements ConfigOption {
     @Override
     public void parse(NodeList childNodes) {
         if (childNodes != null && childNodes.getLength() > 0) {
@@ -39,13 +40,17 @@ public class StringHashMapConfig extends HashMap<String, String> implements Conf
     }
 
     @Override
-    public void save(ArrayList<String> lines) {
+    public void save(ConfigWriter writer) {
         for (String key : keySet()) {
             String value = get(key);
-            lines.add("<item>");
-            lines.add("<key>" + key + "</key>");
-            lines.add("<value>" + value + "</value>");
-            lines.add("</item>");
+
+
+            writer.beginObject("item");
+
+            writer.addConfig("key", key);
+            writer.addConfig("value", value);
+
+            writer.endObject();
         }
     }
 }

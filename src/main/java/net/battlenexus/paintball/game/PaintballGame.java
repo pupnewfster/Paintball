@@ -5,7 +5,7 @@ import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.config.MapConfig;
-import net.battlenexus.paintball.game.config.impl.LocationConfig;
+import net.battlenexus.paintball.game.config.impl.LocationOption;
 import net.battlenexus.paintball.game.items.AbstractItem;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.Weapon;
@@ -114,8 +114,8 @@ public abstract class PaintballGame implements Tick {
     private void refillChests(boolean announce) {
         final Random random = new Random();
         boolean refilled = false;
-        for (LocationConfig lc : getConfig().getChests()) {
-            Block b = lc.location.getBlock();
+        for (LocationOption lc : getConfig().getChests()) {
+            Block b = lc.getLocation().getBlock();
             if (b.getType() == Material.CHEST) {
                 Chest c = (Chest) b.getState();
                 Inventory i = c.getInventory();
