@@ -8,7 +8,6 @@ import net.battlenexus.paintball.entities.ai.pathfinder.PathfinderGoalTargetEnem
 import net.battlenexus.paintball.entities.ai.pathfinder.PathfinderGoalTargetNearestEnemyAI;
 import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.game.impl.OneHitMinute;
-import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.Weapon;
 import net.battlenexus.paintball.game.weapon.impl.Pistol;
 import net.minecraft.server.v1_11_R1.*;
@@ -24,9 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO add taking damage, respawning and such
+public class SimpleSkeleton extends EntitySkeleton implements AIPlayer {
     private final Team team;
-    private AbstractWeapon gun;
+    private Weapon gun;
     private int maxHealth = 20;
 
     public SimpleSkeleton(Team team, Location spawn) {
@@ -47,14 +46,14 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         this.goalSelector.a(1, new PathfinderGoalFloat(this));
-        this.goalSelector.a(5, new PathfinderGoalRandomStrollLand(this, 1.0D));
+        this.goalSelector.a(5, new PathfinderGoalRandomStroll(this, 1.0D, 20));
         this.goalSelector.a(6, new PathfinderGoalLookAtPlayer(this, EntityHuman.class, 8.0F));//TODO edit the goal to look at enemies
         this.goalSelector.a(6, new PathfinderGoalRandomLookaround(this));
         this.goalSelector.a(8, new PathfinderGoalArrowAttack(this, 1.0D, 20, 15.0F));
         this.targetSelector.a(1, new PathfinderGoalTargetEnemyPlayer(this));
         this.targetSelector.a(2, new PathfinderGoalTargetNearestEnemyAI(this, SimpleSkeleton.class));
+        this.targetSelector.a(3, new PathfinderGoalHurtByTarget(this, false, new Class[0]));//TODO make an enemy only version
         //TODO add for all different AI types we make
 
         setName();
@@ -71,6 +70,12 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
         ((CraftWorld) spawn.getWorld()).getHandle().addEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM);
     }
 
+    protected void initAttributes() {
+        super.initAttributes();
+        getAttributeInstance(GenericAttributes.maxHealth).setValue(20.0);
+        getAttributeInstance(GenericAttributes.FOLLOW_RANGE).setValue(64.0D);
+    }
+
     private void setName() {
         int hearts = (int) getHealth();
         boolean endHalf = hearts % 2 == 1;
@@ -84,7 +89,7 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
     }
 
     private void pickGun() {
-        List<Class<? extends AbstractWeapon>> weapons = GameService.getCurrentGame().allowedGuns();
+        List<Class<? extends Weapon>> weapons = GameService.getCurrentGame().allowedGuns();
         if (weapons == null || weapons.isEmpty()) { //TODO make the list be all the available weapons
             weapons = Collections.singletonList(Pistol.class);
         }
@@ -111,13 +116,20 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer { //TODO 
                 if (shooter instanceof PBPlayer)
                     ((PBPlayer) shooter).sendMessage("Watch out! That bot is on your team!");
             } else {
-                if (shooter.getCurrentWeapon().isOneHitKill() || wouldDie(shooter.getCurrentWeapon().damage())) {//TODO set onehit kill for bots
+                if (shooter.getCurrentWeapon().isOneHitKill() || wouldDie(shooter.getCurrentWeapon().damage())) {
                     refillHealth();
                     kill(shooter);
-                } else
+                    lastDamager = null;
+                } else {
                     damagePlayer(shooter.getCurrentWeapon().damage());
+                    lastDamager = shooter.getNMSEntity();
+                }
             }
         }
+    }
+
+    public EntityLiving getNMSEntity() {
+        return this;
     }
 
     private void kill(final BasePlayer killer) {

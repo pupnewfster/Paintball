@@ -4,7 +4,7 @@ import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.PaintballGame;
-import net.battlenexus.paintball.game.weapon.AbstractWeapon;
+import net.battlenexus.paintball.game.weapon.Weapon;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Listener;
 
@@ -29,7 +29,7 @@ public class SimpleGame extends PaintballGame implements Listener {
     }
 
     @Override
-    public List<Class<? extends AbstractWeapon>> allowedGuns() {
+    public List<Class<? extends Weapon>> allowedGuns() {
         return null;
     }
 

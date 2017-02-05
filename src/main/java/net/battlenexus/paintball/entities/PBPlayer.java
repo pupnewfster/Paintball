@@ -3,9 +3,12 @@ package net.battlenexus.paintball.entities;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.GameService;
 import net.battlenexus.paintball.game.PaintballGame;
+import net.battlenexus.paintball.game.items.AbstractItem;
 import net.battlenexus.paintball.game.weapon.Weapon;
+import net.minecraft.server.v1_11_R1.EntityLiving;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +36,7 @@ public class PBPlayer implements BasePlayer {
             return;
         lobby_items = new ItemStack[1];
 
-        lobby_items[0] = new ItemStack(Material.EMERALD);
+        lobby_items[0] = AbstractItem.addGlow(new ItemStack(Material.EMERALD));
         ItemMeta meta = lobby_items[0].getItemMeta();
         meta.setDisplayName("Weapon Shop");
         lobby_items[0].setItemMeta(meta);
@@ -49,6 +52,10 @@ public class PBPlayer implements BasePlayer {
 
     public Weapon getCurrentWeapon() {
         return weapon;
+    }
+
+    public EntityLiving getNMSEntity() {
+        return ((CraftPlayer) getBukkitPlayer()).getHandle();
     }
 
     public void setWeapon(Weapon weapon) {
@@ -138,7 +145,7 @@ public class PBPlayer implements BasePlayer {
         if (!isInGame())
             return;
         addDeath();
-        if (killer != null && killer instanceof PBPlayer) //TODO add it as a point if it was an ai
+        if (killer != null && killer instanceof PBPlayer)
             ((PBPlayer) killer).addKill();
         getCurrentTeam().spawnPlayer(this);
         GameService.getCurrentGame().onPlayerKill(killer, this);
@@ -200,11 +207,9 @@ public class PBPlayer implements BasePlayer {
         player.setGameMode(GameMode.ADVENTURE);
     }
 
-
     public boolean isSpectating() {
         return isSpectating;
     }
-
 
     public void joinGame() {
         PaintballGame game = GameService.getCurrentGame();
@@ -217,6 +222,7 @@ public class PBPlayer implements BasePlayer {
         refillHealth();
         bukkitP.setFoodLevel(20);
         bukkitP.setSaturation(20);
+        bukkitP.getInventory().setHelmet(getCurrentTeam().getHelmet());
         bukkitP.getInventory().setChestplate(getCurrentTeam().getChestplate());
         bukkitP.getInventory().setLeggings(getCurrentTeam().getLeggings());
         bukkitP.getInventory().setBoots(getCurrentTeam().getBoots());
@@ -250,6 +256,7 @@ public class PBPlayer implements BasePlayer {
 
     public void clearInventory() {
         player.getInventory().clear();
+        player.getInventory().setHelmet(new ItemStack(Material.AIR));
         player.getInventory().setChestplate(new ItemStack(Material.AIR));
         player.getInventory().setLeggings(new ItemStack(Material.AIR));
         player.getInventory().setBoots(new ItemStack(Material.AIR));

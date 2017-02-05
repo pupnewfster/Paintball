@@ -4,7 +4,10 @@ import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.items.impl.Food;
 import net.battlenexus.paintball.game.items.impl.Health;
 import net.battlenexus.paintball.game.items.impl.Speed;
+import net.minecraft.server.v1_11_R1.NBTTagCompound;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -91,5 +94,21 @@ public abstract class AbstractItem {
         }
 
         return items;
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    public static ItemStack addGlow(ItemStack item) {
+        item.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        net.minecraft.server.v1_11_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound tag = null;
+        if (!nmsStack.hasTag()) {
+            tag = new NBTTagCompound();
+            nmsStack.setTag(tag);
+        }
+        if (tag == null)
+            tag = nmsStack.getTag();
+        tag.setInt("HideFlags", 63);
+        nmsStack.setTag(tag);
+        return CraftItemStack.asCraftMirror(nmsStack);
     }
 }

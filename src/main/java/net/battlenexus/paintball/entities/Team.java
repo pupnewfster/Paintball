@@ -174,6 +174,8 @@ public class Team implements ConfigParser {
         spawnPlayer(player);
         if (player.getCurrentWeapon() == null)
             player.setWeapon(AbstractWeapon.createWeapon(BasicPaintball.class, player));
+        if (hasAIPlayers())
+            this.aiPlayers.get(0).remove();
     }
 
     public void leaveTeam(PBPlayer player) {
@@ -183,14 +185,17 @@ public class Team implements ConfigParser {
     }
 
     public void spawnAIPlayer() {
-        aiPlayers.add(new SimpleSkeleton(this, getAISpawn()));
+        this.aiPlayers.add(new SimpleSkeleton(this, getAISpawn()));
     }
 
     public void removeAIPlayers() {
-        for (AIPlayer ai : aiPlayers) {
+        for (AIPlayer ai : this.aiPlayers)
             if (ai instanceof SimpleSkeleton)
-                ((SimpleSkeleton) ai).remove();
-        }
+                ai.remove();
+    }
+
+    public boolean hasAIPlayers() {
+        return !this.aiPlayers.isEmpty();
     }
 
     public Location getAISpawn() {

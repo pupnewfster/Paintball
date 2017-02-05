@@ -23,8 +23,9 @@ Ability to change gun mid round without leaving and then it will just give, but 
 Add a way to get money
 Add sound for taking damage
 Make number of kills scale with number of players
-Improve the createbots command to have arguments and limits based on if people are online
 Make the AI's guns distance, strength, and spread actually be taken into account
+Make the AI not have to pull their bow to shoot (Only do this once weapon delay is added to them)
+Replace some casts to SimpleSkeleton with ones to AIPlayer
 Better spawning system
 Make it so the worlds auto load/unload rather than using necessities to just make sure world is loaded
 Given we are using bungeecord, we should just use multiple servers instead of multiple games per server. So make it so autojoin and once changing weapons ingame works... remove /leave

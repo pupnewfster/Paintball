@@ -39,7 +39,7 @@ public abstract class PaintballGame implements Tick {
 
     protected abstract String getGamemodeName();
 
-    public abstract List<Class<? extends AbstractWeapon>> allowedGuns();//TODO make this work and potentially replace it with a WeaponType
+    public abstract List<Class<? extends Weapon>> allowedGuns();//TODO make this work and potentially replace it with a WeaponType
 
     public void beginGame() {
         if (restart) {

@@ -12,12 +12,14 @@ public class CreateBots implements PBCommand {
         GameService service = Paintball.INSTANCE.getGameService();
         if (!service.isGameInProgress() || !service.canJoin())
             player.sendMessage("Error: This command can only be used while in game");
-        else { //This does not currently ensure they are ingame, but not going to bother checking as we will have autojoining
-            for (Team t : GameService.getCurrentGame().getTeams())
-                t.spawnAIPlayer();
-            //todo make one on each team, later make that configurable in args
-            //TODO Add a .opposite or .opponents to Team
-        }
+        else //This does not currently ensure they are ingame, but not going to bother checking as we will have autojoining
+            for (Team t : GameService.getCurrentGame().getTeams()) {
+                if (t.hasAIPlayers())
+                    continue;
+                int players = t.getAllPlayers().size();
+                for (int i = 0; i < 3 - players; i++)
+                    t.spawnAIPlayer();
+            }
     }
 
     @Override

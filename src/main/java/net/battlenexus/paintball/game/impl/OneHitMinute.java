@@ -4,7 +4,7 @@ import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.PaintballGame;
-import net.battlenexus.paintball.game.weapon.AbstractWeapon;
+import net.battlenexus.paintball.game.weapon.Weapon;
 import net.battlenexus.paintball.game.weapon.impl.Pistol;
 import org.bukkit.ChatColor;
 
@@ -24,7 +24,7 @@ public class OneHitMinute extends PaintballGame {
     }
 
     @Override
-    public List<Class<? extends AbstractWeapon>> allowedGuns() {
+    public List<Class<? extends Weapon>> allowedGuns() {
         return Collections.singletonList(Pistol.class);
     }
 

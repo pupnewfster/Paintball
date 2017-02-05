@@ -44,6 +44,8 @@ public interface Weapon {
 
     void refill();
 
+    void setOwner(BasePlayer owner);
+
     void shoot();
 
     void emptyGun();
