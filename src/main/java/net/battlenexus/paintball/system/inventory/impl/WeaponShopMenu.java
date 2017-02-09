@@ -1,8 +1,8 @@
 package net.battlenexus.paintball.system.inventory.impl;
 
-import com.crossge.necessities.Economy.BalChecks;
-import com.crossge.necessities.Necessities;
-import com.crossge.necessities.Variables;
+import gg.galaxygaming.necessities.Economy.Economy;
+import gg.galaxygaming.necessities.Necessities;
+import gg.galaxygaming.necessities.Variables;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.Weapon;
@@ -80,9 +80,9 @@ public class WeaponShopMenu extends PaintballMenu {
 
             int price = PRICES[slot];
 
-            BalChecks b = Necessities.getInstance().getBalChecks();
-            if (b.balance(p.getUniqueId()) < price) {
-                Variables var = Necessities.getInstance().getVar();
+            Economy eco = Necessities.getEconomy();
+            if (eco.getBalance(p.getUniqueId()) < price) {
+                Variables var = Necessities.getVar();
                 p.sendMessage(var.getEr() + "Error: " + var.getErMsg() + "You do not have " + price + " GGs."); //TODO when BalChecks is changed to Economy using mysql use the format
                 event.setCancelled(true);
                 return;
@@ -95,7 +95,7 @@ public class WeaponShopMenu extends PaintballMenu {
                     player.showLobbyItems();
                 player.setWeapon(AbstractWeapon.createWeapon((Class<? extends AbstractWeapon>) WEAPONS[slot], player)); //dude...that's weak..
                 p.closeInventory();
-                b.removeMoney(p.getUniqueId(), price);
+                eco.removeMoney(p.getUniqueId(), price);
                 wakeUp();
             });
         }

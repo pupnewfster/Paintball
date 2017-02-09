@@ -81,16 +81,17 @@ public class Team implements ConfigParser {
         ItemStack item = new ItemStack(m, 1);
         LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
         meta.setUnbreakable(true);
-        meta.setColor(getColor()); //TODO not have to get it every time keep it stored
+        Color c = getName().startsWith("" + ChatColor.COLOR_CHAR) ? getColor(getName().charAt(1)) : null;
+        if (c == null)
+            c= Color.BLUE;//TODO potentially choose a different default color
+        meta.setColor(c); //TODO not have to get it every time keep it stored
         item.setItemMeta(meta);
         return item;
     }
 
-    private Color getColor() {
-        Color c = getName().startsWith("" + ChatColor.COLOR_CHAR) ? getColor(getName().charAt(1)) : null;
-        if (c == null)
-            return Color.BLUE;//TODO potentially choose a different default color
-        return c;
+    public ChatColor getColor() {
+        ChatColor c = getName().startsWith("" + ChatColor.COLOR_CHAR) ? ChatColor.getByChar(getName().charAt(1)) : null;
+        return c == null ? ChatColor.BLUE : c; //TODO potentially choose a different default color
     }
 
     private Color getColor(char c) {

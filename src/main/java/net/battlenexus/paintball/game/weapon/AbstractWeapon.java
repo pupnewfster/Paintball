@@ -35,12 +35,51 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     protected AbstractWeapon() {
-        bar = new CraftBossBar(ChatColor.YELLOW + "Ammo: " + bullets, BarColor.YELLOW, BarStyle.SOLID);
+        //TODO change bar color and message above bar based on team
+        ChatColor color = owner.getCurrentTeam().getColor();
+        BarColor barColor;
+        switch (color) {
+            /*case BLACK:
+            case DARK_GRAY:
+                break;*/
+            case BLUE:
+            case AQUA:
+            case DARK_BLUE:
+            case DARK_AQUA:
+                barColor = BarColor.BLUE;
+                break;
+            case GREEN:
+            case DARK_GREEN:
+                barColor = BarColor.GREEN;
+                break;
+            case RED:
+            case DARK_RED:
+                barColor = BarColor.RED;
+                break;
+            case DARK_PURPLE:
+                barColor = BarColor.PURPLE;
+                break;
+            case YELLOW:
+            case GOLD:
+                barColor = BarColor.YELLOW;
+                break;
+            case LIGHT_PURPLE:
+                barColor = BarColor.PINK;
+                break;
+            case WHITE:
+            case GRAY:
+                barColor = BarColor.WHITE;
+                break;
+            default:
+                barColor = BarColor.BLUE; //TODO pick some other default color
+                break;
+        }
+        bar = new CraftBossBar(color + "Ammo: " + bullets, barColor, BarStyle.SOLID);
     }
 
     public void refill() {
         bullets = clipSize();
-        bar.setTitle(ChatColor.YELLOW + "Ammo: " + bullets);
+        bar.setTitle(owner.getCurrentTeam().getColor() + "Ammo: " + bullets);
         bar.setProgress(1.0);
     }
 
@@ -57,7 +96,7 @@ public abstract class AbstractWeapon implements Weapon {
     private void updateGUI() {
         if (owner == null || !(owner instanceof PBPlayer))
             return;
-        bar.setTitle(ChatColor.YELLOW + "Ammo: " + bullets);
+        bar.setTitle(owner.getCurrentTeam().getColor() + "Ammo: " + bullets);
         bar.setProgress(clipSize() == 0 ? 0 : (1.0 * bullets / clipSize()));
     }
 
@@ -231,7 +270,7 @@ public abstract class AbstractWeapon implements Weapon {
     private void displayReloadAnimation(float speed) {
         if (owner == null || !(owner instanceof PBPlayer))
             return;
-        bar.setTitle(ChatColor.YELLOW + "Reloading");
+        bar.setTitle(owner.getCurrentTeam().getColor() + "Reloading");
         bar.setProgress(0);
         final float percentage = 1 / speed;
         for (int i = 1; i <= speed; i++)
