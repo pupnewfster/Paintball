@@ -52,14 +52,6 @@ public class Team implements ConfigOption {
         //TODO Delete this and use MapConfig.addSpawn instead
     }
 
-
-    public Location getSpawn(boolean startSpawn) {
-        MapConfig config = GameService.getCurrentGame().getConfig();
-        List<SpawnPointOption> options = config.getSpawnsFor(this, false, startSpawn);
-
-        return options.get(PaintballGame.RANDOM.nextInt(options.size())).getPosition().getLocation();
-    }
-
     public ItemStack getHelmet() {
         return setColors(Material.LEATHER_HELMET);
     }
@@ -136,6 +128,13 @@ public class Team implements ConfigOption {
             default:
                 return null;
         }
+    }
+
+    public Location getSpawn(boolean startSpawn) {
+        MapConfig config = GameService.getCurrentGame().getConfig();
+        List<SpawnPointOption> options = config.getSpawnsFor(this, false, startSpawn);
+
+        return options.get(PaintballGame.RANDOM.nextInt(options.size())).getPosition().getLocation();
     }
 
     public String getName() {
