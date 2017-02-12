@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class PaintballGame implements Tick {
+    public static final Random RANDOM = new Random();
+
     private MapConfig mapConfig;
     protected ScoreManager score = new ScoreManager();
     boolean ended = false;

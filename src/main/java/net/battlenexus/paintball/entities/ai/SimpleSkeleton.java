@@ -137,7 +137,7 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer {
         //addDeath();//does it matter if we keep track of this
         if (killer != null && killer instanceof PBPlayer)
             ((PBPlayer) killer).addKill();
-        getBukkitEntity().teleport(team.getAISpawn());
+        getBukkitEntity().teleport(team.getAISpawn(false));
         GameService.getCurrentGame().onPlayerKill(killer, this);
         Bukkit.getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 40, 0));
     }

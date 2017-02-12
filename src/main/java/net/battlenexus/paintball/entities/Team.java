@@ -4,9 +4,11 @@ import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.ai.AIPlayer;
 import net.battlenexus.paintball.entities.ai.SimpleSkeleton;
 import net.battlenexus.paintball.game.GameService;
+import net.battlenexus.paintball.game.PaintballGame;
 import net.battlenexus.paintball.game.config.ConfigOption;
 import net.battlenexus.paintball.game.config.ConfigWriter;
 import net.battlenexus.paintball.game.config.MapConfig;
+import net.battlenexus.paintball.game.config.impl.SpawnPointOption;
 import net.battlenexus.paintball.game.weapon.AbstractWeapon;
 import net.battlenexus.paintball.game.weapon.impl.BasicPaintball;
 import org.bukkit.*;
@@ -50,10 +52,12 @@ public class Team implements ConfigOption {
         //TODO Delete this and use MapConfig.addSpawn instead
     }
 
-    @Deprecated
-    public Location getSpawn() {
+
+    public Location getSpawn(boolean startSpawn) {
         MapConfig config = GameService.getCurrentGame().getConfig();
-        return config.getSpawnsFor(this).get(0).getPosition().getLocation();
+        List<SpawnPointOption> options = config.getSpawnsFor(this, false, startSpawn);
+
+        return options.get(PaintballGame.RANDOM.nextInt(options.size())).getPosition().getLocation();
     }
 
     public ItemStack getHelmet() {
@@ -138,14 +142,11 @@ public class Team implements ConfigOption {
         return team_name;
     }
 
-    public void spawnPlayer(PBPlayer player) {
+    public void spawnPlayer(PBPlayer player, boolean startSpawn) {
         if (!contains(player))
             return;
 
-
-        Location spawn = getSpawn();
-        //TODO Make it so it only chooses start spawns
-
+        Location spawn = getSpawn(startSpawn);
         Bukkit.getScheduler().runTask(Paintball.INSTANCE, () -> player.getBukkitPlayer().teleport(spawn));
     }
 
@@ -167,7 +168,7 @@ public class Team implements ConfigOption {
 
     public void joinTeam(PBPlayer player) {
         players.add(player);
-        spawnPlayer(player);
+        spawnPlayer(player, true);
         if (player.getCurrentWeapon() == null)
             player.setWeapon(AbstractWeapon.createWeapon(BasicPaintball.class, player));
         if (hasAIPlayers())
@@ -181,7 +182,7 @@ public class Team implements ConfigOption {
     }
 
     public void spawnAIPlayer() {
-        this.aiPlayers.add(new SimpleSkeleton(this, getAISpawn()));
+        this.aiPlayers.add(new SimpleSkeleton(this, getAISpawn(true)));
     }
 
     public void removeAIPlayers() {
@@ -194,8 +195,11 @@ public class Team implements ConfigOption {
         return !this.aiPlayers.isEmpty();
     }
 
-    public Location getAISpawn() {
-        return getSpawn(); //TODO make it return a random ai spawn point
+    public Location getAISpawn(boolean startSpawn) {
+        MapConfig config = GameService.getCurrentGame().getConfig();
+        List<SpawnPointOption> options = config.getSpawnsFor(this, true, startSpawn);
+
+        return options.get(PaintballGame.RANDOM.nextInt(options.size())).getPosition().getLocation();
     }
 
     @Override
