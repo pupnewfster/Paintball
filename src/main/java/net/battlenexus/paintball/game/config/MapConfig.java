@@ -95,9 +95,17 @@ public class MapConfig extends ReflectionConfig {
     }
 
     public List<SpawnPointOption> getSpawnsFor(Team team) {
+        return getSpawnsFor(team, false, false);
+    }
+
+    public List<SpawnPointOption> getSpawnsFor(Team team, boolean aiSpawn) {
+        return getSpawnsFor(team, aiSpawn, false);
+    }
+
+    public List<SpawnPointOption> getSpawnsFor(Team team, boolean aiSpawn, boolean startSpawn) {
         ArrayList<SpawnPointOption> list = new ArrayList<>();
         for (SpawnPointOption option : spawns) {
-            if (option.getTeam() == team.getTeamNumber()) {
+            if (aiSpawn == option.isAiSpawn() && startSpawn == option.isStartPoint() && option.getTeam() == team.getTeamNumber()) {
                 list.add(option);
             }
         }

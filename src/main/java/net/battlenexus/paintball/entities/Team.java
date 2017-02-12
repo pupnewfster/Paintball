@@ -141,6 +141,8 @@ public class Team implements ConfigOption {
     public void spawnPlayer(PBPlayer player) {
         if (!contains(player))
             return;
+
+
         Location spawn = getSpawn();
         //TODO Make it so it only chooses start spawns
 
