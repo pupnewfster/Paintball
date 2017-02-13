@@ -1,11 +1,14 @@
 package net.battlenexus.paintball.game.config;
 
 import net.battlenexus.paintball.entities.Team;
-import net.battlenexus.paintball.game.config.impl.ArrayListConfig;
-import net.battlenexus.paintball.game.config.impl.LocationConfig;
+import net.battlenexus.paintball.game.config.impl.ArrayListOption;
+import net.battlenexus.paintball.game.config.impl.LocationOption;
+import net.battlenexus.paintball.game.config.impl.SpawnPointOption;
 import org.bukkit.Location;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapConfig extends ReflectionConfig {
     @ConfigItem
@@ -17,7 +20,9 @@ public class MapConfig extends ReflectionConfig {
     @ConfigItem
     protected Integer playerMax = 16;
     @ConfigItem
-    protected ArrayListConfig<LocationConfig> chests = new ArrayListConfig<>();
+    protected ArrayListOption<LocationOption> chests = new ArrayListOption<>();
+    @ConfigItem
+    protected ArrayListOption<SpawnPointOption> spawns = new ArrayListOption<SpawnPointOption>();
 
     public MapConfig() {
         blue_team = new Team();
@@ -34,8 +39,7 @@ public class MapConfig extends ReflectionConfig {
     }
 
     public void addChest(Location l) {
-        LocationConfig lc = new LocationConfig();
-        lc.location = l;
+        LocationOption lc = new LocationOption(l);
         chests.add(lc);
     }
 
@@ -78,7 +82,34 @@ public class MapConfig extends ReflectionConfig {
         this.playerMax = playerMax;
     }
 
-    public ArrayListConfig<LocationConfig> getChests() {
+    public ArrayListOption<LocationOption> getChests() {
         return chests;
+    }
+
+    public ArrayListOption<SpawnPointOption> getSpawns() {
+        return spawns;
+    }
+
+    public void setSpawns(ArrayListOption<SpawnPointOption> spawns) {
+        this.spawns = spawns;
+    }
+
+    public List<SpawnPointOption> getSpawnsFor(Team team) {
+        return getSpawnsFor(team, false, false);
+    }
+
+    public List<SpawnPointOption> getSpawnsFor(Team team, boolean aiSpawn) {
+        return getSpawnsFor(team, aiSpawn, false);
+    }
+
+    public List<SpawnPointOption> getSpawnsFor(Team team, boolean aiSpawn, boolean startSpawn) {
+        ArrayList<SpawnPointOption> list = new ArrayList<>();
+        for (SpawnPointOption option : spawns) {
+            if (aiSpawn == option.isAiSpawn() && startSpawn == option.isStartPoint() && option.getTeam() == team.getTeamNumber()) {
+                list.add(option);
+            }
+        }
+
+        return list;
     }
 }

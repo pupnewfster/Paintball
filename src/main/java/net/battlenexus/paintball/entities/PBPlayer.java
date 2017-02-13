@@ -147,7 +147,7 @@ public class PBPlayer implements BasePlayer {
         addDeath();
         if (killer != null && killer instanceof PBPlayer)
             ((PBPlayer) killer).addKill();
-        getCurrentTeam().spawnPlayer(this);
+        getCurrentTeam().spawnPlayer(this, false);
         GameService.getCurrentGame().onPlayerKill(killer, this);
         Bukkit.getOnlinePlayers().forEach(p -> p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_THUNDER, 40, 0));
     }
@@ -186,11 +186,11 @@ public class PBPlayer implements BasePlayer {
     public void spectateGame(PaintballGame game) {
         player.setGameMode(GameMode.SPECTATOR);
 
-        Vector firstTeam = game.getConfig().getBlueTeam().getSpawn().toVector();
-        Vector secondTeam = game.getConfig().getRedTeam().getSpawn().toVector();
+        Vector firstTeam = game.getConfig().getBlueTeam().getSpawn(false).toVector();
+        Vector secondTeam = game.getConfig().getRedTeam().getSpawn(false).toVector();
 
         Vector midpoint = firstTeam.midpoint(secondTeam);
-        Location lmidpoint = midpoint.toLocation(game.getConfig().getBlueTeam().getSpawn().getWorld());
+        Location lmidpoint = midpoint.toLocation(game.getConfig().getBlueTeam().getSpawn(false).getWorld());
         while (lmidpoint.getBlock().getType() != Material.AIR)
             lmidpoint.add(0, 1, 0);
 
