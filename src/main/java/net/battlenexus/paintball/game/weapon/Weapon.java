@@ -54,6 +54,8 @@ public interface Weapon {
 
     int totalBullets();
 
+    void setBarColor();
+
     void addBullets(int bullets);
 
     void reload(ItemStack item);

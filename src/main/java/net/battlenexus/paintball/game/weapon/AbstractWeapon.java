@@ -35,7 +35,10 @@ public abstract class AbstractWeapon implements Weapon {
     }
 
     protected AbstractWeapon() {
-        //TODO change bar color and message above bar based on team
+        bar = new CraftBossBar("Ammo: " + bullets, BarColor.PURPLE, BarStyle.SOLID);
+    }
+
+    public void setBarColor() {
         ChatColor color = owner.getCurrentTeam().getColor();
         BarColor barColor;
         switch (color) {
@@ -74,7 +77,8 @@ public abstract class AbstractWeapon implements Weapon {
                 barColor = BarColor.BLUE; //TODO pick some other default color
                 break;
         }
-        bar = new CraftBossBar(color + "Ammo: " + bullets, barColor, BarStyle.SOLID);
+        bar.setColor(barColor);
+        bar.setTitle(color + "Ammo: " + bullets);
     }
 
     public void refill() {

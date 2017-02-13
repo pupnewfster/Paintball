@@ -218,6 +218,7 @@ public class PBPlayer implements BasePlayer {
         hideLobbyItems();//TODO try disabling this see if it lets gun type change midgame if so will need to make it so that we can change clip size
         game.joinNextOpenTeam(this);
         game.onPlayerJoin(this);
+        weapon.setBarColor();
         Player bukkitP = getBukkitPlayer();
         refillHealth();
         bukkitP.setFoodLevel(20);
