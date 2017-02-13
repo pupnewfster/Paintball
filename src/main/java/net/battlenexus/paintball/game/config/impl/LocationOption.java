@@ -10,8 +10,6 @@ import org.bukkit.WorldCreator;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-
 public class LocationOption implements ConfigOption {
     private Location location;
 

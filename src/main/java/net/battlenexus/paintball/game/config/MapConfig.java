@@ -22,7 +22,7 @@ public class MapConfig extends ReflectionConfig {
     @ConfigItem
     protected ArrayListOption<LocationOption> chests = new ArrayListOption<>();
     @ConfigItem
-    protected ArrayListOption<SpawnPointOption> spawns = new ArrayListOption<SpawnPointOption>();
+    protected ArrayListOption<SpawnPointOption> spawns = new ArrayListOption<>();
 
     public MapConfig() {
         blue_team = new Team();

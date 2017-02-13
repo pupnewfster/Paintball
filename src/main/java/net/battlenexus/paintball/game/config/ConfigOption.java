@@ -2,8 +2,6 @@ package net.battlenexus.paintball.game.config;
 
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-
 public interface ConfigOption {
     void parse(NodeList childNodes);
 

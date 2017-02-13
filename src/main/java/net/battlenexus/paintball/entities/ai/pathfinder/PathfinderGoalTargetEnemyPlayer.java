@@ -16,6 +16,7 @@ public class PathfinderGoalTargetEnemyPlayer extends PathfinderGoal {
     private final PathfinderGoalNearestAttackableTarget.DistanceComparator d;
     private EntityLiving e;
 
+    @SuppressWarnings("unchecked")
     public PathfinderGoalTargetEnemyPlayer(SimpleSkeleton skeleton) {
         this.b = skeleton;
         this.c = new Predicate() {
@@ -38,7 +39,7 @@ public class PathfinderGoalTargetEnemyPlayer extends PathfinderGoal {
                             f = 0.1F;
                         d0 *= (double) (0.7F * f);
                     }
-                    return (double) entity.g(PathfinderGoalTargetEnemyPlayer.this.b) > d0 ? false : PathfinderGoalTarget.a(PathfinderGoalTargetEnemyPlayer.this.b, (EntityLiving) entity, false, true);
+                    return !((double) entity.g(PathfinderGoalTargetEnemyPlayer.this.b) > d0) && PathfinderGoalTarget.a(PathfinderGoalTargetEnemyPlayer.this.b, (EntityLiving) entity, false, true);
                 }
             }
 
@@ -49,6 +50,7 @@ public class PathfinderGoalTargetEnemyPlayer extends PathfinderGoal {
         this.d = new PathfinderGoalNearestAttackableTarget.DistanceComparator(skeleton);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean a() {
         double d0 = this.f();
         List list = this.b.world.a(EntityHuman.class, this.b.getBoundingBox().grow(d0, 4.0D, d0), this.c);

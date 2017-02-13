@@ -142,10 +142,12 @@ public class GameService {
         return game;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isGameInProgress() {
         return waiting;
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean canJoin() {
         return joinNext.size() < nextConfig.getPlayerMax();
     }

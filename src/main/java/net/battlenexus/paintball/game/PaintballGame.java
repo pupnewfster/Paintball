@@ -87,6 +87,7 @@ public abstract class PaintballGame implements Tick {
         }, 20 * 2);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasStarted() {
         return started;
     }
@@ -246,10 +247,6 @@ public abstract class PaintballGame implements Tick {
         String message = "shot";
         PBPlayer killer = (PBPlayer) baseKiller;
         PBPlayer victim = (PBPlayer) baseVictim;
-        if (killer == null) {
-            sendGameMessage(victim.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " killed himself!");
-            return;
-        }
         if (!killer.kill_cache.containsKey(victim))
             killer.kill_cache.put(victim, 1);
         else if (victim.kill_cache.containsKey(killer)) {

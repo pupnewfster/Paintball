@@ -11,13 +11,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Formatter;
 
 public abstract class ReflectionConfig {
     public static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
@@ -30,7 +27,7 @@ public abstract class ReflectionConfig {
 
         Field[] fields = getClass().getDeclaredFields();
 
-         FileInputStream fin = new FileInputStream(file);
+        FileInputStream fin = new FileInputStream(file);
         try {
             DocumentBuilder db = DOCUMENT_BUILDER_FACTORY.newDocumentBuilder();
             Document dom = db.parse(fin);

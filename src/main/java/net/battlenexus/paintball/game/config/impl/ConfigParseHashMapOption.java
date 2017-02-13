@@ -5,7 +5,6 @@ import net.battlenexus.paintball.game.config.ConfigWriter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ConfigParseHashMapOption<K extends ConfigOption> extends HashMap<String, K> implements ConfigOption {

@@ -1,8 +1,5 @@
 package net.battlenexus.paintball.game.config;
 
-import net.battlenexus.paintball.Paintball;
-import net.battlenexus.paintball.game.config.impl.ArrayListOption;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

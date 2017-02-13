@@ -31,7 +31,7 @@ public class Team implements ConfigOption {
     public Team(Team blue_team) {
         this.team_name = blue_team.team_name;
         this.world_name = blue_team.world_name;
-     }
+    }
 
     public Team() {
     }
@@ -77,7 +77,7 @@ public class Team implements ConfigOption {
         meta.setUnbreakable(true);
         Color c = getName().startsWith("" + ChatColor.COLOR_CHAR) ? getColor(getName().charAt(1)) : null;
         if (c == null)
-            c= Color.BLUE;//TODO potentially choose a different default color
+            c = Color.BLUE;//TODO potentially choose a different default color
         meta.setColor(c); //TODO not have to get it every time keep it stored
         item.setItemMeta(meta);
         return item;

@@ -15,6 +15,7 @@ public class PathfinderGoalTargetNearestEnemyAI extends PathfinderGoal {
     private EntityLiving e;
     private final Class<? extends EntityLiving> f;
 
+    @SuppressWarnings("unchecked")
     public PathfinderGoalTargetNearestEnemyAI(SimpleSkeleton skeleton, Class<? extends EntityLiving> oclass) {
         this.b = skeleton;
         this.f = oclass;
@@ -41,6 +42,7 @@ public class PathfinderGoalTargetNearestEnemyAI extends PathfinderGoal {
         this.d = new PathfinderGoalNearestAttackableTarget.DistanceComparator(skeleton);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean a() {
         double d0 = this.f();
         List list = this.b.world.a(this.f, this.b.getBoundingBox().grow(d0, 4.0D, d0), this.c);

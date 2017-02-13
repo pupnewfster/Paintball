@@ -80,12 +80,12 @@ public class SimpleSkeleton extends EntitySkeleton implements AIPlayer {
         int hearts = (int) getHealth();
         boolean endHalf = hearts % 2 == 1;
         hearts = hearts / 2;
-        String name = "§c";
+        StringBuilder nameBuilder = new StringBuilder("§c");
         for (int i = 0; i < hearts; i++)
-            name += "♥";
+            nameBuilder.append("♥");
         if (endHalf)
-            name += "♡";
-        setCustomName(name);
+            nameBuilder.append("♡");
+        setCustomName(nameBuilder.toString());
     }
 
     private void pickGun() {

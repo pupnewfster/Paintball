@@ -5,7 +5,6 @@ import net.battlenexus.paintball.game.config.ConfigWriter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class GenericConfigParse {
@@ -31,7 +30,8 @@ public class GenericConfigParse {
         return null;
     }
 
-    private static ConfigOption tryGetParser (String class_) {
+    @SuppressWarnings("unchecked")
+    private static ConfigOption tryGetParser(String class_) {
         Class<? extends ConfigOption> configParserClass = null; //weeeeaaak typing yum
         try {
             configParserClass = (Class<? extends ConfigOption>) Class.forName(class_);
@@ -43,9 +43,7 @@ public class GenericConfigParse {
         ConfigOption object = null;
         try {
             object = configParserClass.newInstance();
-        } catch (InstantiationException e) {
-            return null;
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             return null;
         }
 

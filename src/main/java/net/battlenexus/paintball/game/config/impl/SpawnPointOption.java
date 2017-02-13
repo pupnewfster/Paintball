@@ -1,16 +1,9 @@
 package net.battlenexus.paintball.game.config.impl;
 
-import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.game.config.ConfigOption;
 import net.battlenexus.paintball.game.config.ConfigWriter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
 
 public class SpawnPointOption implements ConfigOption {
     private LocationOption position;
