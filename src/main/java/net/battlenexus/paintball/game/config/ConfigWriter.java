@@ -9,7 +9,7 @@ import java.util.Stack;
 
 public class ConfigWriter {
     private ArrayList<String> lines = new ArrayList<>();
-    private boolean closed = false;
+    private boolean closed;
     private Stack<String> objectStack = new Stack<>();
 
     public void addConfig(String name, boolean value) {

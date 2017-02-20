@@ -14,7 +14,6 @@ public class ScoreManager {
 
     /**
      * Initialises the scoreboard
-     *
      * @param name String Objective Name
      * @param key  String Objective Key
      */
@@ -35,7 +34,6 @@ public class ScoreManager {
 
     /**
      * Creates a new team
-     *
      * @param teamName String The team name
      */
     public void addTeam(String teamName) {
@@ -56,7 +54,6 @@ public class ScoreManager {
 
     /**
      * Remove a team
-     *
      * @param teamName String The team name
      */
     public void removeTeam(String teamName) {
@@ -68,7 +65,6 @@ public class ScoreManager {
 
     /**
      * Adds a player to a team
-     *
      * @param teamName String The name of the team
      * @param player   Player The player you want to add to the team
      */
@@ -78,7 +74,6 @@ public class ScoreManager {
 
     /**
      * Adds a uuid to a team
-     *
      * @param teamName String The name of the team
      * @param uuid     UUID The uuid you want to add to the team
      */
@@ -92,7 +87,6 @@ public class ScoreManager {
 
     /**
      * Removes a player from a team
-     *
      * @param teamName String The name of the team
      * @param player   Player The player you want to remove from the team
      */
@@ -102,7 +96,6 @@ public class ScoreManager {
 
     /**
      * Removes a uuid from a team
-     *
      * @param teamName String The name of the team
      * @param uuid     UUID The uuid you want to remove from the team
      */
@@ -116,7 +109,6 @@ public class ScoreManager {
 
     /**
      * Adds points to a player's score
-     *
      * @param value  OfflinePlayer The Player you want to modify
      * @param amount int The points you want to add
      */
@@ -127,7 +119,6 @@ public class ScoreManager {
 
     /**
      * Takes points from a player's score
-     *
      * @param player OfflinePlayer The player you want to modify
      * @param amount int The points you want to subtract
      */

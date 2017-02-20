@@ -25,7 +25,7 @@ public class WeaponShopMenu extends PaintballMenu {
     private static final Class<?>[] WEAPONS = new Class[]{ //MUST BE A MULTIPLE OF 9!
             Pistol.class, MachineGun.class, Sniper.class, Shotgun.class, null, null, null, null, null
     };
-    private static final int[] PRICES = new int[]{
+    private static final int[] PRICES = {
             0, 10, 10, 10, 0, 0, 0, 0, 0
     };
 
@@ -79,13 +79,14 @@ public class WeaponShopMenu extends PaintballMenu {
             final PBPlayer player = PBPlayer.toPBPlayer(p);
 
             int price = PRICES[slot];
-
             Economy eco = Necessities.getEconomy();
-            if (eco.getBalance(p.getUniqueId()) < price) {
-                Variables var = Necessities.getVar();
-                p.sendMessage(var.getEr() + "Error: " + var.getErMsg() + "You do not have " + price + " GGs."); //TODO when BalChecks is changed to Economy using mysql use the format
-                event.setCancelled(true);
-                return;
+            if (price > 0) {
+                if (eco.getBalance(p.getUniqueId()) < price) {
+                    Variables var = Necessities.getVar();
+                    p.sendMessage(var.getEr() + "Error: " + var.getErMsg() + "You do not have " + price + " GGs."); //TODO when BalChecks is changed to Economy using mysql use the format
+                    event.setCancelled(true);
+                    return;
+                }
             }
 
             //Prevent any form of error..
@@ -95,7 +96,8 @@ public class WeaponShopMenu extends PaintballMenu {
                     player.showLobbyItems();
                 player.setWeapon(AbstractWeapon.createWeapon((Class<? extends AbstractWeapon>) WEAPONS[slot], player)); //dude...that's weak..
                 p.closeInventory();
-                eco.removeMoney(p.getUniqueId(), price);
+                if (price > 0)
+                    eco.removeMoney(p.getUniqueId(), price);
                 wakeUp();
             });
         }

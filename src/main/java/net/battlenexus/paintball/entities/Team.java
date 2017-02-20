@@ -1,5 +1,6 @@
 package net.battlenexus.paintball.entities;
 
+import gg.galaxygaming.necessities.Necessities;
 import net.battlenexus.paintball.Paintball;
 import net.battlenexus.paintball.entities.ai.AIPlayer;
 import net.battlenexus.paintball.entities.ai.SimpleSkeleton;
@@ -30,6 +31,7 @@ public class Team implements ConfigOption {
 
     public Team(Team blue_team) {
         this.team_name = blue_team.team_name;
+        this.teamNumber = blue_team.teamNumber;
         this.world_name = blue_team.world_name;
     }
 
@@ -45,11 +47,6 @@ public class Team implements ConfigOption {
                 break;
             }
         this.team_name = team;
-    }
-
-    @Deprecated
-    public void setSpawn(Location location) {
-        //TODO Delete this and use MapConfig.addSpawn instead
     }
 
     public ItemStack getHelmet() {
@@ -133,7 +130,6 @@ public class Team implements ConfigOption {
     public Location getSpawn(boolean startSpawn) {
         MapConfig config = GameService.getCurrentGame().getConfig();
         List<SpawnPointOption> options = config.getSpawnsFor(this, false, startSpawn);
-
         return options.get(PaintballGame.RANDOM.nextInt(options.size())).getPosition().getLocation();
     }
 
@@ -168,6 +164,8 @@ public class Team implements ConfigOption {
     public void joinTeam(PBPlayer player) {
         players.add(player);
         spawnPlayer(player, true);
+        if (player.getBukkitPlayer() != null)
+            Necessities.getUM().getUser(player.getBukkitPlayer().getUniqueId()).setPrefix("(" + ChatColor.translateAlternateColorCodes(ChatColor.COLOR_CHAR, getName()) + ChatColor.RESET + ") ");
         if (player.getCurrentWeapon() == null)
             player.setWeapon(AbstractWeapon.createWeapon(BasicPaintball.class, player));
         if (hasAIPlayers())
@@ -178,6 +176,8 @@ public class Team implements ConfigOption {
         if (!contains(player))
             return;
         players.remove(player);
+        if (player.getBukkitPlayer() != null)
+            Necessities.getUM().getUser(player.getBukkitPlayer().getUniqueId()).setPrefix("");
     }
 
     public void spawnAIPlayer() {
@@ -224,5 +224,9 @@ public class Team implements ConfigOption {
 
     public int getTeamNumber() {
         return teamNumber;
+    }
+
+    public void setTeamNumber(int teamNumber) {
+        this.teamNumber = teamNumber;
     }
 }

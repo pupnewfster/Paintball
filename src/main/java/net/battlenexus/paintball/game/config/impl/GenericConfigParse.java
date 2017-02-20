@@ -23,16 +23,14 @@ public class GenericConfigParse {
             ConfigOption parser = tryGetParser(packagePath + "." + name);
             if (parser == null)
                 continue;
-
             return parser;
         }
-
         return null;
     }
 
     @SuppressWarnings("unchecked")
     private static ConfigOption tryGetParser(String class_) {
-        Class<? extends ConfigOption> configParserClass = null; //weeeeaaak typing yum
+        Class<? extends ConfigOption> configParserClass; //weeeeaaak typing yum
         try {
             configParserClass = (Class<? extends ConfigOption>) Class.forName(class_);
         } catch (ClassNotFoundException e) {
@@ -40,10 +38,11 @@ public class GenericConfigParse {
             return null;
         }
 
-        ConfigOption object = null;
+        ConfigOption object;
         try {
             object = configParserClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
             return null;
         }
 

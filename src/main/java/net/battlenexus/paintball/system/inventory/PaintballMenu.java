@@ -13,7 +13,7 @@ import org.bukkit.inventory.InventoryView;
 
 public abstract class PaintballMenu implements InventoryHolder {
     private Inventory inventory;
-    private boolean closed = false;
+    private boolean closed;
 
     public PaintballMenu() {
         inventory = Bukkit.createInventory(this, slotCount(), getName());

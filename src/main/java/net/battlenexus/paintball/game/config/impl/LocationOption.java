@@ -13,6 +13,9 @@ import org.w3c.dom.NodeList;
 public class LocationOption implements ConfigOption {
     private Location location;
 
+    public LocationOption() {
+    }
+
     public LocationOption(Location location) {
         this.location = location;
     }

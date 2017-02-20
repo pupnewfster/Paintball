@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class PBCommandHandler implements CommandExecutor {
-    private static final PBCommand[] COMMANDS = new PBCommand[]{
+    private static final PBCommand[] COMMANDS = {
             new CreatePBMap(),
             new JoinQueue(),
             new LeaveQueue(),

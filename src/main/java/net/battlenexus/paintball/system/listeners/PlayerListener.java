@@ -214,16 +214,10 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        Player p = event.getPlayer();
-        PBPlayer who = PBPlayer.getPlayer(p);
-        if (who == null)
-            return;
-        if (who.isInGame()) { //TODO add into Necessities a setChatPrefix, so that minigames can set a prefix
-            String team = "(" + ChatColor.translateAlternateColorCodes(ChatColor.COLOR_CHAR, who.getCurrentTeam().getName()) + ChatColor.RESET + ") ";
-            event.setFormat(team + event.getFormat());
-        } else if (who.isSpectating()) { //TODO: Add a chat for spectators
+        PBPlayer who = PBPlayer.getPlayer(event.getPlayer());
+        if (who != null && who.isSpectating()) { //TODO: Add a chat for spectators
             who.sendMessage("You are spectating, you cannot talk!"); //TODO Maybe only send messages to other spectators
             event.setCancelled(true);
         }

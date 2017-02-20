@@ -27,6 +27,7 @@ public class MapConfig extends ReflectionConfig {
     public MapConfig() {
         blue_team = new Team();
         red_team = new Team();
+        red_team.setTeamNumber(1);
     }
 
     public MapConfig(MapConfig toClone) {
@@ -36,13 +37,21 @@ public class MapConfig extends ReflectionConfig {
         this.blue_team = new Team(toClone.blue_team);
         this.red_team = new Team(toClone.red_team);
         this.chests = toClone.chests.clone();
+        this.spawns = toClone.spawns.clone();
     }
 
     public void addChest(Location l) {
-        LocationOption lc = new LocationOption(l);
-        chests.add(lc);
+        chests.add(new LocationOption(l));
     }
 
+    public void addSpawn(int team, Location l, boolean aiSpawn, boolean startSpawn) {
+        SpawnPointOption spawn = new SpawnPointOption();
+        spawn.setPosition(new LocationOption(l));
+        spawn.setStartPoint(startSpawn);
+        spawn.setAiSpawn(aiSpawn);
+        spawn.setTeam(team);
+        spawns.add(spawn);
+    }
 
     public void setMapName(String mapName) {
         this.map_name = mapName;
@@ -53,13 +62,6 @@ public class MapConfig extends ReflectionConfig {
             blue_team.setTeamName(name);
         else if (team == 1)
             red_team.setTeamName(name);
-    }
-
-    public void setTeamSpawn(int team, Location spawn) {
-        if (team == 0)
-            blue_team.setSpawn(spawn);
-        else if (team == 1)
-            red_team.setSpawn(spawn);
     }
 
     public Team getRedTeam() {
@@ -104,12 +106,9 @@ public class MapConfig extends ReflectionConfig {
 
     public List<SpawnPointOption> getSpawnsFor(Team team, boolean aiSpawn, boolean startSpawn) {
         ArrayList<SpawnPointOption> list = new ArrayList<>();
-        for (SpawnPointOption option : spawns) {
-            if (aiSpawn == option.isAiSpawn() && startSpawn == option.isStartPoint() && option.getTeam() == team.getTeamNumber()) {
+        for (SpawnPointOption option : spawns)
+            if (aiSpawn == option.isAiSpawn() && startSpawn == option.isStartPoint() && option.getTeam() == team.getTeamNumber())
                 list.add(option);
-            }
-        }
-
         return list;
     }
 }

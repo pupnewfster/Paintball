@@ -87,7 +87,6 @@ public class PBPlayer implements BasePlayer {
 
     /**
      * Creates a new {@link PBPlayer} for a player
-     *
      * @param player Player the player you would like to find
      * @return PBPlayer
      */
@@ -107,7 +106,6 @@ public class PBPlayer implements BasePlayer {
 
     /**
      * Finds and returns the {@link PBPlayer} for the given player
-     *
      * @param player Player The player you would like to find
      * @return PBPlayer
      */

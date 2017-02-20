@@ -31,8 +31,8 @@ public abstract class PaintballGame implements Tick {
 
     private MapConfig mapConfig;
     protected ScoreManager score = new ScoreManager();
-    boolean ended = false;
-    protected boolean started = false;
+    boolean ended;
+    protected boolean started;
     private static boolean restart;
 
     protected PaintballGame() {
@@ -209,7 +209,7 @@ public abstract class PaintballGame implements Tick {
         sendGameMessage(ChatColor.DARK_RED + "- " + ChatColor.GRAY + player.getBukkitPlayer().getDisplayName() + ChatColor.GRAY + " has left the game.");
     }
 
-    private boolean ending = false;
+    private boolean ending;
 
     public void endGame() {
         ending = true;

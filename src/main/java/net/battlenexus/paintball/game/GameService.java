@@ -24,8 +24,8 @@ public class GameService {
     private final ArrayList<PBPlayer> joinNext = new ArrayList<>();
     private MapConfig nextConfig;
     private boolean running = true;
-    private boolean softStop = false;
-    private boolean waiting = false;
+    private boolean softStop;
+    private boolean waiting;
     private Thread current_thread;
 
     public static PaintballGame getCurrentGame() {

@@ -83,7 +83,7 @@ public abstract class AbstractWeapon implements Weapon {
 
     public void refill() {
         bullets = clipSize();
-        bar.setTitle(owner.getCurrentTeam().getColor() + "Ammo: " + bullets);
+        bar.setTitle((owner.getCurrentTeam() != null ? owner.getCurrentTeam().getColor() : "") + "Ammo: " + bullets);
         bar.setProgress(1.0);
     }
 
@@ -203,7 +203,7 @@ public abstract class AbstractWeapon implements Weapon {
 
     protected abstract Material getNormalMaterial();
 
-    private boolean reloading = false;
+    private boolean reloading;
 
     @Override
     public void reload(ItemStack item) {

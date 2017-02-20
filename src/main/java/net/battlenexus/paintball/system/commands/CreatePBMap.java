@@ -119,7 +119,7 @@ public class CreatePBMap implements PBCommand, Listener {
                     Location spawn = event.getPlayer().getLocation();
                     event.setCancelled(true);
                     ch.step++;
-                    ch.mapConfig.setTeamSpawn(0, spawn);
+                    ch.mapConfig.addSpawn(0, spawn, true, true);
                     event.getPlayer().sendMessage(Paintball.formatMessage("Awesome!"));
                     event.getPlayer().sendMessage(Paintball.formatMessage("Please stand on the spawn for the team \"" + ch.mapConfig.getRedTeam().getName() + "\""));
                     event.getPlayer().sendMessage(Paintball.formatMessage("Then say \"set\""));
@@ -129,7 +129,7 @@ public class CreatePBMap implements PBCommand, Listener {
                     Location spawn = event.getPlayer().getLocation();
                     event.setCancelled(true);
                     ch.step++;
-                    ch.mapConfig.setTeamSpawn(1, spawn);
+                    ch.mapConfig.addSpawn(1, spawn, true, true);
                     event.getPlayer().sendMessage(Paintball.formatMessage("Awesome!"));
                     event.getPlayer().sendMessage(Paintball.formatMessage("Please wait while I save this to a map file.."));
 
@@ -158,6 +158,6 @@ public class CreatePBMap implements PBCommand, Listener {
 
     public class CreationHelper {
         public final MapConfig mapConfig = new MapConfig();
-        public int step = 0;
+        public int step;
     }
 }

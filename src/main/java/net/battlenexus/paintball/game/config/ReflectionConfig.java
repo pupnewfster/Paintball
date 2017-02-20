@@ -110,7 +110,6 @@ public abstract class ReflectionConfig {
                     continue;
                 }
                 if (obj instanceof ConfigOption) {
-
                     configWriter.beginObject(f.getName());
                     ConfigOption parser = (ConfigOption) obj;
                     parser.save(configWriter);
@@ -130,7 +129,6 @@ public abstract class ReflectionConfig {
         File dir = Paintball.INSTANCE.getDataFolder();
         if (!dir.exists() && !dir.mkdir())
             throw new IOException("Error creating maps directory!");
-
         configWriter.saveToFile(new File(dir, map_name));
     }
 
