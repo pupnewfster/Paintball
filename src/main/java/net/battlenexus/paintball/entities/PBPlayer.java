@@ -114,10 +114,7 @@ public class PBPlayer implements BasePlayer {
     }
 
     public static PBPlayer toPBPlayer(Player player) {
-        if (players.containsKey(player.getName()))
-            return players.get(player.getName());
-        else
-            return newPlayer(player);
+        return players.containsKey(player.getName()) ? players.get(player.getName()) : newPlayer(player);
     }
 
     public void hit(BasePlayer shooter) {

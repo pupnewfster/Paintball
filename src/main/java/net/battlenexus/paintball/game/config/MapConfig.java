@@ -106,6 +106,7 @@ public class MapConfig extends ReflectionConfig {
 
     public List<SpawnPointOption> getSpawnsFor(Team team, boolean aiSpawn, boolean startSpawn) {
         ArrayList<SpawnPointOption> list = new ArrayList<>();
+        //TODO When this is done being set replace this with a stream
         for (SpawnPointOption option : spawns)
             if (aiSpawn == option.isAiSpawn() && startSpawn == option.isStartPoint() && option.getTeam() == team.getTeamNumber())
                 list.add(option);

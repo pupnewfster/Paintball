@@ -11,7 +11,7 @@ public class ArrayListOption<T extends ConfigOption> extends ArrayList<T> implem
     @SuppressWarnings("unchecked")
     @Override
     public void parse(NodeList childNodes) {
-        if (childNodes != null && childNodes.getLength() > 0) {
+        if (childNodes != null && childNodes.getLength() > 0)
             for (int i = 0; i < childNodes.getLength(); i++) {
                 if (!(childNodes.item(i) instanceof Element))
                     continue;
@@ -22,7 +22,6 @@ public class ArrayListOption<T extends ConfigOption> extends ArrayList<T> implem
                     add(object);
                 }
             }
-        }
     }
 
     @Override

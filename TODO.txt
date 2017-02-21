@@ -7,7 +7,7 @@ Fix shotgun
 Cvar system -- half done
 traceline functions
 
-Multiple weps in hotbar
+Multiple weapons in hotbar
 redo/New reloading method
 
 1. Better kill messages
@@ -28,5 +28,5 @@ Make the AI not have to pull their bow to shoot (Only do this once weapon delay 
 Replace some casts to SimpleSkeleton with ones to AIPlayer
 Better spawning system
 Make it so the worlds auto load/unload rather than using necessities to just make sure world is loaded
-Given we are using bungeecord, we should just use multiple servers instead of multiple games per server. So make it so autojoin and once changing weapons ingame works... remove /leave
+Given we are using bungeecord, we should just use multiple servers instead of multiple games per server. So make it so auto join and once changing weapons ingame works... remove /leave
 Add a way when there is not enough people on so that you can choose to be on the same friend or on opposite team as your friends

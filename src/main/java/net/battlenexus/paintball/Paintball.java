@@ -12,9 +12,7 @@ import net.battlenexus.paintball.system.listeners.TickBukkitTask;
 import net.battlenexus.paintball.system.ubot.ULogger;
 import net.battlenexus.paintball.system.ubot.UPatcher;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -24,7 +22,6 @@ import java.io.*;
 public class Paintball extends JavaPlugin {
     public static Paintball INSTANCE;
     public World paintball_world;
-    private Location lobby_spawn;
     private TickBukkitTask tasks;
     private BukkitRunnable gameTask;
     private CancelToken ubotCancelToken;
@@ -41,8 +38,6 @@ public class Paintball extends JavaPlugin {
         CustomEntities.registerEntities();
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-
-        loadPluginConfig();
 
         PBCommandHandler handler = new PBCommandHandler();
         getCommand("createpbmap").setExecutor(handler);
@@ -89,6 +84,7 @@ public class Paintball extends JavaPlugin {
         CustomEntities.unregisterEntities();
         SignStat.saveSigns();
         SignStat.disposeSigns();
+        //TODO cancel the gameTask potentially?
         if (game != null)
             game.stop();
     }
@@ -125,22 +121,6 @@ public class Paintball extends JavaPlugin {
 
     public static String formatMessage(String message) {
         return ChatColor.WHITE + "[" + ChatColor.RED + "Paintball" + ChatColor.WHITE + "] " + ChatColor.GRAY + message;
-    }
-
-    private void loadPluginConfig() {
-        String world_name = getConfig().getString("game.world.name", "world");
-        WorldCreator creator = new WorldCreator(world_name);
-        paintball_world = getServer().createWorld(creator);
-
-        saveDefaultConfig();
-
-        double world_x = getConfig().getDouble("game.world.lobbyx", paintball_world.getSpawnLocation().getX());
-        double world_y = getConfig().getDouble("game.world.lobbyy", paintball_world.getSpawnLocation().getY());
-        double world_z = getConfig().getDouble("game.world.lobbyz", paintball_world.getSpawnLocation().getZ());
-        float world_yaw = (float) getConfig().getDouble("game.world.lobby_yaw", paintball_world.getSpawnLocation().getYaw());
-        float world_pitch = (float) getConfig().getDouble("game.world.lobby_pitch", paintball_world.getSpawnLocation().getPitch());
-
-        lobby_spawn = new Location(paintball_world, world_x, world_y, world_z, world_yaw, world_pitch);
     }
 
     public void stopUbot() {

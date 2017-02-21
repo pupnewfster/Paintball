@@ -62,23 +62,17 @@ public abstract class AbstractItem {
     }
 
     public static AbstractItem getItem(Material mat) {
-        List<AbstractItem> items = getItems();
-        for (AbstractItem i : items)
-            if (i.getMaterial().equals(mat))
-                return i;
-        return null;
+        return getItems().stream().filter(i -> i.getMaterial().equals(mat)).findFirst().orElse(null);
     }
 
     private static ArrayList<AbstractItem> getItems() {
         ArrayList<AbstractItem> items = new ArrayList<>();
-        for (Class<?> class_ : ITEMS) {
+        for (Class<?> class_ : ITEMS)
             try {
                 items.add((AbstractItem) class_.newInstance());
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-        }
-
         return items;
     }
 

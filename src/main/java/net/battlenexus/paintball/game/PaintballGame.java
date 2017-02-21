@@ -214,20 +214,18 @@ public abstract class PaintballGame implements Tick {
     public void endGame() {
         ending = true;
         PBPlayer[] players = getAllPlayers();
-        if (score != null) {
+        if (score != null)
             for (Team t : getTeams()) {
                 t.removeAIPlayers();
                 score.removeTeam(t.getName());
             }
-        }
-        for (PBPlayer player : players) {
+        for (PBPlayer player : players)
             try {
                 player.leaveGame();
             } catch (Throwable t) {
                 t.printStackTrace();
                 Paintball.INSTANCE.error("Error removing player \"" + player.getBukkitPlayer().getName() + "\" from paintball game!");
             }
-        }
         ending = false;
         ended = true;
         Paintball.INSTANCE.getTicker().removeTick(this);

@@ -24,13 +24,12 @@ public abstract class SignStat implements Tick {
     }
 
     public static void saveSigns() {
-        for (SignStat s : stats) {
+        for (SignStat s : stats)
             try {
                 saveStat(s);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
     }
 
     public static void disposeSigns() {
@@ -51,9 +50,8 @@ public abstract class SignStat implements Tick {
             boolean result = dir.mkdir();
         }
         Formatter formatter = new Formatter(new FileWriter(new File(dir, lines[0] + lines[1] + lines[2] + ".dat"), false));
-        for (String line : lines) {
+        for (String line : lines)
             formatter.out().append(line).append("\n");
-        }
         formatter.close();
     }
 
@@ -125,9 +123,8 @@ public abstract class SignStat implements Tick {
     }
 
     protected void updateSign(String... lines) {
-        for (int i = 0; i < lines.length; i++) {
+        for (int i = 0; i < lines.length; i++)
             sign.setLine(i, lines[i]);
-        }
         sign.update(true);
     }
 

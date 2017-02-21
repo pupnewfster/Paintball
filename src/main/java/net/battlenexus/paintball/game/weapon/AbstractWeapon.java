@@ -5,7 +5,6 @@ import net.battlenexus.paintball.entities.BasePlayer;
 import net.battlenexus.paintball.entities.PBPlayer;
 import net.battlenexus.paintball.entities.Team;
 import net.battlenexus.paintball.game.GameService;
-import net.battlenexus.paintball.game.PaintballGame;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -132,15 +131,8 @@ public abstract class AbstractWeapon implements Weapon {
 
     @Override
     public Material getMaterial() {
-        if (owner == null || GameService.getCurrentGame() == null || getOwner().getCurrentTeam() == null)
-            return getNormalMaterial();
-        else {
-            PaintballGame pg = GameService.getCurrentGame();
-            if (pg.getConfig().getBlueTeam().equals(getOwner().getCurrentTeam()))
-                return getBlueTeamMaterial();
-            else
-                return getRedTeamMaterial();
-        }
+        return owner == null || GameService.getCurrentGame() == null || getOwner().getCurrentTeam() == null ? getNormalMaterial() :
+                GameService.getCurrentGame().getConfig().getBlueTeam().equals(getOwner().getCurrentTeam()) ? getBlueTeamMaterial() : getRedTeamMaterial();
     }
 
     @Override
@@ -160,12 +152,7 @@ public abstract class AbstractWeapon implements Weapon {
             pOwner.getBukkitPlayer().getInventory().addItem(item);
         } else {
             while (amount > 0) {
-                int t;
-                if (amount - clipSize() >= 0)
-                    t = clipSize();
-                else
-                    t = amount;
-
+                int t = amount - clipSize() >= 0 ? clipSize() : amount;
                 ItemStack item = Weapon.WeaponUtils.createReloadItem(getReloadItem(), t);
                 pOwner.getBukkitPlayer().getInventory().addItem(item);
                 amount -= t;

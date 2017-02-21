@@ -53,11 +53,7 @@ public class WeaponShopMenu extends PaintballMenu {
             if (item == null)
                 continue;
             ItemMeta meta = item.getItemMeta();
-            List<String> lore;
-            if (meta.hasLore())
-                lore = meta.getLore();
-            else
-                lore = new ArrayList<>();
+            List<String> lore = meta.hasLore() ? meta.getLore() : new ArrayList<>();
             lore.add(ChatColor.GREEN + "Price: " + PRICES[i]);
             meta.setLore(lore);
             item.setItemMeta(meta);

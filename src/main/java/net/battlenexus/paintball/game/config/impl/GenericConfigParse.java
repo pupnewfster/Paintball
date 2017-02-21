@@ -6,6 +6,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import java.util.LinkedList;
+import java.util.Objects;
 
 public class GenericConfigParse {
     private static LinkedList<String> pluginPackages = new LinkedList<>();
@@ -19,13 +20,7 @@ public class GenericConfigParse {
     }
 
     public static ConfigOption findConfig(String name) {
-        for (String packagePath : pluginPackages) {
-            ConfigOption parser = tryGetParser(packagePath + "." + name);
-            if (parser == null)
-                continue;
-            return parser;
-        }
-        return null;
+        return pluginPackages.stream().map(packagePath -> tryGetParser(packagePath + "." + name)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 
     @SuppressWarnings("unchecked")

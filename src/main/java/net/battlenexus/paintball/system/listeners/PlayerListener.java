@@ -70,12 +70,8 @@ public class PlayerListener implements Listener {
         Player p = event.getPlayer();
 
         EquipmentSlot hand = event.getHand();
-        ItemStack item;
-        if (hand.equals(EquipmentSlot.HAND))
-            item = p.getInventory().getItemInMainHand();
-        else //TODO: if there for some reason become more than two hands check if it is offhand and then check for third hand
-            item = p.getInventory().getItemInOffHand();
-
+        ItemStack item = hand.equals(EquipmentSlot.HAND) ? p.getInventory().getItemInMainHand() : p.getInventory().getItemInOffHand();
+        //TODO: if there for some reason become more than two hands check if it is offhand and then check for third hand
         if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().getDisplayName().equals("Weapon Shop")) {
                 WeaponShopMenu menu = new WeaponShopMenu(ChatColor.BOLD + "Weapon Shop");

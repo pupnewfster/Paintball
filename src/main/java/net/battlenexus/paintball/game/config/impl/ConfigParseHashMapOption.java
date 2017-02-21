@@ -20,7 +20,6 @@ public class ConfigParseHashMapOption<K extends ConfigOption> extends HashMap<St
                     NodeList list = item.getChildNodes();
                     if (list != null && list.getLength() > 0) {
                         String key = null;
-                        String value;
                         for (int ii = 0; ii < list.getLength(); ii++) {
                             if (!(list.item(ii) instanceof Element))
                                 continue;
